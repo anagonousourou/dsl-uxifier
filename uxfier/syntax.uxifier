@@ -1,0 +1,54 @@
+new WebApplication  {
+
+    name = "myNew Application"
+
+    pages += new WebPage {
+
+        title = "paege Title"
+
+        name = "page-name-1"
+
+        header = new Header {
+
+            content += new HorizontalLayout{
+                
+                content += new SocialMediaGroup {
+                    medias += new SocialMedia {
+                        type = SocialMediaEnume.FACEBOOK
+                        url = "http://127.0.0.1/"
+                    }
+                }
+
+                content += VerticalLayout {
+
+                    content += WebAppName ("adeline")
+
+                   
+                }
+
+                content += new LoginButton {
+                    value = "log in"
+                }
+                
+                
+                content += new CartButton {
+                    action = open "cartLateralPanel"
+
+                }
+
+            }
+
+            content += new NavigationMenu {
+                element += navigation ("accueil", "http://accueil")
+                element += navigation ("boutique", "http://boutique")
+                element += navigation ("notre historique", "http://notre-historique")
+                element += navigation ("contact", "http://contact")
+            }
+            
+        }
+
+    }
+
+}
+
+
