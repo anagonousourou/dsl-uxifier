@@ -1,12 +1,10 @@
 WebApplication {
 
-    name  'myNew Application'
+    name  'adeline'
 
      WebPage {
             name 'page-name-1'
             title 'page Title'
-
-
 
             Header {
 

@@ -43,20 +43,25 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(WebApplication application) {
-
-        //premier pass : trouver les dependencies et set certaines informations
+        //idée plusieurs passages dans l'arbre, premier passage : trouver les dependencies et set certaines informations triviales,
+        //passages supplémentaires pour résoudre des liens, du routing ...
         this.vueProject.name = application.name
         this.vueProject.packageJson.name = application.name
 
         for(WebPage webPage : application.pages){
             webPage.accept(this)
         }
-        return null
+
     }
 
     @Override
     def visit(WebPage webPage) {
         VueComponent vueComponent = new VueComponent()
         vueComponent.name = webPage.name
+
+        this.vueProject.addVueComponent(vueComponent)
+
     }
+
+
 }

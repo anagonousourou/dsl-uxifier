@@ -13,6 +13,7 @@ import uxifier.models.SocialMediaGroup
 import uxifier.models.SocialMediaType
 import uxifier.models.WebApplication
 import uxifier.models.WebPage
+import uxifier.models.visitors.ApplicationModelVisitorVueJS
 
 class App {
 
@@ -87,7 +88,10 @@ class WebApplicationBuilder{
     }
 
     def name(String appName){
-        println("Calling name method in WebApplicationBuilder with ${appName}")
+        if(appName.contains(' ')){
+            println "Invalid name for application '${appName}' : it should not have spaces"
+            System.exit(1)
+        }
         this.webApplication.name = appName
     }
 
@@ -161,7 +165,16 @@ class UXifier extends  Script{
         closure.delegate = app
         closure()
 
-        println app.build()
+        var application = app.build()
+
+        println application
+
+        var applicationVisitor = new ApplicationModelVisitorVueJS()
+
+        applicationVisitor.visit(application)
+
+        applicationVisitor.vueProject.toCode()
+
 
     }
 

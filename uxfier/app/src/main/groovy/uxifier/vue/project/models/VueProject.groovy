@@ -2,63 +2,78 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 
 import java.nio.file.Files
 import java.nio.file.Path
 
 class FileContext{
-    static Path currentFile; //or directory;
-    static ObjectMapper objectMapper = new ObjectMapper();
+    static Path currentFile //or directory;
+    static ObjectMapper objectMapper
+
+    static {
+        objectMapper = new ObjectMapper()
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
 
     static void writeToFile(Path path, String content) {
         try {
             if (path.toFile().getParentFile().exists() || (path.toFile().getParentFile().mkdirs() && path.toFile().createNewFile())) {
                 try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-                    bw.write(content);
+                    bw.write(content)
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.printStackTrace()
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
     }
 }
 class VueProject {
-    String name;
-    PackageJson packageJson ;
-    BabelConfig babelConfig = new BabelConfig();
-    PublicDirectory  publicDirectory =new PublicDirectory();
-    SourceDirectory sourceDirectory = new SourceDirectory();
+    String name
+    PackageJson packageJson
+    BabelConfig babelConfig = new BabelConfig()
+    PublicDirectory publicDirectory =new PublicDirectory()
+    SourceDirectory sourceDirectory = new SourceDirectory()
 
     VueProject() {
-        this.packageJson = PackageJson.defaultValue();
+        this.packageJson = PackageJson.defaultValue()
     }
 
     def toCode(){
-        FileContext.currentFile = Path.of(name);
+        FileContext.currentFile = Path.of(name)
 
         Files.createDirectory(FileContext.currentFile)
 
         packageJson.toCode()
 
         babelConfig.toCode()
+        FileContext.currentFile = Path.of(name, "public")
+        Files.createDirectory(FileContext.currentFile)
         publicDirectory.toCode()
+
+        FileContext.currentFile = Path.of(name, "src")
+        Files.createDirectory(FileContext.currentFile)
         sourceDirectory.toCode()
 
+    }
 
-
+    def addVueComponent(VueComponent vueComponent){
+        this.sourceDirectory.componentsDirectory.vueComponents.add(vueComponent)
     }
 
 }
 
 class SourceDirectory{
-    ComponentsDirectory componentsDirectory = new ComponentsDirectory();
-    AssetsDirectory assetsDirectory = new AssetsDirectory();
-    AppFile appFile = new AppFile();
-    MainJsFile mainJsFile = new MainJsFile();
+    ComponentsDirectory componentsDirectory = new ComponentsDirectory()
+    AssetsDirectory assetsDirectory = new AssetsDirectory()
+    AppFile appFile = new AppFile()
+    MainJsFile mainJsFile = new MainJsFile()
 
     def toCode(){
+        appFile.toCode()
+        mainJsFile.toCode()
     }
 }
 
@@ -75,14 +90,17 @@ createApp(App).mount('#app')
 }
 
 class AppFile extends VueComponent{
-    AppFile() {
-        this.template ='<template>Hello</template>'
-        this.script ="""
-<script>
-export default {
-  name: 'App'
-}
-</script>"""
+    @Override
+    def toCode() {
+        var appVUe = Files.createFile(Path.of(FileContext.currentFile.toString(), 'App.vue'))
+
+        FileContext.writeToFile(appVUe, """ <template>Hello</template>
+        
+                <script>
+                export default {
+            name: 'App'
+        }
+                </script>""")
     }
 }
 
@@ -91,25 +109,27 @@ class AssetsDirectory{
 }
 
 class ComponentsDirectory{
+    List<VueComponent> vueComponents = new ArrayList<>()
+
 
 }
 
 class PackageJson{
-    String name;
-    String version;
+    String name
+    String version
     @JsonProperty("private")
-    boolean myprivate;
-    Map<String, String> scripts = new HashMap<>();
-    Map<String, String> dependencies = new HashMap<>();
-    Map<String, String> devDependencies =new HashMap<>();
-    List<String> browserslist = new ArrayList<>();
+    boolean myprivate
+    Map<String, String> scripts = new HashMap<>()
+    Map<String, String> dependencies = new HashMap<>()
+    Map<String, String> devDependencies =new HashMap<>()
+    List<String> browserslist = new ArrayList<>()
 
-    EslintConfig eslintConfig =new EslintConfig();
+    EslintConfig eslintConfig =new EslintConfig()
 
-    static defaultValue(){
+    static PackageJson defaultValue(){
         PackageJson projectPackageJson=new PackageJson()
-        projectPackageJson.version="0.1.0"
-        projectPackageJson.myprivate=true;
+        projectPackageJson.version ="0.1.0"
+        projectPackageJson.myprivate=true
         projectPackageJson.scripts.put("serve", "vue-cli-service serve")
         projectPackageJson.scripts.put("build", "vue-cli-service build")
         projectPackageJson.scripts.put("lint", "vue-cli-service lint")
@@ -131,19 +151,21 @@ class PackageJson{
                 "not dead"
         ])
 
-        projectPackageJson.eslintConfig.root=true;
-        projectPackageJson.eslintConfig.env.node=true;
+        projectPackageJson.eslintConfig.root=true
+        projectPackageJson.eslintConfig.env.node=true
         projectPackageJson.eslintConfig.myextends.addAll([
                 "plugin:vue/vue3-essential",
                 "eslint:recommended"
         ])
+
+        return projectPackageJson
     }
 
     def toCode( ){
 
-        var packageJsonPath = Files.createFile(Path.of(FileContext.currentFile.toString(), 'package.json'));
+        var packageJsonPath = Files.createFile(Path.of(FileContext.currentFile.toString(), 'package.json'))
 
-        FileContext.writeToFile(packageJsonPath, FileContext.objectMapper.writeValueAsString(this));
+        FileContext.writeToFile(packageJsonPath, FileContext.objectMapper.writeValueAsString(this))
 
 
     }
@@ -153,20 +175,16 @@ class PackageJson{
 }
 
 class Env{
-    public boolean node;
-}
-
-
-class Rules{
+    public boolean node
 }
 
 class EslintConfig{
-    public boolean root;
-    public Env env =new Env();
+    public boolean root
+    public Env env =new Env()
     @JsonProperty("extends")
-    public List<String> myextends=new ArrayList<>();
-    public Map<String, String> parserOptions = new HashMap<>();
-    public Rules rules =new Rules();
+    public List<String> myextends=new ArrayList<>()
+    public Map<String, String> parserOptions = new HashMap<>()
+
 }
 
 class BabelConfig {
@@ -211,7 +229,7 @@ class PublicDirectory {
 </html>
 """)
 
-        FileContext.currentFile = parentDirectory;
+        FileContext.currentFile = parentDirectory
     }
 }
 
