@@ -5,17 +5,13 @@ WebApplication {
      WebPage {
             name 'page-name-1'
             title 'page Title'
-
-            Header {
-
-                HorizontalLayout{
                        SocialMediaGroup {
                                         SocialMedia {
                                             type Facebook
                                             url 'http://127.0.0.1/'
                                         }
-                                    }
-                }
+                       }
+
             }
-          }
+
 }

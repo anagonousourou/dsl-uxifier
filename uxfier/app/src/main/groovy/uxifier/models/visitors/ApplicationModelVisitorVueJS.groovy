@@ -9,16 +9,22 @@ import uxifier.models.SocialMediaGroup
 import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
+import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsSocialMedia
+import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueProject
 
 class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     int count = 1
 
-    VueProject vueProject=new VueProject();
+    VueProject vueProject=new VueProject()
+
+    private VueGeneratable parent
 
     @Override
     def visit(SocialMedia media) {
-        return null
+        var tmp = new VueJsSocialMedia(media.type.toString(), media.url)
+        this.parent.addContent(tmp)
     }
 
     @Override
@@ -33,7 +39,11 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(SocialMediaGroup socialMediaGroup) {
-        return null
+        var tmp = new VueJsSocialMediaGroup()
+
+        this.parent  = tmp
+        socialMediaGroup.componentList.forEach(c -> c.accept(this))
+
     }
 
     @Override
@@ -58,6 +68,10 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     def visit(WebPage webPage) {
         VueComponent vueComponent = new VueComponent()
         vueComponent.name = webPage.name
+        this.parent = vueComponent
+        for(Component component1 :webPage.getComponentList()){
+            component1.accept(this)
+        }
 
         this.vueProject.addVueComponent(vueComponent)
 

@@ -8,8 +8,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class FileContext{
-    static Path currentFile //or directory;
+    static Path currentDirectory //directory;
     static ObjectMapper objectMapper
+    static BufferedWriter writer
 
     static {
         objectMapper = new ObjectMapper()
@@ -42,19 +43,19 @@ class VueProject {
     }
 
     def toCode(){
-        FileContext.currentFile = Path.of(name)
+        FileContext.currentDirectory = Path.of(name)
 
-        Files.createDirectory(FileContext.currentFile)
+        Files.createDirectory(FileContext.currentDirectory)
 
         packageJson.toCode()
 
         babelConfig.toCode()
-        FileContext.currentFile = Path.of(name, "public")
-        Files.createDirectory(FileContext.currentFile)
+        FileContext.currentDirectory = Path.of(name, "public")
+        Files.createDirectory(FileContext.currentDirectory)
         publicDirectory.toCode()
 
-        FileContext.currentFile = Path.of(name, "src")
-        Files.createDirectory(FileContext.currentFile)
+        FileContext.currentDirectory = Path.of(name, "src")
+        Files.createDirectory(FileContext.currentDirectory)
         sourceDirectory.toCode()
 
     }
@@ -74,12 +75,14 @@ class SourceDirectory{
     def toCode(){
         appFile.toCode()
         mainJsFile.toCode()
+
+        componentsDirectory.vueComponents.forEach(c -> c.toCode())
     }
 }
 
 class MainJsFile{
     def toCode(){
-        Path mainjs = Files.createFile(Path.of(FileContext.currentFile.toString(), "main.js"))
+        Path mainjs = Files.createFile(Path.of(FileContext.currentDirectory.toString(), "main.js"))
         FileContext.writeToFile(mainjs , """
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -92,7 +95,7 @@ createApp(App).mount('#app')
 class AppFile extends VueComponent{
     @Override
     def toCode() {
-        var appVUe = Files.createFile(Path.of(FileContext.currentFile.toString(), 'App.vue'))
+        var appVUe = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'App.vue'))
 
         FileContext.writeToFile(appVUe, """ <template>Hello</template>
         
@@ -110,8 +113,6 @@ class AssetsDirectory{
 
 class ComponentsDirectory{
     List<VueComponent> vueComponents = new ArrayList<>()
-
-
 }
 
 class PackageJson{
@@ -163,7 +164,7 @@ class PackageJson{
 
     def toCode( ){
 
-        var packageJsonPath = Files.createFile(Path.of(FileContext.currentFile.toString(), 'package.json'))
+        var packageJsonPath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'package.json'))
 
         FileContext.writeToFile(packageJsonPath, FileContext.objectMapper.writeValueAsString(this))
 
@@ -190,7 +191,7 @@ class EslintConfig{
 class BabelConfig {
 
     def toCode(){
-        Path babelFile = Files.createFile(Path.of(FileContext.currentFile.toString(), "babel.config.js"))
+        Path babelFile = Files.createFile(Path.of(FileContext.currentDirectory.toString(), "babel.config.js"))
         FileContext.writeToFile(babelFile, """
 module.exports = {
   presets: [
@@ -205,10 +206,10 @@ module.exports = {
 class PublicDirectory {
 
     def toCode(){
-        Path parentDirectory=FileContext.currentFile
-        FileContext.currentFile=Path.of(FileContext.currentFile.toString(), "public")
-        Files.createDirectory(FileContext.currentFile)
-        Path indexHtml = Files.createFile(Path.of(FileContext.currentFile.toString(), "index.html"))
+        Path parentDirectory=FileContext.currentDirectory
+        FileContext.currentDirectory=Path.of(FileContext.currentDirectory.toString(), "public")
+        Files.createDirectory(FileContext.currentDirectory)
+        Path indexHtml = Files.createFile(Path.of(FileContext.currentDirectory.toString(), "index.html"))
         FileContext.writeToFile(indexHtml,
         """<!DOCTYPE html>
 <html lang="">
@@ -229,7 +230,7 @@ class PublicDirectory {
 </html>
 """)
 
-        FileContext.currentFile = parentDirectory
+        FileContext.currentDirectory = parentDirectory
     }
 }
 
