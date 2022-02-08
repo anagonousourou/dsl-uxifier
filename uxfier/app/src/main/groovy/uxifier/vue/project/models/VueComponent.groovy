@@ -1,6 +1,7 @@
 package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
+import groovy.transform.ToString
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,6 +12,10 @@ class VueComponent implements  VueGeneratable{
     String name
     List<VueGeneratable> content = new ArrayList<>();
 
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        this.content.add(vueGeneratable)
+    }
 
     @Override
     def registerDependencies() {
@@ -19,7 +24,7 @@ class VueComponent implements  VueGeneratable{
 
     @Override
     def writeTemplate() {
-        var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), this.name))
+        var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), this.name+'.vue'))
 
         FileContext.writer =  Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
@@ -42,6 +47,11 @@ class VueComponent implements  VueGeneratable{
     @Override
     def importComponents() {
         return null
+    }
+
+    @Override
+    String toString() {
+        return "VueComponent {name = ${name} } -> ${content}"
     }
 }
 
@@ -73,6 +83,16 @@ class VerticalLayout implements HtmlElement{
 
 class VueJsSocialMediaGroup implements VueGeneratable {
     List<VueJsSocialMedia> socialMedia = new ArrayList<>();
+
+    @Override
+    String toString() {
+        return "VueJsSocialMediaGroup -> ${socialMedia}"
+    }
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        return socialMedia.add(vueGeneratable)
+    }
 
     @Override
     def registerDependencies() {
@@ -121,12 +141,19 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     @Override
+    String toString() {
+        return "VueJsSocialMedia {name = ${name} , link = ${link} }"
+    }
+
+    @Override
     def registerDependencies() {
         return null
     }
 
     @Override
     def writeTemplate() {
+        println (this.name)
+        println (iconMaps)
         FileContext.writer.write("""<a href="${this.link}"> <em style="color:${iconMaps.get(this.name).color};" class="${iconMaps.get(this.name).icon}"</em></a>""")
     }
 
@@ -155,6 +182,7 @@ trait VueGeneratable{
     }
 }
 
+@ToString
 class SocialMediaIconInfo{
     String network
     String name

@@ -41,6 +41,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     def visit(SocialMediaGroup socialMediaGroup) {
         var tmp = new VueJsSocialMediaGroup()
 
+        this.parent.addContent(tmp)
         this.parent  = tmp
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
 
@@ -69,6 +70,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         VueComponent vueComponent = new VueComponent()
         vueComponent.name = webPage.name
         this.parent = vueComponent
+
         for(Component component1 :webPage.getComponentList()){
             component1.accept(this)
         }

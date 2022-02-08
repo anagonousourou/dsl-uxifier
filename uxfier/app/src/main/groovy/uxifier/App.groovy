@@ -173,6 +173,7 @@ class UXifier extends  Script{
 
         applicationVisitor.visit(application)
 
+        println applicationVisitor.vueProject
         applicationVisitor.vueProject.toCode()
 
 
@@ -222,10 +223,10 @@ class SocialMediaGroupBuiler implements  GenericBuilder{
 class SocialMediaBuilder {
     SocialMedia socialMedia = new SocialMedia()
 
-    final SocialMediaType Facebook = SocialMediaType.FACEBOOK
-    final SocialMediaType Pinterest = SocialMediaType.PINTEREST
-    final SocialMediaType Instagram = SocialMediaType.INSTAGRAM
-    final SocialMediaType LinkedIn = SocialMediaType.LINKEDIN
+    final SocialMediaType Facebook = SocialMediaType.Facebook
+    final SocialMediaType Pinterest = SocialMediaType.Pinterest
+    final SocialMediaType Instagram = SocialMediaType.Instagram
+    final SocialMediaType LinkedIn = SocialMediaType.LinkedIn
 
     def type(SocialMediaType socialMediaType ){
         this.socialMedia.type  = socialMediaType

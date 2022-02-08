@@ -68,11 +68,11 @@ class SocialMedia implements Component{
 
 
 enum SocialMediaType{
-    FACEBOOK,
-    LINKEDIN,
-    INSTAGRAM,
-    TWITTER,
-    PINTEREST
+    Facebook,
+    LinkedIn,
+    Instagram,
+    Twitter,
+    Pinterest
 }
 
 

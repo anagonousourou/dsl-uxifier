@@ -64,6 +64,10 @@ class VueProject {
         this.sourceDirectory.componentsDirectory.vueComponents.add(vueComponent)
     }
 
+    @Override
+    String toString() {
+        return "VueProject { name = ${name}} -> ${sourceDirectory}"
+    }
 }
 
 class SourceDirectory{
@@ -77,6 +81,11 @@ class SourceDirectory{
         mainJsFile.toCode()
 
         componentsDirectory.vueComponents.forEach(c -> c.toCode())
+    }
+
+    @Override
+    String toString() {
+        return "SourceDirectory -> ${componentsDirectory}"
     }
 }
 
@@ -113,6 +122,11 @@ class AssetsDirectory{
 
 class ComponentsDirectory{
     List<VueComponent> vueComponents = new ArrayList<>()
+
+    @Override
+    String toString() {
+        return "ComponentsDirectory -> ${vueComponents}"
+    }
 }
 
 class PackageJson{

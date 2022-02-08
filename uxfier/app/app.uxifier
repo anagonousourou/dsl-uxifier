@@ -3,7 +3,7 @@ WebApplication {
     name  'adeline'
 
      WebPage {
-            name 'page-name-1'
+            name 'Home'
             title 'page Title'
                        SocialMediaGroup {
                                         SocialMedia {
