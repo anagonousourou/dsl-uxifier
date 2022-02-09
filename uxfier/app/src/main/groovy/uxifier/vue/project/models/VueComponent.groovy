@@ -48,7 +48,7 @@ class VueComponent implements VueGeneratable {
     }
 
     @Override
-    def importComponents() {
+    def writeScript() {
         FileContext.writer.write("<script>")
         content.forEach(c -> c.insertSelfInImports())
         FileContext.writer.write("</script>")
@@ -122,7 +122,7 @@ class VueJsSocialMediaGroup implements VueGeneratable {
     }
 
     @Override
-    def importComponents() {
+    def writeScript() {
         return null
     }
 
@@ -179,7 +179,7 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     @Override
-    def importComponents() {
+    def writeScript() {
         return null
     }
 
@@ -203,7 +203,7 @@ trait VueGeneratable {
 
     }
 
-    abstract def importComponents()
+    abstract def writeScript()
 
     def registerSelfInComponents(){
 
@@ -220,7 +220,7 @@ trait VueGeneratable {
     def toCode() {
         this.registerDependencies()
         this.writeTemplate()
-        this.importComponents()
+        this.writeScript()
     }
 
     def addContent(VueGeneratable vueGeneratable) {

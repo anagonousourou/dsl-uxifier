@@ -119,7 +119,7 @@ class AppFile extends VueComponent {
     }
 
     @Override
-    def importComponents() {
+    def writeScript() {
         FileContext.writer.write("<script>\n")
         content.forEach(c -> c.insertSelfInImports())
         FileContext.writer.write("""export default {

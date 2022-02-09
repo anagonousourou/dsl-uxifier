@@ -14,4 +14,9 @@ WebApplication {
 
             }
 
+      NavigationMenu{
+            burger True
+
+      }
+
 }
