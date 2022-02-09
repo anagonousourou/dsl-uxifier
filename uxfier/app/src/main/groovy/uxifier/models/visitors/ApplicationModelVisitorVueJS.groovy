@@ -14,10 +14,10 @@ import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueProject
 
-class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
+class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
     int count = 1
 
-    VueProject vueProject=new VueProject()
+    VueProject vueProject = new VueProject()
 
     private VueGeneratable parent
 
@@ -42,9 +42,8 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         var tmp = new VueJsSocialMediaGroup()
 
         this.parent.addContent(tmp)
-        this.parent  = tmp
+        this.parent = tmp
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
-
     }
 
     @Override
@@ -59,7 +58,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.vueProject.name = application.name
         this.vueProject.packageJson.name = application.name
 
-        for(WebPage webPage : application.pages){
+        for (WebPage webPage : application.pages) {
             webPage.accept(this)
         }
 
@@ -67,16 +66,20 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(WebPage webPage) {
+
         VueComponent vueComponent = new VueComponent()
         vueComponent.name = webPage.name
         this.parent = vueComponent
 
-        for(Component component1 :webPage.getComponentList()){
+        for (Component component1 : webPage.getComponentList()) {
             component1.accept(this)
         }
 
         this.vueProject.addVueComponent(vueComponent)
 
+        //Given the component is a webpage (the only one for now we add it as content of App.vue
+
+        this.vueProject.sourceDirectory.appFile.content.add(vueComponent)
     }
 
 
