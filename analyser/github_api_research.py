@@ -95,8 +95,6 @@ def fetch_main_tf_for(topic,language,dir="",save=False,repos_name=None):
 
 def save_main_tf_file(topic,language,save_all_infos=False):
 
-    print("Dowloading maint.tf files matching with topic {topic} and language {language}")
-
     repos_infos_file_dir = f"Search_Keys/{topic}_{language}"
 
     if not os.path.exists(repos_infos_file_dir):
@@ -122,7 +120,7 @@ def save_main_tf_file(topic,language,save_all_infos=False):
                 #TODO Améliorer le processus en ne récupérant que les repos maquant
 
 
-    dowload = False
+    download = False
 
     if not main_tf_links or len(main_tf_links) == 0:
         print(f"Warning the file {repos_infos_file} is empty." if main_tf_links else f"The file {repos_infos_file} is empty.")
@@ -130,17 +128,18 @@ def save_main_tf_file(topic,language,save_all_infos=False):
         
         main_tf_links = fetch_main_tf_for(topic,language,repos_infos_file_dir,save_all_infos,repos_name)
         
-        dowload = main_tf_links != None and len(main_tf_links)>0
+        download = main_tf_links != None and len(main_tf_links)>0
 
     if not main_tf_links or len(main_tf_links) == 0:
         print(f"Error the file {repos_infos_file} is still empty!\nDownload failed!\nExiting...")
         sys.exit()
 
-    if dowload:
+    if download:
         #TODO Améliorer le processus en ne sauvegardant que les repos maquant
         with open(repos_infos_file,"w") as content:
             json.dump(main_tf_links, content)
 
+    print(f"Dowloading maint.tf files matching with topic {topic} and language {language}")
     for repo_name in tqdm(main_tf_links):
         save_main_file(repo_name,main_tf_links[repo_name],"Downloads")
     
