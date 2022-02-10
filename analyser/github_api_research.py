@@ -135,7 +135,7 @@ def save_main_tf_file(topic,language,save_all_infos=False):
         sys.exit()
 
     if download:
-        #TODO Améliorer le processus en ne sauvegardant que les repos maquant
+        #TODO Améliorer le processus en ne sauvegardant que les repos manquant
         with open(repos_infos_file,"w") as content:
             json.dump(main_tf_links, content)
 
