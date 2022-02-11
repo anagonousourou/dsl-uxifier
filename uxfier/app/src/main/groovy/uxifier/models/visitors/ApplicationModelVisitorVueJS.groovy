@@ -2,6 +2,7 @@ package uxifier.models.visitors
 
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Component
+import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.SocialMedia
@@ -14,10 +15,10 @@ import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueProject
 
-class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
+class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     int count = 1
 
-    VueProject vueProject = new VueProject()
+    VueProject vueProject=new VueProject()
 
     private VueGeneratable parent
 
@@ -42,8 +43,14 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         var tmp = new VueJsSocialMediaGroup()
 
         this.parent.addContent(tmp)
-        this.parent = tmp
+        this.parent  = tmp
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
+    }
+
+    @Override
+    def visit(Form form){
+        println form.toString()
+        return null
     }
 
     @Override
@@ -58,7 +65,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.vueProject.name = application.name
         this.vueProject.packageJson.name = application.name
 
-        for (WebPage webPage : application.pages) {
+        for(WebPage webPage : application.pages){
             webPage.accept(this)
         }
 

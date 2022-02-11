@@ -1,0 +1,20 @@
+WebApplication {
+
+    name  'formtest2'
+
+     WebPage {
+            name 'Home'
+            title 'page Title'
+            SocialMediaGroup {
+                                        SocialMedia {
+                                            type Facebook
+                                            url 'http://127.0.0.1/'
+                                        }
+             }
+            Form {
+                name 'shipment details'
+            }
+     }
+
+
+}

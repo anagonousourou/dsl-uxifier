@@ -6,6 +6,7 @@ package uxifier
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.Component
+import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.SocialMedia
@@ -168,7 +169,6 @@ class UXifier extends Script {
         closure()
 
         var application = app.build()
-
         println application
 
         var applicationVisitor = new ApplicationModelVisitorVueJS()
@@ -209,13 +209,22 @@ trait GenericBuilder {
         this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
     }
 
-    List<Component> build() {
+    def Form(@DelegatesTo(FormBuilder) Closure closure){
+        var formBuilder = new FormBuilder()
+        def code = closure.rehydrate(formBuilder, this, this)//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code()
+        this.componentList.addAll(formBuilder.build())
+
+    }
+
+    List<Component> build(){
         return componentList
     }
 }
 
-class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
+class SocialMediaGroupBuiler implements  GenericBuilder{
+    def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -228,7 +237,6 @@ class SocialMediaGroupBuiler implements GenericBuilder {
 
 class SocialMediaBuilder {
     SocialMedia socialMedia = new SocialMedia()
-
     final SocialMediaType Facebook = SocialMediaType.Facebook
     final SocialMediaType Pinterest = SocialMediaType.Pinterest
     final SocialMediaType Instagram = SocialMediaType.Instagram
@@ -247,6 +255,19 @@ class SocialMediaBuilder {
     }
 }
 
+class FormBuilder {
+    Form form = new Form()
+
+    def name(String name) {
+        this.form.name = name
+    }
+
+    Form build() {
+        return this.form
+    }
+}
+
 class HorizontalLayoutBuilder implements GenericBuilder {
+
 
 }

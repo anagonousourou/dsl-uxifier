@@ -12,12 +12,12 @@ class WebApplication {
     }
 
 
-    def addWebPage(WebPage page) {
+    def addWebPage(WebPage page){
         this.pages.add(page)
     }
 }
 
-class WebPage implements Component {
+class WebPage implements Component{
     String name
     String title
 
@@ -27,38 +27,36 @@ class WebPage implements Component {
     }
 }
 
-class Header implements Component {
-    Header(List<Component> componentList) {
+class Header implements Component{
+    Header(List<Component> componentList){
         this.componentList = componentList
     }
-
     @Override
-    String toString() {
+    String toString(){
         return "Header {components = ${componentList} }"
     }
 }
 
-class HorizontalLayout implements Component {
-    HorizontalLayout(List<Component> componentList) {
-        this.componentList = componentList
-    }
+class HorizontalLayout implements Component{
+        HorizontalLayout(List<Component> componentList){
+            this.componentList = componentList
+        }
 }
 
-class VerticalLayout implements Component {
+class VerticalLayout implements Component{
 
 }
 
-class SocialMediaGroup implements Component {
-    SocialMediaGroup(List<Component> componentList) {
+class SocialMediaGroup implements Component{
+    SocialMediaGroup(List<Component> componentList){
         this.componentList = componentList
     }
-
-    String toString() {
+    String toString(){
         return "SocialMediaGroup {components = ${componentList} }"
     }
 }
 
-class SocialMedia implements Component {
+class SocialMedia implements Component{
     SocialMediaType type
     String url
 
@@ -68,13 +66,32 @@ class SocialMedia implements Component {
     }
 }
 
-
 enum SocialMediaType {
     Facebook,
     LinkedIn,
     Instagram,
     Twitter,
     Pinterest
+}
+
+class Form implements Component{
+    String name
+
+
+    /*Form(List<Component> componentList){
+        this.componentList = componentList
+    }
+    Form(String name, List<Component> componentList){
+        this.componentList = componentList
+        this.name = name
+    }*/
+
+    @Override
+    public String toString() {
+        return "Form{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
 
 
@@ -99,28 +116,22 @@ interface ApplicationModelVisitable {
     def accept(ApplicationModelVisitor visitor)
 }
 
-interface ApplicationModelVisitor {
+interface ApplicationModelVisitor{
     def visit(SocialMedia media)
-
     def visit(HorizontalLayout layout)
-
     def visit(Component component)
-
     def visit(SocialMediaGroup socialMediaGroup)
-
     def visit(Header header)
-
     def visit(WebApplication application)
-
     def visit(WebPage webPage)
+    def visit(Form form)
 }
 
-trait LeafComponent {
-
-}
-
-trait CompositeComponent {
+trait LeafComponent{
 
 }
 
+trait CompositeComponent{
+
+}
 
