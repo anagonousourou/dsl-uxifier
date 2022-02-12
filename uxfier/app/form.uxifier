@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'formtest2'
+    name  'formtest3'
 
      WebPage {
             name 'Home'
@@ -13,6 +13,16 @@ WebApplication {
              }
             Form {
                 name 'shipment details'
+                FieldGroup{
+                    Field{
+                        name 'First Name'
+                        type 'TextField'
+                    }
+                    Field{
+                        name 'Last Name'
+                        type 'TextField'
+                    }
+                }
             }
      }
 

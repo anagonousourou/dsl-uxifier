@@ -6,6 +6,8 @@ package uxifier
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.Component
+import uxifier.models.Field
+import uxifier.models.FieldGroup
 import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
@@ -169,7 +171,7 @@ class UXifier extends Script {
         closure()
 
         var application = app.build()
-        println application
+        println "application : " + application
 
         var applicationVisitor = new ApplicationModelVisitorVueJS()
 
@@ -255,15 +257,50 @@ class SocialMediaBuilder {
     }
 }
 
-class FormBuilder {
+class FormBuilder implements GenericBuilder{
     Form form = new Form()
 
     def name(String name) {
         this.form.name = name
     }
-
-    Form build() {
+    def FieldGroup(@DelegatesTo(FieldGroupBuilder) Closure closure){
+        var fieldGroupBuilder = new FieldGroupBuilder()
+        def code = closure.rehydrate(fieldGroupBuilder, this, this)//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code()
+        //this.componentList.addAll(fieldGroupBuilder.build())
+        var test = new FieldGroup(fieldGroupBuilder.build())
+        this.componentList.addAll(test)
+    }
+    /*Form build() {
         return this.form
+    }*/
+}
+
+
+class FieldGroupBuilder implements GenericBuilder{
+    def Field(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code()
+        this.componentList.add(fieldBuilder.build())
+    }
+}
+
+
+class FieldBuilder {
+    Field field = new Field();
+
+    def name(String name){
+        this.field.name = name;
+    }
+    def type(String type){
+        this.field.type = type;
+    }
+    Field build(){
+        return this.field;
     }
 }
 

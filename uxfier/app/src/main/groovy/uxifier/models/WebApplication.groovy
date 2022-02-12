@@ -77,8 +77,9 @@ enum SocialMediaType {
 class Form implements Component{
     String name
 
+    /*Form(){}
 
-    /*Form(List<Component> componentList){
+    Form(List<Component> componentList){
         this.componentList = componentList
     }
     Form(String name, List<Component> componentList){
@@ -94,6 +95,29 @@ class Form implements Component{
     }
 }
 
+class FieldGroup implements Component{
+    FieldGroup(List<Component> componentList){
+        this.componentList = componentList
+    }
+    @Override
+    String toString(){
+        return "FieldGroup {components = ${componentList} }"
+    }
+}
+
+class Field implements Component{
+    String type
+    String name
+
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
 
 trait Component implements ApplicationModelVisitable {
     List<Component> componentList
