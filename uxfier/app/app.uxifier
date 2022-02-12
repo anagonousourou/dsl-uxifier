@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'adeline2'
+    name  'adeline'
 
      WebPage {
             name 'Home'
@@ -17,6 +17,9 @@ WebApplication {
      }
 
 
+      NavigationMenu{
+            burger True
 
+      }
 
 }
