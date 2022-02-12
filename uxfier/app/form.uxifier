@@ -1,25 +1,25 @@
 WebApplication {
 
-    name  'formtest3'
+    name  'CheckOut4'
 
      WebPage {
-            name 'Home'
+            name 'CheckOut'
             title 'page Title'
             SocialMediaGroup {
-                                        SocialMedia {
-                                            type Facebook
-                                            url 'http://127.0.0.1/'
-                                        }
-             }
+                SocialMedia {
+                    type Facebook
+                    url 'http://127.0.0.1/'
+                }
+            }
             Form {
-                name 'shipment details'
+                name 'formname'
                 FieldGroup{
                     Field{
-                        name 'First Name'
+                        name 'FirstName'
                         type 'TextField'
                     }
                     Field{
-                        name 'Last Name'
+                        name 'LastName'
                         type 'TextField'
                     }
                 }

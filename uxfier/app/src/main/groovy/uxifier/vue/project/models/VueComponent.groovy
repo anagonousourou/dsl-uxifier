@@ -189,6 +189,30 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 }
 
+class VueJsForm implements VueGeneratable{
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        println("Created a Form div")
+        FileContext.writer.write("""<div> Hello I am A form ! </div>""")
+    }
+}
+
 trait VueGeneratable {
 
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier

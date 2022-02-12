@@ -11,6 +11,7 @@ import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsForm
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueProject
@@ -49,8 +50,9 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(Form form){
-        println form.toString()
-        return null
+        var tmp = new VueJsForm()
+        println 'creating form div'
+        this.parent.addContent(tmp)
     }
 
     @Override

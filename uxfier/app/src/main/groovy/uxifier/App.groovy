@@ -214,10 +214,9 @@ trait GenericBuilder {
     def Form(@DelegatesTo(FormBuilder) Closure closure){
         var formBuilder = new FormBuilder()
         def code = closure.rehydrate(formBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code.resolveStrategy = Closure.DELEGATE_FIRST//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
-        this.componentList.addAll(formBuilder.build())
-
+        this.componentList.add(formBuilder.buildForm())
     }
 
     List<Component> build(){
@@ -229,7 +228,7 @@ class SocialMediaGroupBuiler implements  GenericBuilder{
     def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code.resolveStrategy = Closure.OWNER_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.componentList.add(socialMediaBuilder.build())
@@ -258,32 +257,34 @@ class SocialMediaBuilder {
 }
 
 class FormBuilder implements GenericBuilder{
-    Form form = new Form()
+    String _name
 
     def name(String name) {
-        this.form.name = name
+        this._name = name
     }
+
     def FieldGroup(@DelegatesTo(FieldGroupBuilder) Closure closure){
         var fieldGroupBuilder = new FieldGroupBuilder()
-        def code = closure.rehydrate(fieldGroupBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        def code = closure.rehydrate(fieldGroupBuilder, this, this)
+        code.resolveStrategy = Closure.OWNER_FIRST
         code()
-        //this.componentList.addAll(fieldGroupBuilder.build())
-        var test = new FieldGroup(fieldGroupBuilder.build())
-        this.componentList.addAll(test)
+        this.componentList.addAll(new FieldGroup(fieldGroupBuilder.build()))
     }
-    /*Form build() {
-        return this.form
-    }*/
+
+    Form buildForm() {
+        var form = new Form()
+        form.name = this._name
+        form.componentList = componentList
+        return form
+    }
 }
 
 
 class FieldGroupBuilder implements GenericBuilder{
     def Field(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
-        def code = closure.rehydrate(fieldBuilder, this, this)//permet de définir que tous les appels de méthodes
+        def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
-//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.componentList.add(fieldBuilder.build())
     }

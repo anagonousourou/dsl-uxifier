@@ -77,20 +77,22 @@ enum SocialMediaType {
 class Form implements Component{
     String name
 
-    /*Form(){}
+    Form(){}
 
     Form(List<Component> componentList){
         this.componentList = componentList
     }
+
     Form(String name, List<Component> componentList){
         this.componentList = componentList
         this.name = name
-    }*/
+    }
 
     @Override
     public String toString() {
         return "Form{" +
                 "name='" + name + '\'' +
+                ", components = ${componentList} " +
                 '}';
     }
 }
