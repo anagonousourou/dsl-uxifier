@@ -213,8 +213,8 @@ trait GenericBuilder {
 
     def Form(@DelegatesTo(FormBuilder) Closure closure){
         var formBuilder = new FormBuilder()
-        def code = closure.rehydrate(formBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_FIRST//à l'intérieur de la closure seront résolus en utilisant le delegate
+        def code = closure.rehydrate(formBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.componentList.add(formBuilder.buildForm())
     }
