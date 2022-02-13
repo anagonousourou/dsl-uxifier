@@ -1,16 +1,10 @@
 WebApplication {
 
-    name  'CheckOut4'
+    name  'CheckOut12'
 
      WebPage {
             name 'CheckOut'
             title 'page Title'
-            SocialMediaGroup {
-                SocialMedia {
-                    type Facebook
-                    url 'http://127.0.0.1/'
-                }
-            }
             Form {
                 name 'formname'
                 FieldGroup{

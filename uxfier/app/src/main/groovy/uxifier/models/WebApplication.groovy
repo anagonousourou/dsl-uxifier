@@ -151,6 +151,7 @@ interface ApplicationModelVisitor{
     def visit(WebApplication application)
     def visit(WebPage webPage)
     def visit(Form form)
+    def visit(Field field)
 }
 
 trait LeafComponent{

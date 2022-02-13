@@ -2,6 +2,7 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
+import uxifier.models.Component
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -137,7 +138,6 @@ class VueJsSocialMediaGroup implements VueGeneratable {
                 """
 <div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
                     """)
-
         socialMedia.forEach(s -> s.insertInTemplate())
         FileContext.writer.write("</div>")
     }
@@ -191,6 +191,9 @@ class VueJsSocialMedia implements VueGeneratable {
 
 class VueJsForm implements VueGeneratable{
 
+    String name
+    List<VueGeneratable> fields = new ArrayList<>();
+
     @Override
     def registerDependencies() {
         return null
@@ -208,8 +211,39 @@ class VueJsForm implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        println("Created a Form div")
-        FileContext.writer.write("""<div> Hello I am A form ! </div>""")
+        println 'creating form : ' + name + 'with fields size' + fields.size()
+        FileContext.writer.write("""<div class=${name}>""")
+
+        fields.forEach(s -> s.insertInTemplate())
+
+        FileContext.writer.write("""</div>""")
+    }
+}
+
+class VueJsField implements VueGeneratable{
+
+    String name
+    String type
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        println 'creating field'
+        FileContext.writer.write("""<div>field</div>""")
     }
 }
 

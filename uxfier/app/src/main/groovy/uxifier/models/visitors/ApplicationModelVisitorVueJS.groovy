@@ -2,6 +2,8 @@ package uxifier.models.visitors
 
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Component
+import uxifier.models.Field
+import uxifier.models.FieldGroup
 import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
@@ -11,6 +13,7 @@ import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsField
 import uxifier.vue.project.models.VueJsForm
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
@@ -44,15 +47,32 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         var tmp = new VueJsSocialMediaGroup()
 
         this.parent.addContent(tmp)
-        this.parent  = tmp
+        this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
     }
 
     @Override
     def visit(Form form){
         var tmp = new VueJsForm()
-        println 'creating form div'
+        tmp.name = form.name
+        println 'form components size : ' + form.componentList.size()
+        for(Component c : form.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    println 'Field : ' + f
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    tmp.fields.add(tmpField)
+                }
+            }
+        }
         this.parent.addContent(tmp)
+    }
+
+    @Override
+    def visit(Field field){
+        return null
     }
 
     @Override
