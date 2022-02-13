@@ -117,8 +117,7 @@ enum PriceType {
 }
 
 
-class Header implements Component{
-    Header(List<Component> componentList){
+
 class Header implements Component {
     Header(List<Component> componentList) {
         this.componentList = componentList

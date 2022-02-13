@@ -77,7 +77,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         this.parent.addContent(tmp)
         this.parent  = tmp
-        catalog.componentList.forEach(c -> c.accept(this))
+        catalog.coponentList.forEach(c -> c.accept(this))
     }
 
     @Override

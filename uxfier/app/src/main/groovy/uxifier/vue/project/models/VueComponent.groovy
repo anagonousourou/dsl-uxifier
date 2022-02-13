@@ -167,8 +167,28 @@ class VueJsCatalog implements VueGeneratable {
     }
 
     @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
     def writeTemplate() {
         println (this.catalog)
+
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
         FileContext.writer.write("""
             <h1> Context</h1>
             <h3> product </h3>

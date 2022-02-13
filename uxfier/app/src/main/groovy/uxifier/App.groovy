@@ -244,8 +244,6 @@ trait GenericBuilder {
     }
 }
 
-class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
 
 class CatalogBuilder implements GenericBuilder {
     Catalog catalog = new Catalog()
