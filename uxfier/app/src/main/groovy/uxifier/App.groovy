@@ -16,6 +16,7 @@ import uxifier.models.PriceType
 import uxifier.models.Product
 import uxifier.models.Rating
 import uxifier.models.RatingType
+import uxifier.models.NavigationMenu
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.SocialMediaType
@@ -34,7 +35,8 @@ class App {
         }
     }
 }
-class ScriptInterpreter{
+
+class ScriptInterpreter {
     private GroovyShell shell
     private CompilerConfiguration configuration
     private Binding binding
@@ -71,9 +73,8 @@ class ScriptInterpreter{
             staticStarImportsWhitelist = ['uxifier.models.SocialMedia.*']
 
 
-
             constantTypesClassesWhiteList = [
-                    int, Integer, Number, Integer.TYPE, String, Object
+                    int, Integer, Number, Integer.TYPE, String, Object,boolean
             ]
 
             receiversClassesWhiteList = [
@@ -87,7 +88,8 @@ class ScriptInterpreter{
         return configuration
     }
 }
-class WebApplicationBuilder{
+
+class WebApplicationBuilder {
 
     WebApplication webApplication
 
@@ -95,55 +97,56 @@ class WebApplicationBuilder{
         this.webApplication = webApplication
     }
 
-    def name(String appName){
-        if(appName.contains(' ')){
+    def name(String appName) {
+        if (appName.contains(' ')) {
             println "Invalid name for application '${appName}' : it should not have spaces"
             System.exit(1)
         }
         this.webApplication.name = appName
     }
 
-    def build(){
+    def build() {
         return this.webApplication
     }
 
-    def WebPage(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=WebPageBuilder) Closure closure){
+    def WebPage(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = WebPageBuilder) Closure closure) {
         var webPageBuilder = new WebPageBuilder(webApplication)
         def code = closure.rehydrate(webPageBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.webApplication.addWebPage(webPageBuilder.buildPage())
     }
 }
-class WebPageBuilder implements GenericBuilder{
+
+class WebPageBuilder implements GenericBuilder {
     String _title
     String _name
     WebApplication webApplication
 
-    WebPageBuilder(WebApplication webApplication){
+    WebPageBuilder(WebApplication webApplication) {
         this.webApplication = webApplication
     }
-    def title(String pageTitle){
-        println("Calling title method in WebPageBuilder with ${pageTitle}")
+
+    def title(String pageTitle) {
         this._title = pageTitle
     }
 
-    def name(String pageName){
-        println("Calling name method in WebPageBuilder with ${pageName}")
+    def name(String pageName) {
         this._name = pageName
     }
 
-    def Header(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=HeaderBuilder) Closure closure){
+    def Header(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HeaderBuilder) Closure closure) {
         var header = new HeaderBuilder()
         def code = closure.rehydrate(header, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
-        println "Building header ${header.build()}"
-        this.componentList.addAll(new Header( header.build()))
+        this.componentList.addAll(new Header(header.build()))
 
     }
 
-    WebPage buildPage(){
+    WebPage buildPage() {
         var webPage = new WebPage()
 
         webPage.name = this._name
@@ -155,12 +158,15 @@ class WebPageBuilder implements GenericBuilder{
 
 }
 
-class HeaderBuilder implements  GenericBuilder{
+
+
+
+class HeaderBuilder implements GenericBuilder {
 
 }
 
 
-class UXifier extends  Script{
+class UXifier extends Script {
     WebApplication webApplication = new WebApplication()
 
     @Override
@@ -168,8 +174,8 @@ class UXifier extends  Script{
         return null
     }
 
-    def WebApplication(@DelegatesTo(WebApplicationBuilder) Closure closure){
-        var app= new WebApplicationBuilder(webApplication)
+    def WebApplication(@DelegatesTo(WebApplicationBuilder) Closure closure) {
+        var app = new WebApplicationBuilder(webApplication)
         closure.delegate = app
         closure()
 
@@ -190,27 +196,38 @@ class UXifier extends  Script{
 
 }
 
-trait GenericBuilder{
+trait GenericBuilder {
 
     List<Component> componentList = new ArrayList<>()
 
-    def HorizontalLayout(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=HorizontalLayoutBuilder) Closure closure){
-        var layoutBuilder =  new HorizontalLayoutBuilder()
-        def code = closure.rehydrate(layoutBuilder, this,this)
+    def HorizontalLayout(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HorizontalLayoutBuilder) Closure closure) {
+        var layoutBuilder = new HorizontalLayoutBuilder()
+        def code = closure.rehydrate(layoutBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_ONLY
         code()
 
-        this.componentList.addAll(new HorizontalLayout( layoutBuilder.build()))
+        this.componentList.addAll(new HorizontalLayout(layoutBuilder.build()))
 
     }
 
-    def SocialMediaGroup(@DelegatesTo(SocialMediaGroupBuiler) Closure closure){
+    def SocialMediaGroup(@DelegatesTo(SocialMediaGroupBuiler) Closure closure) {
         var socialMediaGroupBuilder = new SocialMediaGroupBuiler()
-        def code = closure.rehydrate(socialMediaGroupBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        def code = closure.rehydrate(socialMediaGroupBuilder, this, this)
+//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
 
         this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
+    }
+
+    def NavigationMenu(@DelegatesTo(NavigationMenuBuilder) Closure closure){
+        var builder = new NavigationMenuBuilder()
+
+        var code  = closure.rehydrate(builder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        this.componentList.add(new NavigationMenu(builder.componentList,builder.isBurger()))
     }
 
 
@@ -226,6 +243,9 @@ trait GenericBuilder{
         return componentList
     }
 }
+
+class SocialMediaGroupBuiler implements GenericBuilder {
+    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
 
 class CatalogBuilder implements GenericBuilder {
     Catalog catalog = new Catalog()
@@ -349,7 +369,8 @@ class SocialMediaGroupBuiler implements  GenericBuilder{
     def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_FIRST//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+//à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.componentList.add(socialMediaBuilder.build())
 
@@ -364,18 +385,19 @@ class SocialMediaBuilder {
     final SocialMediaType Instagram = SocialMediaType.Instagram
     final SocialMediaType LinkedIn = SocialMediaType.LinkedIn
 
-    def type(SocialMediaType socialMediaType ){
-        this.socialMedia.type  = socialMediaType
+    def type(SocialMediaType socialMediaType) {
+        this.socialMedia.type = socialMediaType
     }
 
-    def url(String urlLink){
+    def url(String urlLink) {
         this.socialMedia.url = urlLink
     }
 
-    SocialMedia build(){
+    SocialMedia build() {
         return this.socialMedia
     }
 }
-class HorizontalLayoutBuilder implements GenericBuilder{
+
+class HorizontalLayoutBuilder implements GenericBuilder {
 
 }
