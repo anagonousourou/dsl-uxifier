@@ -12,6 +12,16 @@ WebApplication {
                                         }
                        }
 
+                         NavigationMenu{
+                                   burger true
+                                   Menu{
+                                       label 'Accueil'
+                                       link '/'
+                                   }
+                             }
+
             }
+
+
 
 }

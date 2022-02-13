@@ -6,7 +6,7 @@ import groovy.transform.ToString
 import java.nio.file.Files
 import java.nio.file.Path
 
-class VueComponent implements  VueGeneratable{
+class VueComponent implements VueGeneratable {
     VueTemplateElement template;
     ScriptElement script;
     String name
@@ -18,24 +18,39 @@ class VueComponent implements  VueGeneratable{
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
     @Override
     def writeTemplate() {
-        var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), this.name+'.vue'))
+        println("generating vuecomponent with name  ${name} ")
+        var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), this.name + '.vue'))
 
-        FileContext.writer =  Files.newBufferedWriter(componentFilePath)
+        FileContext.writer = Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
-
-
-        content.forEach(c -> c.writeTemplate())
-
+        println("wrote <template> ${name}")
+        content.forEach(c -> c.insertInTemplate())
+        println("wrote inserted content ${name}")
         FileContext.writer.write("</template>")
 
+    }
+
+    @Override
+    def insertSelfInImports() {
+        FileContext.writer.write("import ${this.name} from './components/${this.name}.vue'\n")
+    }
+
+    @Override
+    def registerSelfInComponents() {
+        FileContext.writer.write("${this.name},")
+
+    }
+
+    @Override
+    def writeScript() {
         FileContext.writer.write("<script>")
-        content.forEach(c -> c.importComponents())
+        content.forEach(c -> c.insertSelfInImports())
         FileContext.writer.write("</script>")
 
         FileContext.writer.close()
@@ -45,8 +60,8 @@ class VueComponent implements  VueGeneratable{
     }
 
     @Override
-    def importComponents() {
-        return null
+    def insertInTemplate() {
+        FileContext.writer.write("<${this.name}/>")
     }
 
     @Override
@@ -55,34 +70,36 @@ class VueComponent implements  VueGeneratable{
     }
 }
 
-class VueTemplateElement{
+class VueTemplateElement {
     List<HtmlElement> elements = new ArrayList<>()
 }
 
-class ScriptElement{
+class ScriptElement {
 
 }
 
 trait HtmlElement {
 
 }
-trait LeafHtmlElement implements HtmlElement{
+
+trait LeafHtmlElement implements HtmlElement {
 
 }
-trait CompositeHtmlElement implements HtmlElement{
+
+trait CompositeHtmlElement implements HtmlElement {
     List<HtmlElement> elements = new ArrayList<>()
 }
 
-class HorizontalLayout implements HtmlElement{
+class HorizontalLayout implements HtmlElement {
 
 }
 
-class VerticalLayout implements HtmlElement{
+class VerticalLayout implements HtmlElement {
 
 }
 
 class VueJsSocialMediaGroup implements VueGeneratable {
-    List<VueJsSocialMedia> socialMedia = new ArrayList<>();
+    List<VueGeneratable> socialMedia = new ArrayList<>();
 
     @Override
     String toString() {
@@ -95,19 +112,33 @@ class VueJsSocialMediaGroup implements VueGeneratable {
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null;
     }
 
     @Override
     def writeTemplate() {
 
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
         FileContext.writer.write(
                 """
 <div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
                     """)
 
-        socialMedia.forEach(s -> s.writeTemplate())
+        socialMedia.forEach(s -> s.insertInTemplate())
         FileContext.writer.write("</div>")
 
     }
@@ -164,42 +195,68 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
     @Override
-    def writeTemplate() {
-        FileContext.writer.write("""<a href="${this.link}"> <em style="color:${iconMaps.get(this.name).color};" class="${iconMaps.get(this.name).icon}"</em></a>""")
+    def insertInTemplate() {
+        println("in vuejs-socialmedia ${this.name}")
+        FileContext.writer.write("""\n<a href="${this.link}"> <em style="color:${iconMaps.get(this.name).color};" class="${iconMaps.get(this.name).icon}"> </em></a>""")
     }
 
     @Override
-    def importComponents() {
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
         return null
     }
 }
 
-trait VueGeneratable{
+trait VueGeneratable {
 
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier
 
 
-    abstract def registerDependencies()
-    abstract def writeTemplate()
-    abstract def importComponents()
-    def toCode(){
-        this.registerDependencies()
-        this.writeTemplate()
-        this.importComponents()
+    abstract def registerDependencies(PackageJson packageJson)
+
+    /**
+     * Write own template
+     */
+    def writeTemplate(){
+
     }
 
-    def addContent(VueGeneratable vueGeneratable){
+    abstract def writeScript()
+
+    def registerSelfInComponents(){
+
+    }
+
+    abstract def insertSelfInImports()
+
+    /**
+     * insert self in a parent template
+     * @return
+     */
+    abstract def insertInTemplate()
+
+    def toCode(VueProject project) {
+        this.registerDependencies(project.packageJson)
+        this.writeTemplate()
+        this.writeScript()
+    }
+
+    def addContent(VueGeneratable vueGeneratable) {
 
     }
 }
 
 @ToString
-class SocialMediaIconInfo{
+class SocialMediaIconInfo {
     String network
     String name
     String icon
