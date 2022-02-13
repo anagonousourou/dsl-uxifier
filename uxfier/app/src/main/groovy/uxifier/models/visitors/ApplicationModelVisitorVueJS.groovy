@@ -1,6 +1,7 @@
 package uxifier.models.visitors
 
 import uxifier.models.ApplicationModelVisitor
+import uxifier.models.Cart
 import uxifier.models.Component
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
@@ -10,6 +11,7 @@ import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsCart
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueProject
@@ -27,6 +29,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.parent.addContent(tmp)
     }
 
+
     @Override
     def visit(HorizontalLayout layout) {
         return null
@@ -43,8 +46,18 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
         this.parent.addContent(tmp)
         this.parent  = tmp
+
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
 
+    }
+
+    @Override
+    def visit(Cart cart) {
+
+        var tmp = new VueJsCart()
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        //cart.accept(this)
     }
 
     @Override
