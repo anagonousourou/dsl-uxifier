@@ -18,7 +18,7 @@ class VueComponent implements VueGeneratable {
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
@@ -112,7 +112,7 @@ class VueJsSocialMediaGroup implements VueGeneratable {
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null;
     }
 
@@ -168,7 +168,7 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
@@ -194,7 +194,7 @@ trait VueGeneratable {
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier
 
 
-    abstract def registerDependencies()
+    abstract def registerDependencies(PackageJson packageJson)
 
     /**
      * Write own template
@@ -217,8 +217,8 @@ trait VueGeneratable {
      */
     abstract def insertInTemplate()
 
-    def toCode() {
-        this.registerDependencies()
+    def toCode(VueProject project) {
+        this.registerDependencies(project.packageJson)
         this.writeTemplate()
         this.writeScript()
     }

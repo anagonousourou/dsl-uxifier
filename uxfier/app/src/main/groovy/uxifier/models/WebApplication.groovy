@@ -101,9 +101,7 @@ interface ApplicationModelVisitable {
 
 interface ApplicationModelVisitor {
     def visit(SocialMedia media)
-
     def visit(HorizontalLayout layout)
-
     def visit(Component component)
 
     def visit(SocialMediaGroup socialMediaGroup)
@@ -113,6 +111,8 @@ interface ApplicationModelVisitor {
     def visit(WebApplication application)
 
     def visit(WebPage webPage)
+    def visit(NavigationMenu navigationMenu)
+    def visit(Menu menu)
 }
 
 trait LeafComponent {

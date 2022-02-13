@@ -12,11 +12,16 @@ WebApplication {
                                         }
                        }
 
+                         NavigationMenu{
+                                   burger true
+                                   Menu{
+                                       label 'Accueil'
+                                       link '/'
+                                   }
+                             }
+
             }
 
-      NavigationMenu{
-            burger True
 
-      }
 
 }

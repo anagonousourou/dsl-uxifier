@@ -8,6 +8,7 @@ import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.Component
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
+import uxifier.models.NavigationMenu
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.SocialMediaType
@@ -65,7 +66,7 @@ class ScriptInterpreter {
 
 
             constantTypesClassesWhiteList = [
-                    int, Integer, Number, Integer.TYPE, String, Object
+                    int, Integer, Number, Integer.TYPE, String, Object,boolean
             ]
 
             receiversClassesWhiteList = [
@@ -149,6 +150,9 @@ class WebPageBuilder implements GenericBuilder {
 
 }
 
+
+
+
 class HeaderBuilder implements GenericBuilder {
 
 }
@@ -209,6 +213,15 @@ trait GenericBuilder {
         this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
     }
 
+    def NavigationMenu(@DelegatesTo(NavigationMenuBuilder) Closure closure){
+        var builder = new NavigationMenuBuilder()
+
+        var code  = closure.rehydrate(builder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        this.componentList.add(new NavigationMenu(builder.componentList,builder.isBurger()))
+    }
+
     List<Component> build() {
         return componentList
     }
@@ -250,3 +263,5 @@ class SocialMediaBuilder {
 class HorizontalLayoutBuilder implements GenericBuilder {
 
 }
+
+

@@ -4,6 +4,8 @@ import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Component
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
+import uxifier.models.Menu
+import uxifier.models.NavigationMenu
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.WebApplication
@@ -12,6 +14,8 @@ import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
+import uxifier.vue.project.models.VueMenu
+import uxifier.vue.project.models.VueMenuBar
 import uxifier.vue.project.models.VueProject
 
 class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
@@ -69,6 +73,8 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         VueComponent vueComponent = new VueComponent()
         vueComponent.name = webPage.name
+
+        var previousParent = this.parent
         this.parent = vueComponent
 
         for (Component component1 : webPage.getComponentList()) {
@@ -77,9 +83,36 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         this.vueProject.addVueComponent(vueComponent)
 
-        //Given the component is a webpage (the only one for now we add it as content of App.vue
+        //Given the component is a webpage (the only one for now) we add it as content of App.vue
 
         this.vueProject.sourceDirectory.appFile.content.add(vueComponent)
+
+        this.parent = previousParent
+    }
+
+    def visit(NavigationMenu navigationMenu){
+        VueMenuBar menuBar = new VueMenuBar()
+
+        var tmp = this.parent
+        this.parent = menuBar
+
+        for(Component comp : navigationMenu.componentList){
+            comp.accept(this)
+        }
+
+        this.vueProject.sourceDirectory.appFile.content.add(menuBar)
+
+        this.parent = tmp
+
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+    }
+
+    @Override
+    def visit(Menu menu) {
+        VueMenu vueMenu =  new VueMenu()
+        vueMenu.link = menu.link
+        vueMenu.label = menu.label
+        this.parent.addContent(vueMenu)
     }
 
 

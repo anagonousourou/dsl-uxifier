@@ -57,7 +57,7 @@ class VueProject {
 
         FileContext.currentDirectory = Path.of(name, "src")
         Files.createDirectory(FileContext.currentDirectory)
-        sourceDirectory.toCode()
+        sourceDirectory.toCode(this)
 
     }
 
@@ -77,11 +77,11 @@ class SourceDirectory {
     AppFile appFile = new AppFile()
     MainJsFile mainJsFile = new MainJsFile()
 
-    def toCode() {
-        appFile.toCode()
+    def toCode(VueProject vueProject) {
+        appFile.toCode(vueProject)
         mainJsFile.toCode()
 
-        componentsDirectory.toCode()
+        componentsDirectory.toCode(vueProject)
     }
 
     @Override
@@ -105,8 +105,8 @@ createApp(App).mount('#app')
 class AppFile extends VueComponent {
 
     @Override
-    def registerDependencies() {
-        return super.registerDependencies()
+    def registerDependencies(PackageJson packageJson) {
+        return super.registerDependencies(packageJson)
     }
 
     @Override
@@ -148,11 +148,11 @@ class ComponentsDirectory {
         return "ComponentsDirectory -> ${vueComponents}"
     }
 
-    def toCode() {
+    def toCode(VueProject vueProject) {
         Path previousPath = FileContext.currentDirectory
         FileContext.currentDirectory = Path.of(FileContext.currentDirectory.toString(), "components")
         Files.createDirectory(FileContext.currentDirectory)
-        this.vueComponents.forEach(c -> c.toCode())
+        this.vueComponents.forEach(c -> c.toCode(vueProject))
         FileContext.currentDirectory = previousPath
     }
 }
@@ -200,6 +200,7 @@ class PackageJson {
                 "plugin:vue/vue3-essential",
                 "eslint:recommended"
         ])
+        projectPackageJson.eslintConfig.rules.put("vue/no-deprecated-slot-attribute", "off")
 
         return projectPackageJson
     }
@@ -226,6 +227,7 @@ class EslintConfig {
     @JsonProperty("extends")
     public List<String> myextends = new ArrayList<>()
     public Map<String, String> parserOptions = new HashMap<>()
+    Map<String,String> rules = new HashMap<>()
 
 }
 
