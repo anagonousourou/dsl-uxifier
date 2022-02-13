@@ -27,6 +27,96 @@ class WebPage implements Component{
     }
 }
 
+class Catalog implements Component{
+    Product product
+    Filter filter
+
+
+    @Override
+    String toString(){
+        return "product : " + product + "\nfilter : " + filter
+    }
+}
+
+
+class Product implements Component {
+
+    Rating rating
+
+    @Override
+    String toString(){
+
+        return "rating : "+ rating+"\n"
+    }
+
+}
+
+class Rating implements Component{
+    RatingType ratingType
+
+    @Override
+    String toString(){
+        return "rating type : " + ratingType
+    }
+}
+
+enum RatingType {
+    Stars,
+    Bar,
+    Mark
+
+}
+
+
+class Filter implements Component{
+
+    PriceFilter priceFilter
+
+    Filter(List<Component> compoents){
+
+        for(Component c: compoents){
+            if(c instanceof PriceFilter){
+                this.priceFilter = (PriceFilter) c
+            }
+
+        }
+
+    }
+
+
+}
+
+class GenericFilter implements Component{
+
+    String targetAtributName
+    String targetAtributType
+
+    @Override
+    String toString(){
+        return "targetAtributName : " + targetAtributName + "\ntargetAtributType" + targetAtributType
+    }
+
+
+}
+
+class PriceFilter implements Component{
+
+    PriceType priceType
+
+    @Override
+    String toString(){
+        return "type : " + priceType
+    }
+
+}
+
+enum PriceType {
+
+    Range,
+    Bar,
+}
+
+
 class Header implements Component{
     Header(List<Component> componentList){
         this.componentList = componentList
@@ -104,6 +194,7 @@ interface ApplicationModelVisitor{
     def visit(SocialMediaGroup socialMediaGroup)
     def visit(Header header)
     def visit(WebApplication application)
+    def visit(Catalog application)
     def visit(WebPage webPage)
 }
 

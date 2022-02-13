@@ -2,6 +2,7 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
+import uxifier.models.Catalog
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -118,6 +119,50 @@ class VueJsSocialMediaGroup implements VueGeneratable {
         return null
     }
 }
+
+
+class VueJsCatalog implements VueGeneratable {
+
+
+    // private final static Map<String, SocialMediaIconInfo> iconMaps = new HashMap<>();
+
+    private final  Catalog catalog
+
+    VueJsCatalog(Catalog catalog) {
+        this.catalog = catalog
+    }
+
+    @Override
+    String toString() {
+        return "VueJsCatalog {catalog = ${catalog}}"
+    }
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeTemplate() {
+        println (this.catalog)
+        FileContext.writer.write("""
+            <h1> Context</h1>
+            <h3> product </h3>
+            <p> rating ="${catalog.product.rating}" </p><br>
+            <p> price filter type = "${catalog.filter.priceFilter.getPriceType()}"</p><br>
+        """)
+    }
+
+    @Override
+    def importComponents() {
+        return null
+    }
+
+}
+
+
+
+
 
 class VueJsSocialMedia implements VueGeneratable {
 

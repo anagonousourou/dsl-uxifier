@@ -5,9 +5,17 @@ package uxifier
 
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
+import uxifier.models.Catalog
 import uxifier.models.Component
+import uxifier.models.Filter
+import uxifier.models.GenericFilter
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
+import uxifier.models.PriceFilter
+import uxifier.models.PriceType
+import uxifier.models.Product
+import uxifier.models.Rating
+import uxifier.models.RatingType
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.SocialMediaType
@@ -205,10 +213,138 @@ trait GenericBuilder{
         this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
     }
 
+
+    def Catalog(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=CatalogBuilder) Closure closure){
+        var catalogBuilder = new CatalogBuilder()
+        def  code = closure.rehydrate(catalogBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        this.componentList.addAll(new SocialMediaGroup(catalogBuilder.build()))
+    }
+
     List<Component> build(){
         return componentList
     }
 }
+
+class CatalogBuilder implements GenericBuilder {
+    Catalog catalog = new Catalog()
+
+
+    def Product(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=ProductBuilder) Closure closure) {
+        var productBuilder = new ProductBuilder()
+        def  code = closure.rehydrate(productBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.componentList.add(productBuilder.buildProduct())
+    }
+
+    def Filter(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FilterBuilder) Closure closure){
+        var filterBuilder = new FilterBuilder()
+        def  code = closure.rehydrate(filterBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.componentList.add(new Filter(filterBuilder.build()))
+    }
+
+}
+
+
+class ProductBuilder {
+
+    Product product = new Product()
+
+    def buildProduct(){
+        return this.product
+    }
+
+    def Rating(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=RatingBuilder) Closure closure){
+        var ratingBuilder = new RatingBuilder()
+        def  code = closure.rehydrate(ratingBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.product.setRating(ratingBuilder.build())
+    }
+}
+
+class RatingBuilder {
+
+    Rating rating = new Rating()
+
+    final RatingType Stars = RatingType.Stars
+    final RatingType Bar = RatingType.Bar
+    final RatingType Mark = RatingType.Mark
+
+    def ratingType(RatingType type){
+        this.rating.ratingType = type
+    }
+
+    Rating build(){
+        return this.rating
+    }
+
+}
+
+
+class FilterBuilder implements GenericBuilder{
+
+
+
+    def PriceFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PriceFilterBuilder) Closure closure){
+        var priceFilterBuilder = new PriceFilterBuilder()
+        def  code = closure.rehydrate(priceFilterBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.componentList.add(priceFilterBuilder.build())
+    }
+
+    def GenericFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=GenericFilterBuilder) Closure closure){
+        var genericFilterBuilder = new GenericFilterBuilder()
+        def  code = closure.rehydrate(genericFilterBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.componentList.add(genericFilterBuilder.build())
+    }
+
+}
+
+class PriceFilterBuilder {
+    PriceFilter priceFilter = new PriceFilter()
+
+    final PriceType Range = PriceType.Range
+    final PriceType Bar = PriceType.Bar
+
+    def priceType(PriceType type){
+        this.priceFilter.priceType = type
+    }
+
+    PriceFilter build(){
+        return this.priceFilter
+    }
+}
+
+
+class GenericFilterBuilder {
+
+    GenericFilter genericFilter = new GenericFilter()
+
+    def targetAtributName(String name){
+        this.genericFilter.targetAtributName = name
+    }
+
+    def targetAtributType(String type){
+        this.genericFilter.targetAtributType = type
+    }
+
+    GenericFilter build(){
+        return this.genericFilter
+    }
+
+}
+
+
+
+
 class SocialMediaGroupBuiler implements  GenericBuilder{
     def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
         var socialMediaBuilder = new SocialMediaBuilder()

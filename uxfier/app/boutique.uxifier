@@ -1,0 +1,38 @@
+WebApplication {
+
+    name  'adeline-Anas'
+
+    WebPage {
+        name 'Home'
+
+        title 'page Title'
+
+
+        Catalog {
+
+            Product {
+                Rating {
+                    ratingType Stars
+                }
+            }
+
+            Filter {
+                PriceFilter {
+                    priceType Bar
+                }
+
+                GenericFilter {
+                    targetAtributName  'color'
+                    targetAtributType 'String'
+                }
+
+                GenericFilter {
+                    targetAtributName  'brand'
+                    targetAtributType 'String'
+                }
+
+            }
+        }
+
+    }
+}
