@@ -21,6 +21,7 @@ WebApplication {
             }
             Cart{
                     title 'Mon Panier'
+
                     Products{
                         Product{
                             deletable yes
