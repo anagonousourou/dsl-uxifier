@@ -3,10 +3,16 @@ package uxifier.models.visitors
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Catalog
 import uxifier.models.Component
+import uxifier.models.Filter
+import uxifier.models.GenericFilter
+import uxifier.models.GenericFilters
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.Menu
 import uxifier.models.NavigationMenu
+import uxifier.models.PriceFilter
+import uxifier.models.Product
+import uxifier.models.Rating
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.WebApplication
@@ -14,6 +20,12 @@ import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsCatalog
+import uxifier.vue.project.models.VueJsFilter
+import uxifier.vue.project.models.VueJsGenericFilter
+import uxifier.vue.project.models.VueJsGenericFilters
+import uxifier.vue.project.models.VueJsPriceFilter
+import uxifier.vue.project.models.VueJsProduct
+import uxifier.vue.project.models.VueJsRating
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueMenu
@@ -73,11 +85,73 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
     @Override
     def visit(Catalog catalog) {
 
-        var tmp = new VueJsCatalog(catalog)
+        println("inside catalog ==========" + catalog)
+        var tmp = new VueJsCatalog()
 
         this.parent.addContent(tmp)
-        this.parent  = tmp
-        catalog.coponentList.forEach(c -> c.accept(this))
+        var previousParent = this.parent
+        this.parent = tmp
+        catalog.filter.accept(this)
+        catalog.product.accept(this)
+        this.parent = previousParent
+
+    }
+
+
+    @Override
+    def visit(PriceFilter priceFilter) {
+        var tmp = new VueJsPriceFilter(priceFilter.priceType)
+
+        ((VueJsFilter) this.parent).priceFilter = tmp
+    }
+
+    @Override
+    def visit(Filter filter) {
+
+        println("inside filter ==========" + filter)
+        var tmp = new VueJsFilter()
+
+        ((VueJsCatalog) this.parent).filtre = tmp
+
+        var previousParent = this.parent
+        this.parent = tmp
+        filter.priceFilter.accept(this)
+        filter.genericFilters.accept(this)
+        this.parent = previousParent
+
+    }
+
+
+    @Override
+    def visit(Product product) {
+
+        println("inside product ==========" + product)
+        var tmp = new VueJsProduct(product)
+        ((VueJsCatalog) this.parent).product = tmp
+    }
+
+    @Override
+    def visit(GenericFilters genericFilters) {
+        var tmp = new VueJsGenericFilters()
+
+        ((VueJsFilter)this.parent).genericFilters = tmp
+        var previousParent = this.parent
+        this.parent = tmp
+        genericFilters.componentList.forEach(c -> c.accept(this))
+        this.parent = previousParent
+    }
+
+    @Override
+    def visit(GenericFilter genericFilter) {
+
+        println("inside product ==========" + genericFilter)
+
+
+        var tmp = new VueJsGenericFilter(genericFilter.targetAtributType, genericFilter.targetAtributName)
+
+        this.parent.addContent(tmp)
+
+
     }
 
     @Override
@@ -102,13 +176,13 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.parent = previousParent
     }
 
-    def visit(NavigationMenu navigationMenu){
+    def visit(NavigationMenu navigationMenu) {
         VueMenuBar menuBar = new VueMenuBar()
 
         var tmp = this.parent
         this.parent = menuBar
 
-        for(Component comp : navigationMenu.componentList){
+        for (Component comp : navigationMenu.componentList) {
             comp.accept(this)
         }
 
@@ -116,12 +190,12 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         this.parent = tmp
 
-        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core', '22.0.5')
     }
 
     @Override
     def visit(Menu menu) {
-        VueMenu vueMenu =  new VueMenu()
+        VueMenu vueMenu = new VueMenu()
         vueMenu.link = menu.link
         vueMenu.label = menu.label
         this.parent.addContent(vueMenu)

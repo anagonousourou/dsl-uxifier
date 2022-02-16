@@ -31,6 +31,16 @@ class Catalog implements Component{
     Product product
     Filter filter
 
+    Catalog(List<Component> componentList){
+        for(Component c : componentList){
+            if (c instanceof Product){
+                product = c
+            }
+            if(c instanceof  Filter){
+                filter = c
+            }
+        }
+    }
 
     @Override
     String toString(){
@@ -72,11 +82,17 @@ class Filter implements Component{
 
     PriceFilter priceFilter
 
+    GenericFilters genericFilters
+
     Filter(List<Component> compoents){
 
         for(Component c: compoents){
             if(c instanceof PriceFilter){
                 this.priceFilter = (PriceFilter) c
+            }
+
+            if(c instanceof GenericFilters){
+                this.genericFilters = (GenericFilters) c
             }
 
         }
@@ -137,6 +153,18 @@ class HorizontalLayout implements Component {
 
 class VerticalLayout implements Component {
 
+}
+
+
+class GenericFilters implements Component {
+    GenericFilters(List<Component> componentList){
+        this.componentList = componentList
+    }
+
+    @Override
+    String toString() {
+        return "GenericFilters {components = ${componentList} }"
+    }
 }
 
 class SocialMediaGroup implements Component {
@@ -205,6 +233,11 @@ interface ApplicationModelVisitor {
     def visit(WebPage webPage)
     def visit(NavigationMenu navigationMenu)
     def visit(Menu menu)
+    def visit(Filter filter)
+    def visit(PriceFilter priceFilter)
+    def visit(Product product)
+    def visit(GenericFilters genericFilters)
+    def visit(GenericFilter genericFilter)
 }
 
 trait LeafComponent {

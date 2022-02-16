@@ -21,14 +21,16 @@ WebApplication {
                     priceType Bar
                 }
 
-                GenericFilter {
-                    targetAtributName  'color'
-                    targetAtributType 'String'
-                }
+                GenericFilters{
+                    GenericFilter {
+                        targetAtributName  'color'
+                        targetAtributType 'String'
+                    }
 
-                GenericFilter {
-                    targetAtributName  'brand'
-                    targetAtributType 'String'
+                    GenericFilter {
+                        targetAtributName  'brand'
+                        targetAtributType 'String'
+                    }
                 }
 
             }

@@ -9,6 +9,7 @@ import uxifier.models.Catalog
 import uxifier.models.Component
 import uxifier.models.Filter
 import uxifier.models.GenericFilter
+import uxifier.models.GenericFilters
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.PriceFilter
@@ -236,7 +237,7 @@ trait GenericBuilder {
         def  code = closure.rehydrate(catalogBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_ONLY
         code()
-        this.componentList.addAll(new SocialMediaGroup(catalogBuilder.build()))
+        this.componentList.addAll(new Catalog(catalogBuilder.build()))
     }
 
     List<Component> build(){
@@ -246,8 +247,6 @@ trait GenericBuilder {
 
 
 class CatalogBuilder implements GenericBuilder {
-    Catalog catalog = new Catalog()
-
 
     def Product(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=ProductBuilder) Closure closure) {
         var productBuilder = new ProductBuilder()
@@ -306,8 +305,6 @@ class RatingBuilder {
 
 class FilterBuilder implements GenericBuilder{
 
-
-
     def PriceFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PriceFilterBuilder) Closure closure){
         var priceFilterBuilder = new PriceFilterBuilder()
         def  code = closure.rehydrate(priceFilterBuilder, this, this)
@@ -316,15 +313,29 @@ class FilterBuilder implements GenericBuilder{
         this.componentList.add(priceFilterBuilder.build())
     }
 
+    def GenericFilters(@DelegatesTo(GenericFiltersBuilder) Closure closure) {
+        var genericFiltersBuilder = new GenericFiltersBuilder()
+        def code = closure.rehydrate(genericFiltersBuilder, this, this)
+//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code()
+
+        this.componentList.addAll(new GenericFilters(genericFiltersBuilder.build()))
+    }
+
+}
+
+class GenericFiltersBuilder implements GenericBuilder {
+
     def GenericFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=GenericFilterBuilder) Closure closure){
         var genericFilterBuilder = new GenericFilterBuilder()
         def  code = closure.rehydrate(genericFilterBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
-        code()
         this.componentList.add(genericFilterBuilder.build())
     }
-
 }
+
 
 class PriceFilterBuilder {
     PriceFilter priceFilter = new PriceFilter()

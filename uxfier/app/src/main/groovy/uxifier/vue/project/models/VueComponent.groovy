@@ -3,6 +3,12 @@ package uxifier.vue.project.models
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
 import uxifier.models.Catalog
+import uxifier.models.Filter
+import uxifier.models.PriceFilter
+import uxifier.models.PriceType
+import uxifier.models.Product
+import uxifier.models.Rating
+import uxifier.models.RatingType
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -145,25 +151,137 @@ class VueJsSocialMediaGroup implements VueGeneratable {
 }
 
 
-class VueJsCatalog implements VueGeneratable {
+class VueJsPriceFilter implements VueGeneratable {
 
+    private final PriceType type
 
-    // private final static Map<String, SocialMediaIconInfo> iconMaps = new HashMap<>();
-
-    private final  Catalog catalog
-
-    VueJsCatalog(Catalog catalog) {
-        this.catalog = catalog
+    VueJsPriceFilter(PriceType type) {
+        this.type = type
     }
 
     @Override
-    String toString() {
-        return "VueJsCatalog {catalog = ${catalog}}"
-    }
-
-    @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""
+            <p> price filter type  ="${type}" </p><br>
+        """)
+    }
+}
+
+
+class VueJsFilter implements VueGeneratable {
+
+    VueJsPriceFilter priceFilter
+    VueJsGenericFilters genericFilters
+
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""
+            <h3> filter </h3>
+            <div> priceFilter = "${priceFilter.insertInTemplate()}"</div><br>
+            <div> genericFilters = "${genericFilters.insertInTemplate()}"</div><br>
+        """)
+    }
+}
+
+class VueJsRating implements VueGeneratable {
+
+    private final RatingType type
+
+    VueJsRating(RatingType type) {
+        this.type = type
+    }
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        return null
+    }
+}
+
+
+class VueJsGenericFilters implements VueGeneratable {
+
+    List<VueGeneratable> genericFilters = new ArrayList<>()
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        genericFilters.add(vueGeneratable)
+    }
+
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        return "this is generic filters"
+    }
+}
+
+
+class VueJsProduct implements VueGeneratable {
+
+    private final Product product
+
+    VueJsProduct(Product product) {
+        this.product = product
     }
 
     @Override
@@ -173,9 +291,10 @@ class VueJsCatalog implements VueGeneratable {
 
     @Override
     def writeTemplate() {
-        println (this.catalog)
+        println(this.product)
 
     }
+
 
     @Override
     def writeScript() {
@@ -192,20 +311,106 @@ class VueJsCatalog implements VueGeneratable {
         FileContext.writer.write("""
             <h1> Context</h1>
             <h3> product </h3>
-            <p> rating ="${catalog.product.rating}" </p><br>
-            <p> price filter type = "${catalog.filter.priceFilter.getPriceType()}"</p><br>
+            <p> product rating ="${product.rating.ratingType}" </p><br>
         """)
     }
 
+
     @Override
-    def importComponents() {
-        return null
+    String toString() {
+        return "VueJsProduct {product = ${product}}"
     }
 
 }
 
 
+class VueJsGenericFilter implements VueGeneratable {
 
+    private final String targetAtributName
+    private final String targetAtributType
+
+    VueJsGenericFilter(String targetAtributType, String targetAtributName) {
+        this.targetAtributType = targetAtributType
+        this.targetAtributName = targetAtributName
+    }
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        return null
+    }
+}
+
+
+class VueJsCatalog implements VueGeneratable {
+
+
+    VueJsProduct product
+    VueJsFilter filtre
+
+
+    VueJsCatalog() {
+    }
+
+    @Override
+    String toString() {
+        return "VueJsCatalog {catalog =  }}"
+    }
+
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+
+    @Override
+    def writeTemplate() {
+        return null
+
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        filtre.insertInTemplate()
+        FileContext.writer.write("""
+            <h1> Context</h1>
+            <h3> products </h3>
+            <div v-for="product in products">  """)
+
+        product.insertInTemplate()
+
+        FileContext.writer.write("""
+            </div>
+        """)
+
+    }
+
+}
 
 
 class VueJsSocialMedia implements VueGeneratable {
@@ -213,7 +418,7 @@ class VueJsSocialMedia implements VueGeneratable {
     private final static Map<String, SocialMediaIconInfo> iconMaps = new HashMap<>();
 
     private final String name
-    private final String link;
+    private final String link
 
     VueJsSocialMedia(String name, String link) {
         this.name = name
@@ -264,13 +469,13 @@ trait VueGeneratable {
     /**
      * Write own template
      */
-    def writeTemplate(){
+    def writeTemplate() {
 
     }
 
     abstract def writeScript()
 
-    def registerSelfInComponents(){
+    def registerSelfInComponents() {
 
     }
 
