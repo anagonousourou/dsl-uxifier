@@ -4,7 +4,9 @@
 package uxifier
 
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
+import uxifier.models.ActionMenuBar
 import uxifier.models.Component
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
@@ -62,11 +64,11 @@ class ScriptInterpreter {
                     'java.lang.*'
             ]
             staticImportsWhitelist = []
-            staticStarImportsWhitelist = ['uxifier.models.SocialMedia.*']
+            staticStarImportsWhitelist = []
 
 
             constantTypesClassesWhiteList = [
-                    int, Integer, Number, Integer.TYPE, String, Object,boolean
+                    int, Integer, Number, Integer.TYPE, String, Object, boolean
             ]
 
             receiversClassesWhiteList = [
@@ -76,7 +78,6 @@ class ScriptInterpreter {
 
         def configuration = new CompilerConfiguration()
         configuration.addCompilationCustomizers(secure)
-
         return configuration
     }
 }
@@ -99,6 +100,16 @@ class WebApplicationBuilder {
 
     def build() {
         return this.webApplication
+    }
+
+    def NavigationMenu(@DelegatesTo(NavigationMenuBuilder) Closure closure) {
+        var builder = new NavigationMenuBuilder()
+
+        var code = closure.rehydrate(builder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.webApplication.navigationMenu = new NavigationMenu(builder.componentList, builder.getMenuType())
+
     }
 
     def WebPage(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = WebPageBuilder) Closure closure) {
@@ -128,6 +139,7 @@ class WebPageBuilder implements GenericBuilder {
         this._name = pageName
     }
 
+
     def Header(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HeaderBuilder) Closure closure) {
         var header = new HeaderBuilder()
         def code = closure.rehydrate(header, this, this)//permet de définir que tous les appels de méthodes
@@ -151,8 +163,6 @@ class WebPageBuilder implements GenericBuilder {
 }
 
 
-
-
 class HeaderBuilder implements GenericBuilder {
 
 }
@@ -173,16 +183,12 @@ class UXifier extends Script {
 
         var application = app.build()
 
-        println application
-
         var applicationVisitor = new ApplicationModelVisitorVueJS()
 
         applicationVisitor.visit(application)
 
         println applicationVisitor.vueProject
         applicationVisitor.vueProject.toCode()
-
-
     }
 
 
@@ -192,10 +198,10 @@ trait GenericBuilder {
 
     List<Component> componentList = new ArrayList<>()
 
-    def HorizontalLayout(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HorizontalLayoutBuilder) Closure closure) {
+    def HorizontalLayout(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = HorizontalLayoutBuilder) Closure closure) {
         var layoutBuilder = new HorizontalLayoutBuilder()
         def code = closure.rehydrate(layoutBuilder, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
 
         this.componentList.addAll(new HorizontalLayout(layoutBuilder.build()))
@@ -206,20 +212,21 @@ trait GenericBuilder {
         var socialMediaGroupBuilder = new SocialMediaGroupBuiler()
         def code = closure.rehydrate(socialMediaGroupBuilder, this, this)
 //permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code.resolveStrategy = Closure.DELEGATE_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
 
         this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
     }
 
-    def NavigationMenu(@DelegatesTo(NavigationMenuBuilder) Closure closure){
-        var builder = new NavigationMenuBuilder()
 
-        var code  = closure.rehydrate(builder, this,this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+
+    def ActionMenuBar(@DelegatesTo(ActionMenuBarBuilder) Closure closure) {
+        var builder = new ActionMenuBarBuilder()
+        var code = closure.rehydrate(builder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-        this.componentList.add(new NavigationMenu(builder.componentList,builder.isBurger()))
+        this.componentList.add(builder.build())
     }
 
     List<Component> build() {
@@ -228,7 +235,7 @@ trait GenericBuilder {
 }
 
 class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
+    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SocialMediaBuilder) Closure closure) {
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
         code.resolveStrategy = Closure.DELEGATE_FIRST

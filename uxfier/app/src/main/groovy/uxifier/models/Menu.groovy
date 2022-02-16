@@ -1,15 +1,22 @@
 package uxifier.models
 
-class Menu implements Component{
+class Menu implements Component {
     String label
     String link
+    String icon
 }
 
 
-class NavigationMenu implements Component{
-    boolean burger = false
-    NavigationMenu(List<Component> componentList, boolean useBurger){
+class NavigationMenu implements Component {
+    NavigationMenuType menuType
+
+    NavigationMenu(List<Component> componentList, NavigationMenuType menuType) {
         this.componentList = componentList
-        this.burger = useBurger
+        this.menuType = menuType
     }
+}
+
+enum NavigationMenuType {
+    Drawer,
+    Navbar
 }

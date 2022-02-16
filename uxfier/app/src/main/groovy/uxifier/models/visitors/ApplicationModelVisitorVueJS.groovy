@@ -1,21 +1,30 @@
 package uxifier.models.visitors
 
+import uxifier.models.Action
+import uxifier.models.ActionMenuBar
 import uxifier.models.ApplicationModelVisitor
+import uxifier.models.CartAction
 import uxifier.models.Component
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.Menu
 import uxifier.models.NavigationMenu
+import uxifier.models.NavigationMenuType
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
 import uxifier.models.WebApplication
 import uxifier.models.WebPage
+import uxifier.vue.project.models.VueActionMenu
+import uxifier.vue.project.models.VueActionMenuBar
+import uxifier.vue.project.models.VueCartActionMenu
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueMenu
 import uxifier.vue.project.models.VueMenuBar
+import uxifier.vue.project.models.VueMenuItemNavbar
+import uxifier.vue.project.models.VueMenuNavbar
 import uxifier.vue.project.models.VueProject
 
 class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
@@ -24,6 +33,8 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
     VueProject vueProject = new VueProject()
 
     private VueGeneratable parent
+
+    private NavigationMenuType currentNavigationMenuType = null
 
     @Override
     def visit(SocialMedia media) {
@@ -62,6 +73,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.vueProject.name = application.name
         this.vueProject.packageJson.name = application.name
 
+        application.navigationMenu.accept(this)
         for (WebPage webPage : application.pages) {
             webPage.accept(this)
         }
@@ -90,30 +102,76 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.parent = previousParent
     }
 
-    def visit(NavigationMenu navigationMenu){
-        VueMenuBar menuBar = new VueMenuBar()
+    def visit(NavigationMenu navigationMenu) {
+        this.currentNavigationMenuType = navigationMenu.menuType
+        if (this.currentNavigationMenuType == NavigationMenuType.Navbar) {
+            VueMenuNavbar menuNavbar = new VueMenuNavbar()
 
-        var tmp = this.parent
-        this.parent = menuBar
+            this.parent = menuNavbar
 
-        for(Component comp : navigationMenu.componentList){
-            comp.accept(this)
+            for (Component comp : navigationMenu.componentList) {
+                comp.accept(this)
+            }
+            this.vueProject.sourceDirectory.appFile.content.add(menuNavbar)
+
+        } else if (this.currentNavigationMenuType == NavigationMenuType.Drawer) {
+            VueMenuBar menuBar = new VueMenuBar()
+
+
+            this.parent = menuBar
+
+            for (Component comp : navigationMenu.componentList) {
+                comp.accept(this)
+            }
+            this.vueProject.sourceDirectory.appFile.content.add(menuBar)
         }
-
-        this.vueProject.sourceDirectory.appFile.content.add(menuBar)
-
-        this.parent = tmp
-
-        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core', '22.0.5')
     }
 
     @Override
     def visit(Menu menu) {
-        VueMenu vueMenu =  new VueMenu()
-        vueMenu.link = menu.link
-        vueMenu.label = menu.label
-        this.parent.addContent(vueMenu)
+        if (this.currentNavigationMenuType == NavigationMenuType.Drawer) {
+            VueMenu vueMenu = new VueMenu()
+            vueMenu.link = menu.link
+            vueMenu.label = menu.label
+            vueMenu.icon = menu.icon
+            this.parent.addContent(vueMenu)
+        } else {
+            VueMenuItemNavbar vueMenu = new VueMenuItemNavbar()
+            vueMenu.link = menu.link
+            vueMenu.label = menu.label
+            this.parent.addContent(vueMenu)
+        }
+
     }
 
+    @Override
+    def visit(Action action) {
+        VueActionMenu actionMenu = new VueActionMenu()
+        actionMenu.label = action.label
+        this.parent.addContent(actionMenu)
+        println("Adding action")
+    }
 
+    @Override
+    def visit(ActionMenuBar menuBar) {
+
+        println("Adding actionMenuBar")
+        var previousParent = this.parent
+        var vueActionMenuBar = new VueActionMenuBar()
+
+        this.parent  = vueActionMenuBar
+        menuBar.componentList.forEach(c -> c.accept(this))
+
+        this.parent = previousParent
+
+        this.vueProject.sourceDirectory.appFile.content.add(vueActionMenuBar)
+
+    }
+
+    @Override
+    def visit(CartAction action) {
+       this.parent.addContent(new VueCartActionMenu(action.label,action.displayCartCount))
+        println("Adding cartaction to ${this.parent}")
+    }
 }

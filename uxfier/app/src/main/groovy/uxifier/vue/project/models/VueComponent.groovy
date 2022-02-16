@@ -199,13 +199,21 @@ trait VueGeneratable {
     /**
      * Write own template
      */
-    def writeTemplate(){
+    def writeTemplate() {
 
     }
 
     abstract def writeScript()
 
-    def registerSelfInComponents(){
+    def registerSelfInComponents() {
+
+    }
+
+    def writeStyle() {
+
+    }
+
+    def insertSelfInStyle() {
 
     }
 
@@ -221,6 +229,7 @@ trait VueGeneratable {
         this.registerDependencies(project.packageJson)
         this.writeTemplate()
         this.writeScript()
+        this.writeStyle()
     }
 
     def addContent(VueGeneratable vueGeneratable) {

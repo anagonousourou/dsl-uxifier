@@ -86,7 +86,7 @@ class SourceDirectory {
 
     @Override
     String toString() {
-        return "SourceDirectory -> ${componentsDirectory}"
+        return "SourceDirectory ->{AppFile = ${appFile} , ${componentsDirectory} }"
     }
 }
 
@@ -110,6 +110,11 @@ class AppFile extends VueComponent {
     }
 
     @Override
+    String toString() {
+        return "${content}"
+    }
+
+    @Override
     def writeTemplate() {
         var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'App.vue'))
         FileContext.writer = Files.newBufferedWriter(componentFilePath)
@@ -127,12 +132,22 @@ class AppFile extends VueComponent {
 
         FileContext.writer.write("""components :{""")
 
-        content.forEach(c-> c.registerSelfInComponents())
+        content.forEach(c -> c.registerSelfInComponents())
 
         FileContext.writer.write("}}\n</script>")
 
+
+    }
+
+    @Override
+    Object writeStyle() {
+        FileContext.writer.write("<style>\n")
+        content.forEach(c -> c.insertSelfInStyle())
+        FileContext.writer.write("</style>\n")
+
         FileContext.writer.close()
         FileContext.writer = null
+
     }
 }
 
@@ -227,7 +242,7 @@ class EslintConfig {
     @JsonProperty("extends")
     public List<String> myextends = new ArrayList<>()
     public Map<String, String> parserOptions = new HashMap<>()
-    Map<String,String> rules = new HashMap<>()
+    Map<String, String> rules = new HashMap<>()
 
 }
 

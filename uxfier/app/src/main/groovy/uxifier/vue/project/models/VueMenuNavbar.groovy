@@ -1,43 +1,6 @@
 package uxifier.vue.project.models
 
-class VueMenu extends VueComponent {
-    String label
-    String link
-    String icon
-
-    @Override
-    def registerDependencies(PackageJson packageJson) {
-
-    }
-
-    @Override
-    def insertInTemplate() {
-        FileContext.writer.write(""" 
-    <vaadin-tab>
-      <a tabindex="-1" href="${this.link}">
-        <vaadin-icon icon="vaadin:cart"></vaadin-icon>
-        <span>${this.label}</span>
-      </a>
-    </vaadin-tab>""")
-    }
-
-    @Override
-    def writeScript() {
-        return null
-    }
-
-    @Override
-    def insertSelfInImports() {
-        return null
-    }
-
-    @Override
-    def registerSelfInComponents() {
-        //
-    }
-}
-
-class VueMenuBar extends VueComponent {
+class VueMenuNavbar extends VueComponent {
     List<VueGeneratable> menus = new ArrayList<>();
 
     @Override
@@ -74,9 +37,8 @@ import "@vaadin/tabs";
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
- <vaadin-app-layout primary-section="drawer">
-    <vaadin-drawer-toggle slot="navbar"></vaadin-drawer-toggle>
-    <vaadin-tabs slot="drawer" orientation="vertical">
+ <vaadin-app-layout >
+    <vaadin-tabs slot="navbar">
 """
         )
         menus.forEach(m -> m.insertInTemplate())
@@ -87,4 +49,34 @@ import "@vaadin/tabs";
         )
 
     }
+
+    @Override
+    Object insertSelfInStyle() {
+        return FileContext.writer.write("""
+ vaadin-tabs {
+   margin: auto;
+ }
+""")
+    }
+}
+
+class VueMenuItemNavbar extends VueComponent {
+    String label
+    String link
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write(""" 
+    <vaadin-tab>
+      <a tabindex="-1" href="${this.link}"> 
+        ${this.label}
+      </a>
+    </vaadin-tab>""")
+    }
+
 }
