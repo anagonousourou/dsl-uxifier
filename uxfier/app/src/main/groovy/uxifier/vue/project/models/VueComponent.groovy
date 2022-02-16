@@ -50,6 +50,7 @@ class VueComponent implements VueGeneratable {
 
     @Override
     def writeScript() {
+        println 'importing libraries for all components...'
         FileContext.writer.write("<script>")
         content.forEach(c -> c.insertSelfInImports())
         FileContext.writer.write("</script>")
@@ -206,7 +207,28 @@ class VueJsForm implements VueGeneratable{
 
     @Override
     def insertSelfInImports() {
-        return null
+        println "importing libraries for form"
+        FileContext.writer.write("""
+            import '@vaadin/text-field';
+            import '@vaadin/checkbox';
+            import '@vaadin/combo-box';
+            import '@vaadin/email-field';
+            import '@vaadin/date-picker';
+            import '@vaadin/date-time-picker';
+            import '@vaadin/button';
+            import '@vaadin/message-input';
+            import '@vaadin/password-field';
+            import '@vaadin/rich-text-editor';
+            import '@vaadin/time-picker';
+            import '@vaadin/upload';
+            
+            import '@vaadin/radio-group';
+            import '@vaadin/radio-button';
+            
+            export default {
+            
+            }
+        """)
     }
 
     @Override
@@ -243,7 +265,9 @@ class VueJsField implements VueGeneratable{
     @Override
     def insertInTemplate() {
         println 'creating field'
-        FileContext.writer.write("""<div>field</div>""")
+        FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
+
+
     }
 }
 
@@ -279,6 +303,9 @@ trait VueGeneratable {
         this.registerDependencies()
         this.writeTemplate()
         this.writeScript()
+
+        if(FileContext.writer != null && FileContext.writer)
+            FileContext.writer.close()
     }
 
     def addContent(VueGeneratable vueGeneratable) {
@@ -293,3 +320,4 @@ class SocialMediaIconInfo {
     String icon
     String color
 }
+

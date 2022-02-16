@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'CheckOut12'
+    name  'Form4'
 
      WebPage {
             name 'CheckOut'
@@ -8,14 +8,15 @@ WebApplication {
             Form {
                 name 'formname'
                 FieldGroup{
-                    Field{
-                        name 'FirstName'
-                        type 'TextField'
-                    }
-                    Field{
-                        name 'LastName'
-                        type 'TextField'
-                    }
+                    TextField {name 'TextField'}
+                    EmailField {name 'EmailField'}
+                    DatePicker {name 'DatePicker'}
+                    DateTimePicker {name 'DateTimePicker'}
+                    Button {name 'Button'}
+                    PasswordField {name 'PasswordField'}
+                    RichText {name 'RichText'}
+                    TimePicker {name 'TimePicker'}
+                    Upload {name 'Upload'}
                 }
             }
      }

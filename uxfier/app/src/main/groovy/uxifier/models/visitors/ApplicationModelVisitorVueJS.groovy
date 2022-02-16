@@ -1,5 +1,6 @@
 package uxifier.models.visitors
 
+import uxifier.models.AccordionGroup
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Component
 import uxifier.models.Field
@@ -49,6 +50,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.parent.addContent(tmp)
         this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
+
     }
 
     @Override
@@ -68,10 +70,16 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
             }
         }
         this.parent.addContent(tmp)
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
     }
 
     @Override
     def visit(Field field){
+        return null
+    }
+
+    @Override
+    def visit(AccordionGroup accordionGroup){
         return null
     }
 

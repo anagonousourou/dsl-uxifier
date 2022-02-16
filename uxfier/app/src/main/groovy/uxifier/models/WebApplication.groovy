@@ -121,6 +121,29 @@ class Field implements Component{
     }
 }
 
+class AccordionGroup implements Component{
+    AccordionGroup(List<Component> componentList){
+        this.componentList = componentList
+    }
+    @Override
+    String toString(){
+        return "AccordionGroup {components = ${componentList} }"
+    }
+}
+
+class Accordion implements Component{
+    String name
+
+    Accordion(List<Component> componentList){
+        this.componentList = componentList
+    }
+    @Override
+    String toString(){
+        return "Accordion {name = ${name}, components = ${componentList} }"
+    }
+}
+
+
 trait Component implements ApplicationModelVisitable {
     List<Component> componentList
 
@@ -152,6 +175,7 @@ interface ApplicationModelVisitor{
     def visit(WebPage webPage)
     def visit(Form form)
     def visit(Field field)
+    def visit(AccordionGroup accordionGroup)
 }
 
 trait LeafComponent{

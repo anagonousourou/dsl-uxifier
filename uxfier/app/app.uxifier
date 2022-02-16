@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'adeline'
+    name  'adeline4'
 
      WebPage {
             name 'Home'
@@ -11,15 +11,5 @@ WebApplication {
                                             url 'http://127.0.0.1/'
                                         }
              }
-            Form {
-                name 'shipment details'
-            }
      }
-
-
-      NavigationMenu{
-            burger True
-
-      }
-
 }

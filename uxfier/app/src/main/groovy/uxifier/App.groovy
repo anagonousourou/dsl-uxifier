@@ -219,6 +219,14 @@ trait GenericBuilder {
         this.componentList.add(formBuilder.buildForm())
     }
 
+    def AccordionGroup(@DelegatesTo(AccordionGroupBuilder) Closure closure){
+        var accordionGroupBuilder = new AccordionGroupBuilder()
+        def code = closure.rehydrate(accordionGroupBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        //this.componentList.add(accordionGroupBuilder.)
+    }
+
     List<Component> build(){
         return componentList
     }
@@ -281,11 +289,104 @@ class FormBuilder implements GenericBuilder{
 
 
 class FieldGroupBuilder implements GenericBuilder{
-    def Field(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def TextField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
+        fieldBuilder.type('text-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def CheckBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('checkbox')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def ComboBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('combo-box')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def EmailField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('email-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def DatePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('date-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def DateTimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('date-time-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def Button(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('button')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def PasswordField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('password-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def RichText(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('rich-text-editor')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def TimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('time-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def Upload(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        println('fieldbuilder : ' + fieldBuilder)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('upload')
         this.componentList.add(fieldBuilder.build())
     }
 }
@@ -303,6 +404,12 @@ class FieldBuilder {
     Field build(){
         return this.field;
     }
+}
+
+class AccordionGroupBuilder{
+
+
+
 }
 
 class HorizontalLayoutBuilder implements GenericBuilder {
