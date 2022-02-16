@@ -479,6 +479,14 @@ trait VueGeneratable {
 
     }
 
+    def writeStyle() {
+
+    }
+
+    def insertSelfInStyle() {
+
+    }
+
     abstract def insertSelfInImports()
 
     /**
@@ -491,6 +499,7 @@ trait VueGeneratable {
         this.registerDependencies(project.packageJson)
         this.writeTemplate()
         this.writeScript()
+        this.writeStyle()
     }
 
     def addContent(VueGeneratable vueGeneratable) {

@@ -5,6 +5,7 @@ WebApplication {
      WebPage {
             name 'Home'
             title 'page Title'
+
                        SocialMediaGroup {
                                         SocialMedia {
                                             type Facebook
@@ -12,15 +13,39 @@ WebApplication {
                                         }
                        }
 
-                         NavigationMenu{
-                                   burger true
-                                   Menu{
-                                       label 'Accueil'
-                                       link '/'
-                                   }
-                             }
 
-            }
+
+       }
+
+                                NavigationMenu{
+                                       type 'Navbar'
+                                          Menu{
+                                              label 'Products'
+                                              link '/'
+
+                                          }
+                                          Menu{
+                                              label 'Customers'
+                                              link '/'
+                                          }
+                                          Menu{
+                                              label 'Orders'
+                                              link '/'
+                                          }
+                                          Menu{
+                                               label 'Login'
+                                                link '/'
+                                          }
+                                          Menu{
+                                               label 'My account'
+
+                                          }
+                                                          CartAction{
+                                                              displayItemCount true
+                                                              label 'Mon Panier'
+                                                          }
+
+                                    }
 
 
 
