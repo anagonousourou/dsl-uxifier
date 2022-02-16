@@ -4,27 +4,8 @@
 package uxifier
 
 import org.codehaus.groovy.control.CompilerConfiguration
-import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
-import uxifier.models.Catalog
-import uxifier.models.ActionMenuBar
-import uxifier.models.Component
-import uxifier.models.Filter
-import uxifier.models.GenericFilter
-import uxifier.models.GenericFilters
-import uxifier.models.Header
-import uxifier.models.HorizontalLayout
-import uxifier.models.PriceFilter
-import uxifier.models.PriceType
-import uxifier.models.Product
-import uxifier.models.Rating
-import uxifier.models.RatingType
-import uxifier.models.NavigationMenu
-import uxifier.models.SocialMedia
-import uxifier.models.SocialMediaGroup
-import uxifier.models.SocialMediaType
-import uxifier.models.WebApplication
-import uxifier.models.WebPage
+import uxifier.models.*
 import uxifier.models.visitors.ApplicationModelVisitorVueJS
 
 class App {
@@ -251,9 +232,6 @@ trait GenericBuilder {
         return componentList
     }
 }
-
-class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SocialMediaBuilder) Closure closure) {
 
 class CatalogBuilder implements GenericBuilder {
 
