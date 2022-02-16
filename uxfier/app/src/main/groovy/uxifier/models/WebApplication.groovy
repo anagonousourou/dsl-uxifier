@@ -122,6 +122,11 @@ class Field implements Component{
 }
 
 class AccordionGroup implements Component{
+
+    AccordionGroup(){
+        this.componentList = new ArrayList<>()
+    }
+
     AccordionGroup(List<Component> componentList){
         this.componentList = componentList
     }
@@ -134,12 +139,14 @@ class AccordionGroup implements Component{
 class Accordion implements Component{
     String name
 
-    Accordion(List<Component> componentList){
-        this.componentList = componentList
+    Accordion(){
+        this.componentList = new ArrayList<>()
     }
+
+
     @Override
     String toString(){
-        return "Accordion {name = ${name}, components = ${componentList} }"
+        return "Accordion {name = ${name}, components = ${componentList}}"
     }
 }
 

@@ -264,10 +264,7 @@ class VueJsField implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        println 'creating field'
         FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
-
-
     }
 }
 
