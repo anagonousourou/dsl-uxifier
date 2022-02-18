@@ -7,6 +7,8 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.ActionMenuBar
+import uxifier.models.Accordion
+import uxifier.models.AccordionGroup
 import uxifier.models.Component
 import uxifier.models.Field
 import uxifier.models.FieldGroup
@@ -205,9 +207,7 @@ trait GenericBuilder {
         def code = closure.rehydrate(layoutBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-
-        this.componentList.addAll(new HorizontalLayout(layoutBuilder.build()))
-
+        addComponent(new HorizontalLayout(layoutBuilder.build()))
     }
 
     def SocialMediaGroup(@DelegatesTo(SocialMediaGroupBuiler) Closure closure) {
@@ -218,7 +218,7 @@ trait GenericBuilder {
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
 
-        this.componentList.addAll(new SocialMediaGroup(socialMediaGroupBuilder.build()))
+        addComponent(new SocialMediaGroup(socialMediaGroupBuilder.build()))
     }
 
 
@@ -235,7 +235,7 @@ trait GenericBuilder {
         def code = closure.rehydrate(formBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-        this.componentList.add(formBuilder.buildForm())
+        addComponent(formBuilder.buildForm())
     }
 
     def AccordionGroup(@DelegatesTo(AccordionGroupBuilder) Closure closure){
@@ -243,7 +243,11 @@ trait GenericBuilder {
         def code = closure.rehydrate(accordionGroupBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-        //this.componentList.add(accordionGroupBuilder.)
+        addComponent(accordionGroupBuilder.buildAccordionGroup())
+    }
+
+    def addComponent(Component component){
+        this.componentList.addAll(component)
     }
 
     List<Component> build(){
@@ -291,6 +295,7 @@ class FormBuilder implements GenericBuilder{
         def code = closure.rehydrate(fieldGroupBuilder, this, this)
         code.resolveStrategy = Closure.OWNER_FIRST
         code()
+
         this.componentList.addAll(new FieldGroup(fieldGroupBuilder.build()))
     }
 
@@ -301,7 +306,6 @@ class FormBuilder implements GenericBuilder{
         return form
     }
 }
-
 
 class FieldGroupBuilder implements GenericBuilder{
 
@@ -395,7 +399,6 @@ class FieldGroupBuilder implements GenericBuilder{
     }
 }
 
-
 class FieldBuilder {
     Field field = new Field();
 
@@ -410,10 +413,44 @@ class FieldBuilder {
     }
 }
 
-class AccordionGroupBuilder{
+class AccordionGroupBuilder implements GenericBuilder {
+    AccordionGroup accordionGroup = new AccordionGroup();
 
+    def Accordion(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=AccordionBuilder)Closure closure){
+        var accordionBuilder = new AccordionBuilder()
+        def code = closure.rehydrate(accordionBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.accordionGroup.componentList.add(accordionBuilder.buildAccordion())
+    }
 
+    AccordionGroup buildAccordionGroup(){
+        return accordionGroup;
+    }
 
+}
+
+class AccordionBuilder implements GenericBuilder{
+    Accordion accordion = new Accordion()
+
+    def name(String name){
+        this.accordion.name = name;
+    }
+
+    Accordion buildAccordion(){
+        return accordion;
+    }
+
+    def addComponent(Component component){
+        this.accordion.componentList.addAll(component)
+    }
+
+    @Override
+    public String toString() {
+        return "AccordionBuilder{" +
+                "accordion=" + accordion +
+                '}';
+    }
 }
 
 class HorizontalLayoutBuilder implements GenericBuilder {
