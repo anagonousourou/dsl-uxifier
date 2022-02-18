@@ -61,7 +61,6 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         for(Component c : form.componentList){
             if(c instanceof FieldGroup){
                 for(Field f : (c.componentList as List<Field>)){
-                    println 'Field : ' + f
                     var tmpField = new VueJsField()
                     tmpField.setName(f.name)
                     tmpField.setType(f.type)

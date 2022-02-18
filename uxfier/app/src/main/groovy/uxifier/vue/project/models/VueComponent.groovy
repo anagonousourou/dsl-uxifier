@@ -207,28 +207,7 @@ class VueJsForm implements VueGeneratable{
 
     @Override
     def insertSelfInImports() {
-        println "importing libraries for form"
-        FileContext.writer.write("""
-            import '@vaadin/text-field';
-            import '@vaadin/checkbox';
-            import '@vaadin/combo-box';
-            import '@vaadin/email-field';
-            import '@vaadin/date-picker';
-            import '@vaadin/date-time-picker';
-            import '@vaadin/button';
-            import '@vaadin/message-input';
-            import '@vaadin/password-field';
-            import '@vaadin/rich-text-editor';
-            import '@vaadin/time-picker';
-            import '@vaadin/upload';
-            
-            import '@vaadin/radio-group';
-            import '@vaadin/radio-button';
-            
-            export default {
-            
-            }
-        """)
+        return null
     }
 
     @Override

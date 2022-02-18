@@ -293,7 +293,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def TextField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('text-field')
@@ -302,7 +301,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def CheckBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('checkbox')
@@ -311,7 +309,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def ComboBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('combo-box')
@@ -320,7 +317,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def EmailField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('email-field')
@@ -329,7 +325,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def DatePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('date-picker')
@@ -338,7 +333,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def DateTimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('date-time-picker')
@@ -347,7 +341,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def Button(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('button')
@@ -356,7 +349,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def PasswordField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('password-field')
@@ -365,7 +357,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def RichText(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('rich-text-editor')
@@ -374,7 +365,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def TimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('time-picker')
@@ -383,7 +373,6 @@ class FieldGroupBuilder implements GenericBuilder{
     def Upload(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
-        println('fieldbuilder : ' + fieldBuilder)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         fieldBuilder.type('upload')
