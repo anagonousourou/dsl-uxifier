@@ -6,6 +6,9 @@ package uxifier
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.Component
+import uxifier.models.Field
+import uxifier.models.FieldGroup
+import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.NavigationMenu
@@ -172,8 +175,7 @@ class UXifier extends Script {
         closure()
 
         var application = app.build()
-
-        println application
+        println "application : " + application
 
         var applicationVisitor = new ApplicationModelVisitorVueJS()
 
@@ -221,17 +223,33 @@ trait GenericBuilder {
         code()
         this.componentList.add(new NavigationMenu(builder.componentList,builder.isBurger()))
     }
+    
+    def Form(@DelegatesTo(FormBuilder) Closure closure){
+        var formBuilder = new FormBuilder()
+        def code = closure.rehydrate(formBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.componentList.add(formBuilder.buildForm())
+    }
 
-    List<Component> build() {
+    def AccordionGroup(@DelegatesTo(AccordionGroupBuilder) Closure closure){
+        var accordionGroupBuilder = new AccordionGroupBuilder()
+        def code = closure.rehydrate(accordionGroupBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        //this.componentList.add(accordionGroupBuilder.)
+    }
+
+    List<Component> build(){
         return componentList
     }
 }
 
-class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
+class SocialMediaGroupBuiler implements  GenericBuilder{
+    def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code.resolveStrategy = Closure.OWNER_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.componentList.add(socialMediaBuilder.build())
@@ -241,7 +259,6 @@ class SocialMediaGroupBuiler implements GenericBuilder {
 
 class SocialMediaBuilder {
     SocialMedia socialMedia = new SocialMedia()
-
     final SocialMediaType Facebook = SocialMediaType.Facebook
     final SocialMediaType Pinterest = SocialMediaType.Pinterest
     final SocialMediaType Instagram = SocialMediaType.Instagram
@@ -260,8 +277,144 @@ class SocialMediaBuilder {
     }
 }
 
-class HorizontalLayoutBuilder implements GenericBuilder {
+class FormBuilder implements GenericBuilder{
+    String _name
 
+    def name(String name) {
+        this._name = name
+    }
+
+    def FieldGroup(@DelegatesTo(FieldGroupBuilder) Closure closure){
+        var fieldGroupBuilder = new FieldGroupBuilder()
+        def code = closure.rehydrate(fieldGroupBuilder, this, this)
+        code.resolveStrategy = Closure.OWNER_FIRST
+        code()
+        this.componentList.addAll(new FieldGroup(fieldGroupBuilder.build()))
+    }
+
+    Form buildForm() {
+        var form = new Form()
+        form.name = this._name
+        form.componentList = componentList
+        return form
+    }
 }
 
 
+class FieldGroupBuilder implements GenericBuilder{
+
+    def TextField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('text-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def CheckBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('checkbox')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def ComboBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('combo-box')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def EmailField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('email-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def DatePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('date-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def DateTimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('date-time-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def Button(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('button')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def PasswordField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('password-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def RichText(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('rich-text-editor')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def TimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('time-picker')
+        this.componentList.add(fieldBuilder.build())
+    }
+    def Upload(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('upload')
+        this.componentList.add(fieldBuilder.build())
+    }
+}
+
+
+class FieldBuilder {
+    Field field = new Field();
+
+    def name(String name){
+        this.field.name = name;
+    }
+    def type(String type){
+        this.field.type = type;
+    }
+    Field build(){
+        return this.field;
+    }
+}
+
+class AccordionGroupBuilder{
+
+
+
+}
+
+class HorizontalLayoutBuilder implements GenericBuilder {
+
+
+}

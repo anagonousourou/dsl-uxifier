@@ -122,6 +122,22 @@ class AppFile extends VueComponent {
     def writeScript() {
         FileContext.writer.write("<script>\n")
         content.forEach(c -> c.insertSelfInImports())
+
+        FileContext.writer.write("""
+            import '@vaadin/text-field';
+            import '@vaadin/checkbox';
+            import '@vaadin/combo-box';
+            import '@vaadin/email-field';
+            import '@vaadin/date-picker';
+            import '@vaadin/date-time-picker';
+            import '@vaadin/button';
+            import '@vaadin/message-input';
+            import '@vaadin/password-field';
+            import '@vaadin/time-picker';
+            import '@vaadin/upload';
+            
+            import '@vaadin/radio-group';
+        """)
         FileContext.writer.write("""export default {
             name: 'App',""")
 

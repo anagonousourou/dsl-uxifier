@@ -1,27 +1,15 @@
 WebApplication {
 
-    name  'adeline'
+    name  'adeline4'
 
      WebPage {
             name 'Home'
             title 'page Title'
-                       SocialMediaGroup {
+            SocialMediaGroup {
                                         SocialMedia {
                                             type Facebook
                                             url 'http://127.0.0.1/'
                                         }
-                       }
-
-                         NavigationMenu{
-                                   burger true
-                                   Menu{
-                                       label 'Accueil'
-                                       link '/'
-                                   }
-                             }
-
-            }
-
-
-
+             }
+     }
 }

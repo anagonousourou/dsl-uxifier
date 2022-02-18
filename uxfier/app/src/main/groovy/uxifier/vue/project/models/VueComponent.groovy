@@ -2,6 +2,7 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
+import uxifier.models.Component
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -49,6 +50,7 @@ class VueComponent implements VueGeneratable {
 
     @Override
     def writeScript() {
+        println 'importing libraries for all components...'
         FileContext.writer.write("<script>")
         content.forEach(c -> c.insertSelfInImports())
         FileContext.writer.write("</script>")
@@ -137,7 +139,6 @@ class VueJsSocialMediaGroup implements VueGeneratable {
                 """
 <div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
                     """)
-
         socialMedia.forEach(s -> s.insertInTemplate())
         FileContext.writer.write("</div>")
     }
@@ -189,6 +190,66 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 }
 
+class VueJsForm implements VueGeneratable{
+
+    String name
+    List<VueGeneratable> fields = new ArrayList<>();
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        println 'creating form : ' + name + 'with fields size' + fields.size()
+        FileContext.writer.write("""<div class=${name}>""")
+
+        fields.forEach(s -> s.insertInTemplate())
+
+        FileContext.writer.write("""</div>""")
+    }
+}
+
+class VueJsField implements VueGeneratable{
+
+    String name
+    String type
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        println 'creating field'
+        FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
+
+
+    }
+}
+
 trait VueGeneratable {
 
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier
@@ -221,6 +282,9 @@ trait VueGeneratable {
         this.registerDependencies(project.packageJson)
         this.writeTemplate()
         this.writeScript()
+
+        if(FileContext.writer != null && FileContext.writer)
+            FileContext.writer.close()
     }
 
     def addContent(VueGeneratable vueGeneratable) {
@@ -235,3 +299,4 @@ class SocialMediaIconInfo {
     String icon
     String color
 }
+
