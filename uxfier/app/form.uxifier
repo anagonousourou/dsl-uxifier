@@ -1,25 +1,47 @@
 WebApplication {
 
-    name  'Form3'
+    name  'Form20'
 
      WebPage {
-            name 'CheckOut'
-            title 'page Title'
-            Form {
-                name 'formname'
-                FieldGroup{
-                    TextField {name 'TextField'}
-                    EmailField {name 'EmailField'}
-                    DatePicker {name 'DatePicker'}
-                    DateTimePicker {name 'DateTimePicker'}
-                    Button {name 'Button'}
-                    PasswordField {name 'PasswordField'}
-                    RichText {name 'RichText'}
-                    TimePicker {name 'TimePicker'}
-                    Upload {name 'Upload'}
+        name 'CheckOut'
+        title 'page Title'
+        AccordionGroup{
+            Accordion{
+                name 'Shipment'
+                Form {
+                    name 'formname'
+                    FieldGroup{
+                        TextField {name 'TextField'}
+                        EmailField {name 'EmailField'}
+                        DatePicker {name 'DatePicker'}
+                        DateTimePicker {name 'DateTimePicker'}
+                        Button {name 'Button'}
+                        PasswordField {name 'PasswordField'}
+                        RichText {name 'RichText'}
+                        TimePicker {name 'TimePicker'}
+                        Upload {name 'Upload'}
+                    }
                 }
             }
+            Accordion{
+                name 'Shipment'
+                Form {
+                    name 'formname'
+                    FieldGroup{
+                        TextField {name 'TextField'}
+                        EmailField {name 'EmailField'}
+                        DatePicker {name 'DatePicker'}
+                        DateTimePicker {name 'DateTimePicker'}
+                        Button {name 'Button'}
+                        PasswordField {name 'PasswordField'}
+                        RichText {name 'RichText'}
+                        TimePicker {name 'TimePicker'}
+                        Upload {name 'Upload'}
+                    }
+                }
+            }
+        }
      }
-
-
 }
+
+

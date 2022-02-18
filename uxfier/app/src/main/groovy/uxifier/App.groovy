@@ -173,7 +173,6 @@ class UXifier extends Script {
         closure()
 
         var application = app.build()
-        println "application : " + application
 
         var applicationVisitor = new ApplicationModelVisitorVueJS()
 

@@ -183,6 +183,7 @@ interface ApplicationModelVisitor{
     def visit(Form form)
     def visit(Field field)
     def visit(AccordionGroup accordionGroup)
+    def visit(Accordion accordion)
 }
 
 trait LeafComponent{

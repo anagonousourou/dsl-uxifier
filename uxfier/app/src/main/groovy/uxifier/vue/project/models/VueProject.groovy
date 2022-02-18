@@ -114,7 +114,9 @@ class AppFile extends VueComponent {
         var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'App.vue'))
         FileContext.writer = Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
+        content.forEach(c -> c.openTagInTemplate())
         content.forEach(c -> c.insertInTemplate())
+        content.forEach(c -> c.closeTagInTemplate())
         FileContext.writer.write("</template>")
     }
 

@@ -1,5 +1,6 @@
 package uxifier.models.visitors
 
+import uxifier.models.Accordion
 import uxifier.models.AccordionGroup
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.Component
@@ -14,6 +15,8 @@ import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsAccordion
+import uxifier.vue.project.models.VueJsAccordionGroup
 import uxifier.vue.project.models.VueJsField
 import uxifier.vue.project.models.VueJsForm
 import uxifier.vue.project.models.VueJsSocialMedia
@@ -31,6 +34,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     def visit(SocialMedia media) {
         var tmp = new VueJsSocialMedia(media.type.toString(), media.url)
         this.parent.addContent(tmp)
+        return tmp
     }
 
     @Override
@@ -50,18 +54,16 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.parent.addContent(tmp)
         this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
-
+        return tmp
     }
 
     @Override
     def visit(Form form){
         var tmp = new VueJsForm()
         tmp.name = form.name
-        println 'form components size : ' + form.componentList.size()
         for(Component c : form.componentList){
             if(c instanceof FieldGroup){
                 for(Field f : (c.componentList as List<Field>)){
-                    println 'Field : ' + f
                     var tmpField = new VueJsField()
                     tmpField.setName(f.name)
                     tmpField.setType(f.type)
@@ -71,6 +73,23 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         }
         this.parent.addContent(tmp)
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        return tmp
+    }
+
+    def buildForm(Form form){
+        var tmp = new VueJsForm()
+        tmp.name = form.name
+        for(Component c : form.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    tmp.fields.add(tmpField)
+                }
+            }
+        }
+        return tmp
     }
 
     @Override
@@ -80,6 +99,30 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(AccordionGroup accordionGroup){
+        var tmp = new VueJsAccordionGroup();
+
+        for(Accordion a : (accordionGroup.componentList as List<Accordion>)){
+            VueJsAccordion tmpAcc = new VueJsAccordion()
+            tmpAcc.name = a.name
+
+            for(Component c : a.componentList){
+
+                if(c instanceof Form){
+                    tmpAcc.components.add(buildForm(c))
+                }
+                //tmpAcc.components.add(c.accept(this) as VueGeneratable)
+
+            }
+            tmp.accordions.add(tmpAcc)
+        }
+
+        this.parent.addContent(tmp)
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        return tmp
+    }
+
+    @Override
+    def visit(Accordion accordion){
         return null
     }
 
@@ -117,6 +160,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         //Given the component is a webpage (the only one for now we add it as content of App.vue
 
         this.vueProject.sourceDirectory.appFile.content.add(vueComponent)
+        return vueComponent
     }
 
 
