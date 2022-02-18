@@ -1,0 +1,15 @@
+// this is a DSLD file
+// start off creating a custom DSL Descriptor for your Groovy DSL
+
+// The following snippet adds the 'newProp' to all types that are a subtype of GroovyObjects
+
+
+def isUxScript = fileExtension('uxifier')
+contribute(isUxScript ) {
+	delegatesTo 'uxifier.UXifier'
+	method name: 'WebApplication', type: Object, params: [block: Closure]
+}
+
+contribute(isUxScript & enclosingCallName('WebPage') & inClosure() & currentType('uxifier.UXifier')) {
+  setDelegateType('uxifier.WebPageBuilder')
+}

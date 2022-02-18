@@ -3,8 +3,10 @@ package uxifier.models
 class WebApplication {
 
     String name
-
+    String title
     List<WebPage> pages = new ArrayList<>()
+
+    NavigationMenu navigationMenu
 
     @Override
     String toString() {
@@ -167,17 +169,27 @@ interface ApplicationModelVisitable {
 
 interface ApplicationModelVisitor{
     def visit(SocialMedia media)
+
     def visit(HorizontalLayout layout)
+
     def visit(Component component)
     def visit(SocialMediaGroup socialMediaGroup)
     def visit(Header header)
     def visit(WebApplication application)
     def visit(WebPage webPage)
+
     def visit(NavigationMenu navigationMenu)
+
     def visit(Menu menu)
     def visit(Form form)
     def visit(Field field)
     def visit(AccordionGroup accordionGroup)
+
+    def visit(Action action)
+
+    def visit(ActionMenuBar menuBar)
+
+    def visit(CartAction action)
 }
 
 trait LeafComponent{

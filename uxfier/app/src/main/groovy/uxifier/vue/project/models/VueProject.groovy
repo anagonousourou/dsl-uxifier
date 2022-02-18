@@ -34,6 +34,7 @@ class FileContext {
 
 class VueProject {
     String name
+    String pageTitle
     PackageJson packageJson
     BabelConfig babelConfig = new BabelConfig()
     PublicDirectory publicDirectory = new PublicDirectory()
@@ -46,14 +47,16 @@ class VueProject {
     def toCode() {
         FileContext.currentDirectory = Path.of(name)
 
-        Files.createDirectory(FileContext.currentDirectory)
+        if(!FileContext.currentDirectory.toFile().exists()){
+            Files.createDirectory(FileContext.currentDirectory)
+        }
 
         packageJson.toCode()
 
         babelConfig.toCode()
         FileContext.currentDirectory = Path.of(name, "public")
         Files.createDirectory(FileContext.currentDirectory)
-        publicDirectory.toCode()
+        publicDirectory.toCode(this)
 
         FileContext.currentDirectory = Path.of(name, "src")
         Files.createDirectory(FileContext.currentDirectory)
@@ -86,7 +89,7 @@ class SourceDirectory {
 
     @Override
     String toString() {
-        return "SourceDirectory -> ${componentsDirectory}"
+        return "SourceDirectory ->{AppFile = ${appFile} , ${componentsDirectory} }"
     }
 }
 
@@ -107,6 +110,11 @@ class AppFile extends VueComponent {
     @Override
     def registerDependencies(PackageJson packageJson) {
         return super.registerDependencies(packageJson)
+    }
+
+    @Override
+    String toString() {
+        return "${content}"
     }
 
     @Override
@@ -143,12 +151,22 @@ class AppFile extends VueComponent {
 
         FileContext.writer.write("""components :{""")
 
-        content.forEach(c-> c.registerSelfInComponents())
+        content.forEach(c -> c.registerSelfInComponents())
 
         FileContext.writer.write("}}\n</script>")
 
+
+    }
+
+    @Override
+    Object writeStyle() {
+        FileContext.writer.write("<style>\n")
+        content.forEach(c -> c.insertSelfInStyle())
+        FileContext.writer.write("</style>\n")
+
         FileContext.writer.close()
         FileContext.writer = null
+
     }
 }
 
@@ -227,7 +245,6 @@ class PackageJson {
 
         FileContext.writeToFile(packageJsonPath, FileContext.objectMapper.writeValueAsString(this))
 
-
     }
 
 
@@ -243,7 +260,7 @@ class EslintConfig {
     @JsonProperty("extends")
     public List<String> myextends = new ArrayList<>()
     public Map<String, String> parserOptions = new HashMap<>()
-    Map<String,String> rules = new HashMap<>()
+    Map<String, String> rules = new HashMap<>()
 
 }
 
@@ -264,7 +281,7 @@ module.exports = {
 
 class PublicDirectory {
 
-    def toCode() {
+    def toCode(VueProject vueProject) {
         Path parentDirectory = FileContext.currentDirectory
         FileContext.currentDirectory = Path.of(FileContext.currentDirectory.toString(), "public")
         Files.createDirectory(FileContext.currentDirectory)
@@ -277,7 +294,7 @@ class PublicDirectory {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>${vueProject.pageTitle}</title>
   </head>
   <body>
     <noscript>

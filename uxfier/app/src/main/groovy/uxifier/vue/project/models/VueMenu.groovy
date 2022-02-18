@@ -1,10 +1,10 @@
 package uxifier.vue.project.models
 
 class VueMenu extends VueComponent {
-
     String label
     String link
     String icon
+
     @Override
     def registerDependencies(PackageJson packageJson) {
 
@@ -14,9 +14,13 @@ class VueMenu extends VueComponent {
     def insertInTemplate() {
         FileContext.writer.write(""" 
     <vaadin-tab>
-      <a tabindex="-1" href="${this.link}">
-        <vaadin-icon icon="vaadin:cart"></vaadin-icon>
-        <span>${this.label}</span>
+      <a tabindex="-1">""")
+                if(this.icon !=null && !this.icon.isBlank()){
+                    FileContext.writer.write("""   <vaadin-icon icon="vaadin:${icon}"></vaadin-icon>""")
+                }
+
+
+    FileContext.writer.write("""<span>${this.label}</span>
       </a>
     </vaadin-tab>""")
     }
@@ -39,10 +43,14 @@ class VueMenu extends VueComponent {
 
 class VueMenuBar extends VueComponent {
     List<VueGeneratable> menus = new ArrayList<>();
+    private String applicationName
+    void setApplicationName(String appname){
+        this.applicationName = appname
+    }
+
     @Override
     def registerDependencies(PackageJson packageJson) {
         println("Registering vaadin-core in ")
-
     }
 
     @Override
@@ -75,10 +83,14 @@ import "@vaadin/tabs";
     def insertInTemplate() {
         FileContext.writer.write("""
  <vaadin-app-layout primary-section="drawer">
-    <vaadin-drawer-toggle slot="navbar"></vaadin-drawer-toggle>
+    <vaadin-drawer-toggle slot="navbar"></vaadin-drawer-toggle>""")
+                if(this.applicationName != null  && !this.applicationName.isBlank()){
+                    FileContext.writer.write(""" <h1 slot="navbar">${this.applicationName}</h1>""")
+                }
+        FileContext.writer.write(  """
     <vaadin-tabs slot="drawer" orientation="vertical">
 """
-)
+        )
         menus.forEach(m -> m.insertInTemplate())
         FileContext.writer.write("""
     </vaadin-tabs>
