@@ -196,7 +196,7 @@ class VueJsForm implements VueGeneratable{
     List<VueGeneratable> fields = new ArrayList<>();
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
@@ -227,7 +227,7 @@ class VueJsField implements VueGeneratable{
     String type
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 

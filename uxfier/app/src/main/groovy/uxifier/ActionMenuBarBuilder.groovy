@@ -27,6 +27,8 @@ class CartActionBuilder {
     private boolean _dc
     private boolean useIcon
 
+    private String previewType = ''
+
     def label(String _label) {
         this._label = _label
     }
@@ -38,6 +40,18 @@ class CartActionBuilder {
         else if(propertyName.equals("useIcon")){
            this.useIcon = true
        }
+    }
+
+    def onhover(stuff){
+        println("In onhover")
+        [CartPreview: {cl -> println(cl)}]
+    }
+
+    def CartPreview (@DelegatesTo(value= CartPreviewBuilder, strategy = Closure.DELEGATE_FIRST) Closure closure){
+        var builder = new CartPreviewBuilder()
+        var code = closure.rehydrate(builder, this,this)
+        code()
+
     }
 
     def build() {
