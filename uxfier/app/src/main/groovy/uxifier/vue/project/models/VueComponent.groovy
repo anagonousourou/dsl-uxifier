@@ -331,11 +331,6 @@ class VueJsAccordionGroup implements VueGeneratable{
     List<VueGeneratable> accordions = new ArrayList<>();
 
     @Override
-    def registerDependencies() {
-        return null
-    }
-
-    @Override
     def writeScript() {
         return null
     }
@@ -388,11 +383,6 @@ class VueJsAccordion implements VueGeneratable{
     List<VueGeneratable> components = new ArrayList<>()
 
     @Override
-    def registerDependencies() {
-        return null
-    }
-
-    @Override
     def writeScript() {
         return null
     }
@@ -437,7 +427,9 @@ trait VueGeneratable {
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier
 
 
-    abstract def registerDependencies(PackageJson packageJson)
+    def registerDependencies(PackageJson packageJson){
+
+    }
 
     /**
      * Write own template
@@ -474,9 +466,13 @@ trait VueGeneratable {
      * used for nested components
      * such as tabs or accordions
      * */
-    abstract def openTagInTemplate()
+    def openTagInTemplate(){
 
-    abstract def closeTagInTemplate()
+    }
+
+   def closeTagInTemplate(){
+
+    }
 
     def toCode(VueProject project) {
         this.registerDependencies(project.packageJson)
