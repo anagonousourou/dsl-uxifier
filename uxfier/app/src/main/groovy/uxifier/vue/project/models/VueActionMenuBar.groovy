@@ -1,8 +1,9 @@
 package uxifier.vue.project.models
 
-class VueActionMenuBar implements VueGeneratable{
+class VueActionMenuBar implements VueGeneratable {
 
     List<VueGeneratable> actions = new ArrayList<>()
+
     @Override
     def registerDependencies(PackageJson packageJson) {
         return null
@@ -21,7 +22,7 @@ class VueActionMenuBar implements VueGeneratable{
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""<ul class="pull-right list-unstyled list-inline"> """)
-        actions.forEach(action-> action.insertInTemplate())
+        actions.forEach(action -> action.insertInTemplate())
         FileContext.writer.write("</ul>")
     }
 

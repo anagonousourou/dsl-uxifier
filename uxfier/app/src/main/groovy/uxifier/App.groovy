@@ -25,7 +25,7 @@ class App {
         if (args.length > 0) {
             dsl.eval(new File(args[0]))
         } else {
-            System.out.println("/!\\ Missing arg: Please specify the path to a Groovy script file to execute")
+            System.out.println("Missing arg: Please specify the path to a Groovy script file to execute")
         }
     }
 }
@@ -40,32 +40,26 @@ class ScriptInterpreter {
         binding = new Binding()
         configuration = getDSLConfiguration()
         configuration.setScriptBaseClass("uxifier.UXifier")
-        shell = new GroovyShell(configuration)
+        shell = new GroovyShell(binding, configuration)
     }
 
 
     void eval(File scriptFile) {
         Script script = shell.parse(scriptFile)
 
-        script.setBinding(binding)
-
         script.run()
     }
 
     private static CompilerConfiguration getDSLConfiguration() {
-        def secure = new SecureASTCustomizer()
-        secure.with {
+        var secure = new SecureASTCustomizer()
+        secure.setAllowedStaticStarImports(['uxifier.models.SocialMediaType','uxifier.models.NavigationMenuType'])
+        secure.setClosuresAllowed(true)
+
+        /*secure.with {
 
             closuresAllowed = true
 
             methodDefinitionAllowed = true
-
-            importsWhitelist = [
-                    'java.lang.*'
-            ]
-            staticImportsWhitelist = []
-            staticStarImportsWhitelist = []
-
 
             constantTypesClassesWhiteList = [
                     int, Integer, Number, Integer.TYPE, String, Object, boolean
@@ -74,10 +68,12 @@ class ScriptInterpreter {
             receiversClassesWhiteList = [
                     int, Number, Integer, String, Object
             ]
-        }
+        }*/
 
         def configuration = new CompilerConfiguration()
-        configuration.addCompilationCustomizers(secure)
+        var icz = new ImportCustomizer()
+        icz = icz.addStaticStars('uxifier.models.SocialMediaType','uxifier.models.NavigationMenuType')
+        configuration.addCompilationCustomizers(icz, secure)
         return configuration
     }
 }
@@ -97,6 +93,9 @@ class WebApplicationBuilder {
         }
         this.webApplication.name = appName
     }
+    def pageTitle(String title){
+        this.webApplication.title = title
+    }
 
     def build() {
         return this.webApplication
@@ -108,14 +107,14 @@ class WebApplicationBuilder {
         var code = closure.rehydrate(builder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-        this.webApplication.navigationMenu = new NavigationMenu(builder.componentList, builder.getMenuType())
+        this.webApplication.navigationMenu = new NavigationMenu(builder.componentList, builder.getMenuType(), builder.applicationName)
 
     }
 
-    def WebPage(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = WebPageBuilder) Closure closure) {
+    def WebPage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WebPageBuilder) Closure closure) {
         var webPageBuilder = new WebPageBuilder(webApplication)
         def code = closure.rehydrate(webPageBuilder, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code.resolveStrategy = Closure.DELEGATE_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.webApplication.addWebPage(webPageBuilder.buildPage())
@@ -140,10 +139,10 @@ class WebPageBuilder implements GenericBuilder {
     }
 
 
-    def Header(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HeaderBuilder) Closure closure) {
+    def Header(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = HeaderBuilder) Closure closure) {
         var header = new HeaderBuilder()
         def code = closure.rehydrate(header, this, this)//permet de définir que tous les appels de méthodes
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code.resolveStrategy = Closure.DELEGATE_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
         this.componentList.addAll(new Header(header.build()))
@@ -220,7 +219,6 @@ trait GenericBuilder {
     }
 
 
-
     def ActionMenuBar(@DelegatesTo(ActionMenuBarBuilder) Closure closure) {
         var builder = new ActionMenuBarBuilder()
         var code = closure.rehydrate(builder, this, this)
@@ -249,10 +247,6 @@ class SocialMediaGroupBuiler implements GenericBuilder {
 class SocialMediaBuilder {
     SocialMedia socialMedia = new SocialMedia()
 
-    final SocialMediaType Facebook = SocialMediaType.Facebook
-    final SocialMediaType Pinterest = SocialMediaType.Pinterest
-    final SocialMediaType Instagram = SocialMediaType.Instagram
-    final SocialMediaType LinkedIn = SocialMediaType.LinkedIn
 
     def type(SocialMediaType socialMediaType) {
         this.socialMedia.type = socialMediaType

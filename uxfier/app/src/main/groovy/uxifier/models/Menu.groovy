@@ -9,10 +9,12 @@ class Menu implements Component {
 
 class NavigationMenu implements Component {
     NavigationMenuType menuType
+    String applicationName
 
-    NavigationMenu(List<Component> componentList, NavigationMenuType menuType) {
+    NavigationMenu(List<Component> componentList, NavigationMenuType menuType, String applicationName) {
         this.componentList = componentList
         this.menuType = menuType
+        this.applicationName = applicationName
     }
 }
 

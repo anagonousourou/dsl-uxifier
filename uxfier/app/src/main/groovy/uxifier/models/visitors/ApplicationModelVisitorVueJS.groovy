@@ -71,6 +71,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         //idée plusieurs passages dans l'arbre, premier passage : trouver les dependencies et set certaines informations triviales,
         //passages supplémentaires pour résoudre des liens, du routing ...
         this.vueProject.name = application.name
+        this.vueProject.pageTitle = application.title
         this.vueProject.packageJson.name = application.name
 
         application.navigationMenu.accept(this)
@@ -106,7 +107,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.currentNavigationMenuType = navigationMenu.menuType
         if (this.currentNavigationMenuType == NavigationMenuType.Navbar) {
             VueMenuNavbar menuNavbar = new VueMenuNavbar()
-
+            menuNavbar.setApplicationName(navigationMenu.getApplicationName())
             this.parent = menuNavbar
 
             for (Component comp : navigationMenu.componentList) {
@@ -116,7 +117,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         } else if (this.currentNavigationMenuType == NavigationMenuType.Drawer) {
             VueMenuBar menuBar = new VueMenuBar()
-
+            menuBar.setApplicationName(navigationMenu.getApplicationName())
 
             this.parent = menuBar
 
@@ -160,7 +161,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         var previousParent = this.parent
         var vueActionMenuBar = new VueActionMenuBar()
 
-        this.parent  = vueActionMenuBar
+        this.parent = vueActionMenuBar
         menuBar.componentList.forEach(c -> c.accept(this))
 
         this.parent = previousParent
@@ -171,7 +172,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
     @Override
     def visit(CartAction action) {
-       this.parent.addContent(new VueCartActionMenu(action.label,action.displayCartCount))
+        this.parent.addContent(new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon))
         println("Adding cartaction to ${this.parent}")
     }
 }

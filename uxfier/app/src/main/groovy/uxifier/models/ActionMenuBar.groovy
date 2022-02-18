@@ -16,9 +16,11 @@ class Action implements Component {
 
 class CartAction extends Action {
     boolean displayCartCount = true
+    boolean displayCartIcon = false
 
-    CartAction(String label, boolean displayCartCount) {
+    CartAction(String label, boolean displayCartCount, boolean  displayCartIcon) {
         super(label)
         this.displayCartCount = displayCartCount
+        this.displayCartIcon = displayCartIcon
     }
 }

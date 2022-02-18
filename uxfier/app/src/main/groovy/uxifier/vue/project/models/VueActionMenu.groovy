@@ -1,6 +1,6 @@
 package uxifier.vue.project.models
 
-class VueActionMenu implements VueGeneratable{
+class VueActionMenu implements VueGeneratable {
     String label
 
 

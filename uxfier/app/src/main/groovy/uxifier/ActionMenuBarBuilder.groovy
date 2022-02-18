@@ -17,7 +17,6 @@ class ActionMenuBarBuilder {
     }
 
 
-
     def build() {
         return new ActionMenuBar(actionList)
     }
@@ -26,17 +25,23 @@ class ActionMenuBarBuilder {
 class CartActionBuilder {
     private String _label
     private boolean _dc
+    private boolean useIcon
 
     def label(String _label) {
         this._label = _label
     }
 
-    def displayItemCount(boolean dc) {
-        this._dc = dc
+    def propertyMissing(String propertyName) {
+       if(propertyName.equals("displayItemCount")){
+           this._dc = true
+       }
+        else if(propertyName.equals("useIcon")){
+           this.useIcon = true
+       }
     }
 
     def build() {
-        return new CartAction(this._label, this._dc)
+        return new CartAction(this._label, this._dc, this.useIcon)
     }
 }
 

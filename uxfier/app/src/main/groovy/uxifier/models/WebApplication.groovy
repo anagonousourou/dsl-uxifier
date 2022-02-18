@@ -3,7 +3,7 @@ package uxifier.models
 class WebApplication {
 
     String name
-
+    String title
     List<WebPage> pages = new ArrayList<>()
 
     NavigationMenu navigationMenu
@@ -121,7 +121,9 @@ interface ApplicationModelVisitor {
     def visit(Menu menu)
 
     def visit(Action action)
+
     def visit(ActionMenuBar menuBar)
+
     def visit(CartAction action)
 }
 

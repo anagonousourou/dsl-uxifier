@@ -8,15 +8,20 @@ class NavigationMenuBuilder implements GenericBuilder {
 
     private boolean burger = false
     private NavigationMenuType menuType = NavigationMenuType.Navbar
+    private String applicationName
 
     def burger(boolean useBurger) {
         this.burger = useBurger
     }
 
-    def type(String _type) {
-        this.menuType = NavigationMenuType.valueOf(_type)
+
+    def type(NavigationMenuType _type) {
+        this.menuType = _type
     }
 
+    def ApplicationName(String name){
+        this.applicationName = name
+    }
     def Menu(@DelegatesTo(MenuBuilder) Closure closure) {
         var builder = new MenuBuilder()
         var code = closure.rehydrate(builder, this, this)
@@ -31,6 +36,10 @@ class NavigationMenuBuilder implements GenericBuilder {
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.componentList.add(builder.build())
+    }
+
+    String getApplicationName(){
+        return this.applicationName
     }
 
     NavigationMenuType getMenuType() {
