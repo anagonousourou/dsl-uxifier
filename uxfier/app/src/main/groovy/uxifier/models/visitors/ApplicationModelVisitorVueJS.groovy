@@ -109,8 +109,9 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.vueProject.name = application.name
         this.vueProject.pageTitle = application.title
         this.vueProject.packageJson.name = application.name
-
-        application.navigationMenu.accept(this)
+        if(application.navigationMenu != null){
+            application.navigationMenu.accept(this)
+        }
         for (WebPage webPage : application.pages) {
             webPage.accept(this)
         }

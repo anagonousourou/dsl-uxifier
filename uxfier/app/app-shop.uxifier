@@ -1,0 +1,64 @@
+WebApplication {
+    name 'adeline'
+    pageTitle 'The default title of Adeline !'
+    WebPage {
+        name 'Home'
+        title 'page Title'
+
+        SocialMediaGroup {
+            SocialMedia {
+                type Facebook
+                url 'http://127.0.0.1/'
+            }
+        }
+
+    }
+
+    NavigationMenu {
+        ApplicationName 'Adeline'
+        type Drawer
+        Menu {
+            label 'Products'
+            link '/'
+
+        }
+        Menu {
+            label 'Customers'
+            link '/'
+        }
+        Menu {
+            label 'Orders'
+            link '/'
+        }
+        Menu {
+            label 'Login'
+            link '/'
+        }
+        Menu {
+            label 'My account'
+
+        }
+        CartAction {
+            displayItemCount
+            label 'Mon Panier'
+            useIcon
+
+            /*CartPreview on hover {
+                Article {
+                    displayImage
+                    displayPrice
+                    displayQuantity
+                    allowRemoval
+                }
+                displayTotal
+            }
+
+            CartPreview on click {
+
+            }*/
+        }
+
+    }
+
+
+}
