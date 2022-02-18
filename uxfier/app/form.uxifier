@@ -1,6 +1,7 @@
 WebApplication {
 
     name  'Form20'
+    name  'Form35'
 
      WebPage {
         name 'CheckOut'
