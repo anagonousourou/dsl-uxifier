@@ -60,6 +60,11 @@ class Catalog implements Component{
     String toString(){
         return "product : " + product + "\nfilter : " + filter
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 
@@ -73,6 +78,10 @@ class Product implements Component {
         return "rating : "+ rating+"\n"
     }
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class Rating implements Component{
@@ -81,6 +90,11 @@ class Rating implements Component{
     @Override
     String toString(){
         return "rating type : " + ratingType
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -113,7 +127,10 @@ class Filter implements Component{
 
     }
 
-
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class GenericFilter implements Component{
@@ -126,7 +143,10 @@ class GenericFilter implements Component{
         return "targetAtributName : " + targetAtributName + "\ntargetAtributType" + targetAtributType
     }
 
-
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class PriceFilter implements Component{
@@ -138,6 +158,10 @@ class PriceFilter implements Component{
         return "type : " + priceType
     }
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 enum PriceType {
@@ -192,6 +216,11 @@ class GenericFilters implements Component {
     @Override
     String toString() {
         return "GenericFilters {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -404,7 +433,6 @@ interface ApplicationModelVisitor{
     def visit(Form form)
     def visit(Field field)
     def visit(AccordionGroup accordionGroup)
-    def visit(Accordion accordion)
 
     def visit(Action action)
 
