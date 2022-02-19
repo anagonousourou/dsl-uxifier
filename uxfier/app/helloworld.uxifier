@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'myNew Application'
+    name  'myNewApplication'
 
      WebPage {
             name 'page-name-1'

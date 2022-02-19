@@ -34,9 +34,7 @@ class VueComponent implements VueGeneratable {
         FileContext.writer = Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
         println("wrote <template> ${name}")
-        content.forEach(c -> c.openTagInTemplate())
         content.forEach(c -> c.insertInTemplate())
-        content.forEach(c -> c.closeTagInTemplate())
         println("wrote inserted content ${name}")
         FileContext.writer.write("</template>")
 
@@ -79,16 +77,6 @@ class VueComponent implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("<${this.name}/>")
-    }
-
-    @Override
-    def openTagInTemplate() {
-        return null
-    }
-
-    @Override
-    def closeTagInTemplate() {
-        return null
     }
 
     @Override
@@ -166,16 +154,6 @@ class VueJsSocialMediaGroup implements VueGeneratable {
                     """)
         socialMedia.forEach(s -> s.insertInTemplate())
         FileContext.writer.write("</div>")
-    }
-
-    @Override
-    def openTagInTemplate() {
-        return null
-    }
-
-    @Override
-    def closeTagInTemplate() {
-        return null
     }
 }
 
@@ -499,16 +477,6 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     @Override
-    def openTagInTemplate() {
-        return null
-    }
-
-    @Override
-    def closeTagInTemplate() {
-        return null
-    }
-
-    @Override
     def writeScript() {
         return null
     }
@@ -536,47 +504,18 @@ class VueJsForm implements VueGeneratable{
 
     @Override
     def insertSelfInImports() {
-        FileContext.writer.write("""
-            import '@vaadin/text-field';
-            import '@vaadin/checkbox';
-            import '@vaadin/combo-box';
-            import '@vaadin/email-field';
-            import '@vaadin/date-picker';
-            import '@vaadin/date-time-picker';
-            import '@vaadin/button';
-            import '@vaadin/message-input';
-            import '@vaadin/password-field';
-            import '@vaadin/time-picker';
-            import '@vaadin/upload';
-            
-            import '@vaadin/radio-group';
-            
-            export default {
-            
-            }
-        """)
+        return null
     }
 
     @Override
     def insertInTemplate() {
         println 'creating form : ' + name + 'with fields size' + fields.size()
-        FileContext.writer.write("""<div class=${name}>""")
+        FileContext.writer.write("""<vaadin-form-layout name="${name}">""")
 
         fields.forEach(s -> s.insertInTemplate())
 
-        FileContext.writer.write("""</div>""")
+        FileContext.writer.write("""</vaadin-form-layout>""")
     }
-
-    @Override
-    def openTagInTemplate() {
-        return null
-    }
-
-    @Override
-    def closeTagInTemplate() {
-        return null
-    }
-
 
     @Override
     public String toString() {
@@ -611,21 +550,16 @@ class VueJsField implements VueGeneratable{
     def insertInTemplate() {
         FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
     }
-
-    @Override
-    def openTagInTemplate() {
-        return null
-    }
-
-    @Override
-    def closeTagInTemplate() {
-        return null
-    }
 }
 
 class VueJsAccordionGroup implements VueGeneratable{
 
     List<VueGeneratable> accordions = new ArrayList<>();
+
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
 
     @Override
     def writeScript() {
@@ -634,38 +568,17 @@ class VueJsAccordionGroup implements VueGeneratable{
 
     @Override
     def insertSelfInImports() {
-        println "importing libraries for Accorions"
-        FileContext.writer.write("""
-
-            import '@vaadin/accordion';
-            import '@vaadin/vertical-layout';
-            
-            export default {
-            
-            }
-        """)
+        return null
     }
 
     @Override
     def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-accordion style="width:40%; margin-left: 2%; margin-right: 2%; margin-top: 2%">""")
         for(VueGeneratable v : accordions){
-            v.insertSelfInImports()
-            v.openTagInTemplate()
             v.insertInTemplate()
-            v.closeTagInTemplate()
         }
-    }
-
-    @Override
-    def openTagInTemplate() {
-        FileContext.writer.write("""<vaadin-accordion style="width:50%; margin-left: 2%">""")
-    }
-
-    @Override
-    def closeTagInTemplate() {
         FileContext.writer.write("""</vaadin-accordion>""")
     }
-
 
     @Override
     public String toString() {
@@ -680,6 +593,11 @@ class VueJsAccordion implements VueGeneratable{
     List<VueGeneratable> components = new ArrayList<>()
 
     @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
     def writeScript() {
         return null
     }
@@ -691,23 +609,14 @@ class VueJsAccordion implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-accordion-panel>
+        <vaadin-vertical-layout>""")
         for(VueGeneratable v : components){
             v.insertInTemplate()
         }
-    }
-
-    @Override
-    def openTagInTemplate() {
-        FileContext.writer.write("""<vaadin-accordion-panel>
-        <vaadin-vertical-layout>""")
-    }
-
-    @Override
-    def closeTagInTemplate() {
         FileContext.writer.write("""</vaadin-vertical-layout>
         </vaadin-accordion-panel>""")
     }
-
 
     @Override
     public String toString() {
@@ -797,3 +706,4 @@ class SocialMediaIconInfo {
     String icon
     String color
 }
+

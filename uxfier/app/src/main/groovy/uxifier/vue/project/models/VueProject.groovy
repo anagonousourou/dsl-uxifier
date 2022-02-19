@@ -122,9 +122,7 @@ class AppFile extends VueComponent {
         var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'App.vue'))
         FileContext.writer = Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
-        content.forEach(c -> c.openTagInTemplate())
         content.forEach(c -> c.insertInTemplate())
-        content.forEach(c -> c.closeTagInTemplate())
         FileContext.writer.write("</template>")
     }
 
@@ -145,8 +143,9 @@ class AppFile extends VueComponent {
             import '@vaadin/password-field';
             import '@vaadin/time-picker';
             import '@vaadin/upload';
-            
             import '@vaadin/radio-group';
+            import '@vaadin/accordion';
+            import '@vaadin/vertical-layout';
         """)
         FileContext.writer.write("""export default {
             name: 'App',""")
