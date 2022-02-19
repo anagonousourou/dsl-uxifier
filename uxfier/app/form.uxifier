@@ -1,25 +1,59 @@
 WebApplication {
 
-    name  'Form35'
+    name  'Form3'
 
      WebPage {
-            name 'CheckOut'
-            title 'page Title'
-            Form {
-                name 'formname'
-                FieldGroup{
-                    TextField {name 'TextField'}
-                    EmailField {name 'EmailField'}
-                    DatePicker {name 'DatePicker'}
-                    DateTimePicker {name 'DateTimePicker'}
-                    Button {name 'Button'}
-                    PasswordField {name 'PasswordField'}
-                    RichText {name 'RichText'}
-                    TimePicker {name 'TimePicker'}
-                    Upload {name 'Upload'}
+        name 'CheckOut'
+        title 'page Title'
+        SocialMediaGroup {
+                                                SocialMedia {
+                                                    type Facebook
+                                                    url 'http://127.0.0.1/'
+                                                }
+                     }
+        AccordionGroup{
+            Accordion{
+                name 'Shipment'
+                Form {
+                    name 'formname'
+                    FieldGroup{
+                        TextField {name 'TextField'}
+                        EmailField {name 'EmailField'}
+                        DatePicker {name 'DatePicker'}
+                        DateTimePicker {name 'DateTimePicker'}
+                        Button {name 'Button'}
+                        PasswordField {name 'PasswordField'}
+                        RichText {name 'RichText'}
+                        TimePicker {name 'TimePicker'}
+                        Upload {name 'Upload'}
+                    }
+                }
+                SocialMediaGroup {
+                                                        SocialMedia {
+                                                            type Facebook
+                                                            url 'http://127.0.0.1/'
+                                                        }
+                             }
+            }
+            Accordion{
+                name 'Shipment'
+                Form {
+                    name 'formname'
+                    FieldGroup{
+                        TextField {name 'TextField'}
+                        EmailField {name 'EmailField'}
+                        DatePicker {name 'DatePicker'}
+                        DateTimePicker {name 'DateTimePicker'}
+                        Button {name 'Button'}
+                        PasswordField {name 'PasswordField'}
+                        RichText {name 'RichText'}
+                        TimePicker {name 'TimePicker'}
+                        Upload {name 'Upload'}
+                    }
                 }
             }
+        }
      }
-
-
 }
+
+

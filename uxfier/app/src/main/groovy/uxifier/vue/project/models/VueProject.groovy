@@ -143,8 +143,9 @@ class AppFile extends VueComponent {
             import '@vaadin/password-field';
             import '@vaadin/time-picker';
             import '@vaadin/upload';
-            
             import '@vaadin/radio-group';
+            import '@vaadin/accordion';
+            import '@vaadin/vertical-layout';
         """)
         FileContext.writer.write("""export default {
             name: 'App',""")

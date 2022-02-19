@@ -213,11 +213,19 @@ class VueJsForm implements VueGeneratable{
     @Override
     def insertInTemplate() {
         println 'creating form : ' + name + 'with fields size' + fields.size()
-        FileContext.writer.write("""<div class=${name}>""")
+        FileContext.writer.write("""<vaadin-form-layout name="${name}">""")
 
         fields.forEach(s -> s.insertInTemplate())
 
-        FileContext.writer.write("""</div>""")
+        FileContext.writer.write("""</vaadin-form-layout>""")
+    }
+
+    @Override
+    public String toString() {
+        return "VueJsForm{" +
+                "name='" + name + '\'' +
+                ", fields=" + fields +
+                '}';
     }
 }
 
@@ -243,12 +251,85 @@ class VueJsField implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        println 'creating field'
         FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
-
-
     }
 }
+
+class VueJsAccordionGroup implements VueGeneratable{
+
+    List<VueGeneratable> accordions = new ArrayList<>();
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-accordion style="width:40%; margin-left: 2%; margin-right: 2%; margin-top: 2%">""")
+        for(VueGeneratable v : accordions){
+            v.insertInTemplate()
+        }
+        FileContext.writer.write("""</vaadin-accordion>""")
+    }
+
+    @Override
+    public String toString() {
+        return "VueJsAccordionGroup{" +
+                "accordions=" + accordions +
+                '}';
+    }
+}
+
+class VueJsAccordion implements VueGeneratable{
+    String name
+    List<VueGeneratable> components = new ArrayList<>()
+
+    @Override
+    def registerDependencies() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-accordion-panel>
+        <vaadin-vertical-layout>""")
+        for(VueGeneratable v : components){
+            v.insertInTemplate()
+        }
+        FileContext.writer.write("""</vaadin-vertical-layout>
+        </vaadin-accordion-panel>""")
+    }
+
+    @Override
+    public String toString() {
+        return "VueJsAccordion{" +
+                "name='" + name + '\'' +
+                ", components=" + components +
+                '}';
+    }
+}
+
 
 trait VueGeneratable {
 
