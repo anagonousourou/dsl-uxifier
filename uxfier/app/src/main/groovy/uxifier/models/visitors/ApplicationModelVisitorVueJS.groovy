@@ -50,7 +50,6 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(SocialMediaGroup socialMediaGroup) {
         var tmp = new VueJsSocialMediaGroup()
-
         this.parent.addContent(tmp)
         this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
@@ -59,36 +58,9 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(Form form){
-        var tmp = new VueJsForm()
-        tmp.name = form.name
-        for(Component c : form.componentList){
-            if(c instanceof FieldGroup){
-                for(Field f : (c.componentList as List<Field>)){
-                    var tmpField = new VueJsField()
-                    tmpField.setName(f.name)
-                    tmpField.setType(f.type)
-                    tmp.fields.add(tmpField)
-                }
-            }
-        }
+        var tmp = form.buildVue()
         this.parent.addContent(tmp)
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
-        return tmp
-    }
-
-    def buildForm(Form form){
-        var tmp = new VueJsForm()
-        tmp.name = form.name
-        for(Component c : form.componentList){
-            if(c instanceof FieldGroup){
-                for(Field f : (c.componentList as List<Field>)){
-                    var tmpField = new VueJsField()
-                    tmpField.setName(f.name)
-                    tmpField.setType(f.type)
-                    tmp.fields.add(tmpField)
-                }
-            }
-        }
         return tmp
     }
 
@@ -99,23 +71,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(AccordionGroup accordionGroup){
-        var tmp = new VueJsAccordionGroup();
-
-        for(Accordion a : (accordionGroup.componentList as List<Accordion>)){
-            VueJsAccordion tmpAcc = new VueJsAccordion()
-            tmpAcc.name = a.name
-
-            for(Component c : a.componentList){
-
-                if(c instanceof Form){
-                    tmpAcc.components.add(buildForm(c))
-                }
-                //tmpAcc.components.add(c.accept(this) as VueGeneratable)
-
-            }
-            tmp.accordions.add(tmpAcc)
-        }
-
+        var tmp = accordionGroup.buildVue()
         this.parent.addContent(tmp)
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
         return tmp

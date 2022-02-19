@@ -1,5 +1,12 @@
 package uxifier.models
 
+import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsAccordion
+import uxifier.vue.project.models.VueJsAccordionGroup
+import uxifier.vue.project.models.VueJsField
+import uxifier.vue.project.models.VueJsForm
+import uxifier.vue.project.models.VueJsSocialMediaGroup
+
 class WebApplication {
 
     String name
@@ -25,6 +32,11 @@ class WebPage implements Component{
     String toString() {
         return "WebPage {title = ${title} , name = ${name}, components = ${componentList} }"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class Header implements Component{
@@ -35,16 +47,30 @@ class Header implements Component{
     String toString(){
         return "Header {components = ${componentList} }"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class HorizontalLayout implements Component{
         HorizontalLayout(List<Component> componentList){
             this.componentList = componentList
         }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class VerticalLayout implements Component{
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class SocialMediaGroup implements Component{
@@ -53,6 +79,11 @@ class SocialMediaGroup implements Component{
     }
     String toString(){
         return "SocialMediaGroup {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -63,6 +94,11 @@ class SocialMedia implements Component{
     @Override
     String toString() {
         return "SocialMedia {type = ${type},url = ${url} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -95,6 +131,23 @@ class Form implements Component{
                 ", components = ${componentList} " +
                 '}';
     }
+
+    @Override
+    def buildVue() {
+        var vue = new VueJsForm()
+        vue.name = this.name
+        for(Component c : this.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    vue.fields.add(tmpField)
+                }
+            }
+        }
+        return vue
+    }
 }
 
 class FieldGroup implements Component{
@@ -104,6 +157,11 @@ class FieldGroup implements Component{
     @Override
     String toString(){
         return "FieldGroup {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -118,6 +176,11 @@ class Field implements Component{
                 "type='" + type + '\'' +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -134,6 +197,23 @@ class AccordionGroup implements Component{
     String toString(){
         return "AccordionGroup {components = ${componentList} }"
     }
+
+    @Override
+    def buildVue() {
+        var tmp = new VueJsAccordionGroup();
+        for(Accordion a : (this.componentList as List<Accordion>)){
+            VueJsAccordion tmpAcc = new VueJsAccordion()
+            tmpAcc.name = a.name
+            for(Component c : a.componentList){
+                var vue = c.buildVue()
+                if(vue == null)
+                    continue
+                tmpAcc.components.add(vue as VueGeneratable)
+            }
+            tmp.accordions.add(tmpAcc)
+        }
+        return tmp
+    }
 }
 
 class Accordion implements Component{
@@ -148,6 +228,11 @@ class Accordion implements Component{
     String toString(){
         return "Accordion {name = ${name}, components = ${componentList}}"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 
@@ -161,6 +246,8 @@ trait Component implements ApplicationModelVisitable {
     String toString() {
         return "Component {components = ${componentList} }"
     }
+
+    abstract def buildVue()
 
     @Override
     def accept(ApplicationModelVisitor visitor) {
