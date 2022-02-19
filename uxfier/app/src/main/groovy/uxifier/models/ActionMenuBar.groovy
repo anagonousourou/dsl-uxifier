@@ -4,6 +4,11 @@ class ActionMenuBar implements Component {
     ActionMenuBar(List<Component> componentList) {
         this.componentList = componentList
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class Action implements Component {
@@ -11,6 +16,11 @@ class Action implements Component {
 
     Action(String _label) {
         this.label = _label
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 

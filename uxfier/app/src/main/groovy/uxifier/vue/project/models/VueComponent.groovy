@@ -260,7 +260,7 @@ class VueJsAccordionGroup implements VueGeneratable{
     List<VueGeneratable> accordions = new ArrayList<>();
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 
@@ -296,7 +296,7 @@ class VueJsAccordion implements VueGeneratable{
     List<VueGeneratable> components = new ArrayList<>()
 
     @Override
-    def registerDependencies() {
+    def registerDependencies(PackageJson packageJson) {
         return null
     }
 

@@ -164,7 +164,6 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
             this.vueProject.sourceDirectory.appFile.content.add(menuBar)
         }
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core', '22.0.5')
-        return vueComponent
     }
 
     @Override
