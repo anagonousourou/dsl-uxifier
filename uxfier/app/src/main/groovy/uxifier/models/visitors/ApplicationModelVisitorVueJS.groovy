@@ -78,10 +78,12 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(SocialMediaGroup socialMediaGroup) {
+        var previousParent = this.parent
         var tmp = new VueJsSocialMediaGroup()
         this.parent.addContent(tmp)
         this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
+        this.parent = previousParent
         return tmp
     }
 
@@ -194,7 +196,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(GenericFilter genericFilter) {
 
-        println("inside product ==========" + genericFilter)
+        println("inside generic filter ==========" + genericFilter)
 
 
         var tmp = new VueJsGenericFilter(genericFilter.targetAtributType, genericFilter.targetAtributName)

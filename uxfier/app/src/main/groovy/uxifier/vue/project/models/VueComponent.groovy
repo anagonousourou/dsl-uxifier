@@ -296,6 +296,8 @@ class VueJsProduct implements VueGeneratable {
         this.product = product
     }
 
+
+
     @Override
     def insertInData() {
         FileContext.writer.write("""
@@ -402,6 +404,7 @@ class VueJsCatalog implements VueGeneratable {
 
     @Override
     def insertInData() {
+        println("generate product data")
         product.insertInData()
         filtre.insertInData()
     }

@@ -7,21 +7,6 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import uxifier.models.*
-import uxifier.models.Accordion
-import uxifier.models.AccordionGroup
-import uxifier.models.ActionMenuBar
-import uxifier.models.Component
-import uxifier.models.Field
-import uxifier.models.FieldGroup
-import uxifier.models.Form
-import uxifier.models.Header
-import uxifier.models.HorizontalLayout
-import uxifier.models.NavigationMenu
-import uxifier.models.SocialMedia
-import uxifier.models.SocialMediaGroup
-import uxifier.models.SocialMediaType
-import uxifier.models.WebApplication
-import uxifier.models.WebPage
 import uxifier.models.visitors.ApplicationModelVisitorVueJS
 
 class App {
