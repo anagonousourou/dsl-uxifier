@@ -3,7 +3,7 @@ package uxifier.models
 class WebApplication {
 
     String name
-
+    String title
     List<WebPage> pages = new ArrayList<>()
 
     NavigationMenu navigationMenu
@@ -14,12 +14,12 @@ class WebApplication {
     }
 
 
-    def addWebPage(WebPage page) {
+    def addWebPage(WebPage page){
         this.pages.add(page)
     }
 }
 
-class WebPage implements Component {
+class WebPage implements Component{
     String name
     String title
 
@@ -136,24 +136,24 @@ enum PriceType {
 
 
 
-class Header implements Component {
-    Header(List<Component> componentList) {
+
+class Header implements Component{
+    Header(List<Component> componentList){
         this.componentList = componentList
     }
-
     @Override
-    String toString() {
+    String toString(){
         return "Header {components = ${componentList} }"
     }
 }
 
-class HorizontalLayout implements Component {
-    HorizontalLayout(List<Component> componentList) {
-        this.componentList = componentList
-    }
+class HorizontalLayout implements Component{
+        HorizontalLayout(List<Component> componentList){
+            this.componentList = componentList
+        }
 }
 
-class VerticalLayout implements Component {
+class VerticalLayout implements Component{
 
 }
 
@@ -169,17 +169,18 @@ class GenericFilters implements Component {
     }
 }
 
-class SocialMediaGroup implements Component {
-    SocialMediaGroup(List<Component> componentList) {
+
+
+class SocialMediaGroup implements Component{
+    SocialMediaGroup(List<Component> componentList){
         this.componentList = componentList
     }
-
-    String toString() {
+    String toString(){
         return "SocialMediaGroup {components = ${componentList} }"
     }
 }
 
-class SocialMedia implements Component {
+class SocialMedia implements Component{
     SocialMediaType type
     String url
 
@@ -196,6 +197,82 @@ enum SocialMediaType {
     Instagram,
     Twitter,
     Pinterest
+}
+
+class Form implements Component{
+    String name
+
+    Form(){}
+
+    Form(List<Component> componentList){
+        this.componentList = componentList
+    }
+
+    Form(String name, List<Component> componentList){
+        this.componentList = componentList
+        this.name = name
+    }
+
+    @Override
+    public String toString() {
+        return "Form{" +
+                "name='" + name + '\'' +
+                ", components = ${componentList} " +
+                '}';
+    }
+}
+
+class FieldGroup implements Component{
+    FieldGroup(List<Component> componentList){
+        this.componentList = componentList
+    }
+    @Override
+    String toString(){
+        return "FieldGroup {components = ${componentList} }"
+    }
+}
+
+class Field implements Component{
+    String type
+    String name
+
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+
+class AccordionGroup implements Component{
+
+    AccordionGroup(){
+        this.componentList = new ArrayList<>()
+    }
+
+    AccordionGroup(List<Component> componentList){
+        this.componentList = componentList
+    }
+    @Override
+    String toString(){
+        return "AccordionGroup {components = ${componentList} }"
+    }
+}
+
+class Accordion implements Component{
+    String name
+
+    Accordion(){
+        this.componentList = new ArrayList<>()
+    }
+
+
+    @Override
+    String toString(){
+        return "Accordion {name = ${name}, components = ${componentList}}"
+    }
 }
 
 
@@ -220,7 +297,7 @@ interface ApplicationModelVisitable {
     def accept(ApplicationModelVisitor visitor)
 }
 
-interface ApplicationModelVisitor {
+interface ApplicationModelVisitor{
     def visit(SocialMedia media)
 
     def visit(HorizontalLayout layout)
@@ -239,10 +316,16 @@ interface ApplicationModelVisitor {
     def visit(NavigationMenu navigationMenu)
 
     def visit(Menu menu)
+    def visit(Form form)
+    def visit(Field field)
+    def visit(AccordionGroup accordionGroup)
 
     def visit(Action action)
+
     def visit(ActionMenuBar menuBar)
+
     def visit(CartAction action)
+    def visit(Accordion accordion)
     def visit(Filter filter)
     def visit(PriceFilter priceFilter)
     def visit(Product product)
@@ -250,11 +333,11 @@ interface ApplicationModelVisitor {
     def visit(GenericFilter genericFilter)
 }
 
-trait LeafComponent {
+trait LeafComponent{
 
 }
 
-trait CompositeComponent {
+trait CompositeComponent{
 
 }
 

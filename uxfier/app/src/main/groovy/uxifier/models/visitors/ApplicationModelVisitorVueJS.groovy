@@ -1,5 +1,7 @@
 package uxifier.models.visitors
 
+import uxifier.models.Accordion
+import uxifier.models.AccordionGroup
 import uxifier.models.Action
 import uxifier.models.ActionMenuBar
 import uxifier.models.ApplicationModelVisitor
@@ -9,6 +11,9 @@ import uxifier.models.Component
 import uxifier.models.Filter
 import uxifier.models.GenericFilter
 import uxifier.models.GenericFilters
+import uxifier.models.Field
+import uxifier.models.FieldGroup
+import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.Menu
@@ -26,6 +31,10 @@ import uxifier.vue.project.models.VueActionMenuBar
 import uxifier.vue.project.models.VueCartActionMenu
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsAccordion
+import uxifier.vue.project.models.VueJsAccordionGroup
+import uxifier.vue.project.models.VueJsField
+import uxifier.vue.project.models.VueJsForm
 import uxifier.vue.project.models.VueJsCatalog
 import uxifier.vue.project.models.VueJsFilter
 import uxifier.vue.project.models.VueJsGenericFilter
@@ -41,10 +50,10 @@ import uxifier.vue.project.models.VueMenuItemNavbar
 import uxifier.vue.project.models.VueMenuNavbar
 import uxifier.vue.project.models.VueProject
 
-class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
+class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     int count = 1
 
-    VueProject vueProject = new VueProject()
+    VueProject vueProject=new VueProject()
 
     private VueGeneratable parent
 
@@ -54,6 +63,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
     def visit(SocialMedia media) {
         var tmp = new VueJsSocialMedia(media.type.toString(), media.url)
         this.parent.addContent(tmp)
+        return tmp
     }
 
     @Override
@@ -71,8 +81,78 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         var tmp = new VueJsSocialMediaGroup()
 
         this.parent.addContent(tmp)
-        this.parent = tmp
+        this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
+        return tmp
+    }
+
+    @Override
+    def visit(Form form){
+        var tmp = new VueJsForm()
+        tmp.name = form.name
+        for(Component c : form.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    tmp.fields.add(tmpField)
+                }
+            }
+        }
+        this.parent.addContent(tmp)
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        return tmp
+    }
+
+    def buildForm(Form form){
+        var tmp = new VueJsForm()
+        tmp.name = form.name
+        for(Component c : form.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    tmp.fields.add(tmpField)
+                }
+            }
+        }
+        return tmp
+    }
+
+    @Override
+    def visit(Field field){
+        return null
+    }
+
+    @Override
+    def visit(AccordionGroup accordionGroup){
+        var tmp = new VueJsAccordionGroup();
+
+        for(Accordion a : (accordionGroup.componentList as List<Accordion>)){
+            VueJsAccordion tmpAcc = new VueJsAccordion()
+            tmpAcc.name = a.name
+
+            for(Component c : a.componentList){
+
+                if(c instanceof Form){
+                    tmpAcc.components.add(buildForm(c))
+                }
+                //tmpAcc.components.add(c.accept(this) as VueGeneratable)
+
+            }
+            tmp.accordions.add(tmpAcc)
+        }
+
+        this.parent.addContent(tmp)
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        return tmp
+    }
+
+    @Override
+    def visit(Accordion accordion){
+        return null
     }
 
     @Override
@@ -85,9 +165,11 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         //idée plusieurs passages dans l'arbre, premier passage : trouver les dependencies et set certaines informations triviales,
         //passages supplémentaires pour résoudre des liens, du routing ...
         this.vueProject.name = application.name
+        this.vueProject.pageTitle = application.title
         this.vueProject.packageJson.name = application.name
-
-        application.navigationMenu.accept(this)
+        if(application.navigationMenu != null){
+            application.navigationMenu.accept(this)
+        }
         for (WebPage webPage : application.pages) {
             webPage.accept(this)
         }
@@ -192,7 +274,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         this.currentNavigationMenuType = navigationMenu.menuType
         if (this.currentNavigationMenuType == NavigationMenuType.Navbar) {
             VueMenuNavbar menuNavbar = new VueMenuNavbar()
-
+            menuNavbar.setApplicationName(navigationMenu.getApplicationName())
             this.parent = menuNavbar
 
             for (Component comp : navigationMenu.componentList) {
@@ -202,7 +284,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
         } else if (this.currentNavigationMenuType == NavigationMenuType.Drawer) {
             VueMenuBar menuBar = new VueMenuBar()
-
+            menuBar.setApplicationName(navigationMenu.getApplicationName())
 
             this.parent = menuBar
 
@@ -246,7 +328,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
         var previousParent = this.parent
         var vueActionMenuBar = new VueActionMenuBar()
 
-        this.parent  = vueActionMenuBar
+        this.parent = vueActionMenuBar
         menuBar.componentList.forEach(c -> c.accept(this))
 
         this.parent = previousParent
@@ -257,7 +339,7 @@ class ApplicationModelVisitorVueJS implements ApplicationModelVisitor {
 
     @Override
     def visit(CartAction action) {
-       this.parent.addContent(new VueCartActionMenu(action.label,action.displayCartCount))
+        this.parent.addContent(new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon))
         println("Adding cartaction to ${this.parent}")
     }
 }

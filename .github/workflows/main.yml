@@ -1,0 +1,30 @@
+name: Continuous integration
+
+on :
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+        cache: gradle
+    - name: check if compile & work
+      working-directory: ./uxfier
+      run: |
+        ./gradlew run --args app.uxifier
+        ./gradlew run --args form.uxifier

@@ -1,8 +1,12 @@
 package uxifier.vue.project.models
 
 class VueMenuNavbar extends VueComponent {
-    List<VueGeneratable> menus = new ArrayList<>();
+    List<VueGeneratable> menus = new ArrayList<>()
+    String applicationName
 
+    void setApplicationName(String appname){
+        this.applicationName = appname
+    }
     @Override
     def registerDependencies(PackageJson packageJson) {
         println("Registering vaadin-core in ")
@@ -37,7 +41,12 @@ import "@vaadin/tabs";
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
- <vaadin-app-layout >
+ <vaadin-app-layout >""")
+        if(this.applicationName != null && !this.applicationName.isBlank()){
+            FileContext.writer.write("""<h1 slot="navbar">${this.applicationName}</h1>""")
+        }
+
+        FileContext.writer.write("""
     <vaadin-tabs slot="navbar">
 """
         )
@@ -73,7 +82,7 @@ class VueMenuItemNavbar extends VueComponent {
     def insertInTemplate() {
         FileContext.writer.write(""" 
     <vaadin-tab>
-      <a tabindex="-1" href="${this.link}"> 
+      <a tabindex="-1" > 
         ${this.label}
       </a>
     </vaadin-tab>""")
