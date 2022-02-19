@@ -91,7 +91,7 @@ class SourceDirectory {
 }
 
 class MainJsFile {
-    def toCode() {
+    static def toCode() {
         Path mainjs = Files.createFile(Path.of(FileContext.currentDirectory.toString(), "main.js"))
         FileContext.writeToFile(mainjs, """
 import { createApp } from 'vue'

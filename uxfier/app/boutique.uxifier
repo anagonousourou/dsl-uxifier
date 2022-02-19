@@ -11,6 +11,7 @@ WebApplication {
         Catalog {
 
             Product {
+
                 Rating {
                     ratingType Stars
                 }
@@ -37,4 +38,31 @@ WebApplication {
         }
 
     }
+    NavigationMenu{
+                type 'Navbar'
+                Menu{
+                    label 'Products'
+                    link '/'
+                }
+                Menu{
+                    label 'Customers'
+                    link '/'
+                }
+                Menu{
+                    label 'Orders'
+                    link '/'
+                }
+                Menu{
+                    label 'Login'
+                    link '/'
+                }
+                Menu{
+                    label 'My account'
+                }
+                CartAction{
+                    displayItemCount true
+                    label 'Mon Panier'
+                }
+           }
+
 }

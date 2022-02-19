@@ -2,12 +2,8 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
-import uxifier.models.Catalog
-import uxifier.models.Filter
-import uxifier.models.PriceFilter
 import uxifier.models.PriceType
 import uxifier.models.Product
-import uxifier.models.Rating
 import uxifier.models.RatingType
 
 import java.nio.file.Files
@@ -58,7 +54,17 @@ class VueComponent implements VueGeneratable {
     def writeScript() {
         FileContext.writer.write("<script>")
         content.forEach(c -> c.insertSelfInImports())
-        FileContext.writer.write("</script>")
+
+        FileContext.writer.write("""export default {
+            name: '${name}',""")
+
+        FileContext.writer.write("""components :{""")
+
+        content.forEach(c -> c.registerSelfInComponents())
+        FileContext.writer.write("}, data() {\nreturn{")
+        content.forEach(c -> c.insertInData())
+
+        FileContext.writer.write("}}}\n</script>")
 
         FileContext.writer.close()
         FileContext.writer = null
@@ -208,8 +214,13 @@ class VueJsFilter implements VueGeneratable {
     def insertInTemplate() {
         FileContext.writer.write("""
             <h3> filter </h3>
-            <div> priceFilter = "${priceFilter.insertInTemplate()}"</div><br>
-            <div> genericFilters = "${genericFilters.insertInTemplate()}"</div><br>
+            <div> priceFilter = """)
+        priceFilter.insertInTemplate()
+        FileContext.writer.write("""</div><br>
+            <div> genericFilters = """)
+        genericFilters.insertInTemplate()
+        FileContext.writer.write("""
+            </div><br>
         """)
     }
 }
@@ -285,6 +296,17 @@ class VueJsProduct implements VueGeneratable {
     }
 
     @Override
+    def insertInData() {
+        FileContext.writer.write("""
+            products: [
+              { name: 'Foo' },
+              { name: 'Bar' },
+              { name: 'Dir' }
+            ]
+        """)
+    }
+
+    @Override
     def registerDependencies(PackageJson packageJson) {
         return null
     }
@@ -309,9 +331,9 @@ class VueJsProduct implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
-            <h1> Context</h1>
             <h3> product </h3>
             <p> product rating ="${product.rating.ratingType}" </p><br>
+            <span> {{product.name}} </span>
         """)
     }
 
@@ -377,6 +399,11 @@ class VueJsCatalog implements VueGeneratable {
         return null
     }
 
+    @Override
+    def insertInData() {
+        product.insertInData()
+        filtre.insertInData()
+    }
 
     @Override
     def writeTemplate() {
@@ -400,7 +427,7 @@ class VueJsCatalog implements VueGeneratable {
         FileContext.writer.write("""
             <h1> Context</h1>
             <h3> products </h3>
-            <div v-for="product in products">  """)
+            <div v-for="product in products" :key="product.name">  """)
 
         product.insertInTemplate()
 
@@ -470,6 +497,9 @@ trait VueGeneratable {
      * Write own template
      */
     def writeTemplate() {
+
+    }
+    def insertInData(){
 
     }
 
