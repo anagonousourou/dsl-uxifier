@@ -4,22 +4,8 @@
 package uxifier
 
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
-import uxifier.models.ActionMenuBar
-import uxifier.models.Accordion
-import uxifier.models.AccordionGroup
-import uxifier.models.Component
-import uxifier.models.Field
-import uxifier.models.FieldGroup
-import uxifier.models.Form
-import uxifier.models.Header
-import uxifier.models.HorizontalLayout
-import uxifier.models.NavigationMenu
-import uxifier.models.SocialMedia
-import uxifier.models.SocialMediaGroup
-import uxifier.models.SocialMediaType
-import uxifier.models.WebApplication
-import uxifier.models.WebPage
 import uxifier.models.*
 import uxifier.models.visitors.ApplicationModelVisitorVueJS
 
@@ -57,7 +43,7 @@ class ScriptInterpreter {
 
     private static CompilerConfiguration getDSLConfiguration() {
         var secure = new SecureASTCustomizer()
-        secure.setAllowedStaticStarImports(['uxifier.models.SocialMediaType','uxifier.models.NavigationMenuType'])
+        secure.setAllowedStaticStarImports(['uxifier.models.SocialMediaType', 'uxifier.models.NavigationMenuType'])
         secure.setClosuresAllowed(true)
 
         /*secure.with {
@@ -77,7 +63,7 @@ class ScriptInterpreter {
 
         def configuration = new CompilerConfiguration()
         var icz = new ImportCustomizer()
-        icz = icz.addStaticStars('uxifier.models.SocialMediaType','uxifier.models.NavigationMenuType')
+        icz = icz.addStaticStars('uxifier.models.SocialMediaType', 'uxifier.models.NavigationMenuType')
         configuration.addCompilationCustomizers(icz, secure)
         return configuration
     }
@@ -98,7 +84,8 @@ class WebApplicationBuilder {
         }
         this.webApplication.name = appName
     }
-    def pageTitle(String title){
+
+    def pageTitle(String title) {
         this.webApplication.title = title
     }
 
@@ -230,7 +217,7 @@ trait GenericBuilder {
         this.componentList.add(builder.build())
     }
 
-    def Form(@DelegatesTo(FormBuilder) Closure closure){
+    def Form(@DelegatesTo(FormBuilder) Closure closure) {
         var formBuilder = new FormBuilder()
         def code = closure.rehydrate(formBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -239,16 +226,16 @@ trait GenericBuilder {
     }
 
 
-    def Catalog(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=CatalogBuilder) Closure closure){
+    def Catalog(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = CatalogBuilder) Closure closure) {
         var catalogBuilder = new CatalogBuilder()
-        def  code = closure.rehydrate(catalogBuilder, this, this)
+        def code = closure.rehydrate(catalogBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_ONLY
         code()
         this.componentList.addAll(new Catalog(catalogBuilder.build()))
     }
 
-    List<Component> build(){
-    def AccordionGroup(@DelegatesTo(AccordionGroupBuilder) Closure closure){
+
+    def AccordionGroup(@DelegatesTo(AccordionGroupBuilder) Closure closure) {
         var accordionGroupBuilder = new AccordionGroupBuilder()
         def code = closure.rehydrate(accordionGroupBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -256,28 +243,28 @@ trait GenericBuilder {
         addComponent(accordionGroupBuilder.buildAccordionGroup())
     }
 
-    def addComponent(Component component){
+    def addComponent(Component component) {
         this.componentList.addAll(component)
     }
 
-    List<Component> build(){
+    List<Component> build() {
         return componentList
     }
 }
 
 class CatalogBuilder implements GenericBuilder {
 
-    def Product(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=ProductBuilder) Closure closure) {
+    def Product(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ProductBuilder) Closure closure) {
         var productBuilder = new ProductBuilder()
-        def  code = closure.rehydrate(productBuilder, this, this)
+        def code = closure.rehydrate(productBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.componentList.add(productBuilder.buildProduct())
     }
 
-    def Filter(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FilterBuilder) Closure closure){
+    def Filter(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FilterBuilder) Closure closure) {
         var filterBuilder = new FilterBuilder()
-        def  code = closure.rehydrate(filterBuilder, this, this)
+        def code = closure.rehydrate(filterBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.componentList.add(new Filter(filterBuilder.build()))
@@ -290,13 +277,13 @@ class ProductBuilder {
 
     Product product = new Product()
 
-    def buildProduct(){
+    def buildProduct() {
         return this.product
     }
 
-    def Rating(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=RatingBuilder) Closure closure){
+    def Rating(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RatingBuilder) Closure closure) {
         var ratingBuilder = new RatingBuilder()
-        def  code = closure.rehydrate(ratingBuilder, this, this)
+        def code = closure.rehydrate(ratingBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.product.setRating(ratingBuilder.build())
@@ -311,22 +298,22 @@ class RatingBuilder {
     final RatingType Bar = RatingType.Bar
     final RatingType Mark = RatingType.Mark
 
-    def ratingType(RatingType type){
+    def ratingType(RatingType type) {
         this.rating.ratingType = type
     }
 
-    Rating build(){
+    Rating build() {
         return this.rating
     }
 
 }
 
 
-class FilterBuilder implements GenericBuilder{
+class FilterBuilder implements GenericBuilder {
 
-    def PriceFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PriceFilterBuilder) Closure closure){
+    def PriceFilter(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = PriceFilterBuilder) Closure closure) {
         var priceFilterBuilder = new PriceFilterBuilder()
-        def  code = closure.rehydrate(priceFilterBuilder, this, this)
+        def code = closure.rehydrate(priceFilterBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         this.componentList.add(priceFilterBuilder.build())
@@ -347,9 +334,9 @@ class FilterBuilder implements GenericBuilder{
 
 class GenericFiltersBuilder implements GenericBuilder {
 
-    def GenericFilter (@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=GenericFilterBuilder) Closure closure){
+    def GenericFilter(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = GenericFilterBuilder) Closure closure) {
         var genericFilterBuilder = new GenericFilterBuilder()
-        def  code = closure.rehydrate(genericFilterBuilder, this, this)
+        def code = closure.rehydrate(genericFilterBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         this.componentList.add(genericFilterBuilder.build())
     }
@@ -362,11 +349,11 @@ class PriceFilterBuilder {
     final PriceType Range = PriceType.Range
     final PriceType Bar = PriceType.Bar
 
-    def priceType(PriceType type){
+    def priceType(PriceType type) {
         this.priceFilter.priceType = type
     }
 
-    PriceFilter build(){
+    PriceFilter build() {
         return this.priceFilter
     }
 }
@@ -376,27 +363,26 @@ class GenericFilterBuilder {
 
     GenericFilter genericFilter = new GenericFilter()
 
-    def targetAtributName(String name){
+    def targetAtributName(String name) {
         this.genericFilter.targetAtributName = name
     }
 
-    def targetAtributType(String type){
+    def targetAtributType(String type) {
         this.genericFilter.targetAtributType = type
     }
 
-    GenericFilter build(){
+    GenericFilter build() {
         return this.genericFilter
     }
 
 }
 
 
-
-
-class SocialMediaGroupBuiler implements  GenericBuilder{
-    def SocialMedia(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SocialMediaBuilder) Closure closure){
+class SocialMediaGroupBuiler implements GenericBuilder {
+    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
         var socialMediaBuilder = new SocialMediaBuilder()
-        def code = closure.rehydrate(socialMediaBuilder, this, this)//permet de définir que tous les appels de méthodes
+        def code = closure.rehydrate(socialMediaBuilder, this, this)
+//permet de définir que tous les appels de méthodes
         code.resolveStrategy = Closure.OWNER_FIRST
 //à l'intérieur de la closure seront résolus en utilisant le delegate
         code()
@@ -421,14 +407,14 @@ class SocialMediaBuilder {
     }
 }
 
-class FormBuilder implements GenericBuilder{
+class FormBuilder implements GenericBuilder {
     String _name
 
     def name(String name) {
         this._name = name
     }
 
-    def FieldGroup(@DelegatesTo(FieldGroupBuilder) Closure closure){
+    def FieldGroup(@DelegatesTo(FieldGroupBuilder) Closure closure) {
         var fieldGroupBuilder = new FieldGroupBuilder()
         def code = closure.rehydrate(fieldGroupBuilder, this, this)
         code.resolveStrategy = Closure.OWNER_FIRST
@@ -445,9 +431,9 @@ class FormBuilder implements GenericBuilder{
     }
 }
 
-class FieldGroupBuilder implements GenericBuilder{
+class FieldGroupBuilder implements GenericBuilder {
 
-    def TextField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+    def TextField(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -455,7 +441,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('text-field')
         this.componentList.add(fieldBuilder.build())
     }
-    def CheckBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def CheckBox(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -463,7 +450,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('checkbox')
         this.componentList.add(fieldBuilder.build())
     }
-    def ComboBox(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def ComboBox(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -471,7 +459,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('combo-box')
         this.componentList.add(fieldBuilder.build())
     }
-    def EmailField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def EmailField(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -479,7 +468,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('email-field')
         this.componentList.add(fieldBuilder.build())
     }
-    def DatePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def DatePicker(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -487,7 +477,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('date-picker')
         this.componentList.add(fieldBuilder.build())
     }
-    def DateTimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def DateTimePicker(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -495,7 +486,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('date-time-picker')
         this.componentList.add(fieldBuilder.build())
     }
-    def Button(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def Button(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -503,7 +495,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('button')
         this.componentList.add(fieldBuilder.build())
     }
-    def PasswordField(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def PasswordField(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -511,7 +504,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('password-field')
         this.componentList.add(fieldBuilder.build())
     }
-    def RichText(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def RichText(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -519,7 +513,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('rich-text-editor')
         this.componentList.add(fieldBuilder.build())
     }
-    def TimePicker(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def TimePicker(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -527,7 +522,8 @@ class FieldGroupBuilder implements GenericBuilder{
         fieldBuilder.type('time-picker')
         this.componentList.add(fieldBuilder.build())
     }
-    def Upload(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=FieldBuilder) Closure closure){
+
+    def Upload(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
         var fieldBuilder = new FieldBuilder()
         def code = closure.rehydrate(fieldBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -540,13 +536,15 @@ class FieldGroupBuilder implements GenericBuilder{
 class FieldBuilder {
     Field field = new Field();
 
-    def name(String name){
+    def name(String name) {
         this.field.name = name;
     }
-    def type(String type){
+
+    def type(String type) {
         this.field.type = type;
     }
-    Field build(){
+
+    Field build() {
         return this.field;
     }
 }
@@ -554,7 +552,7 @@ class FieldBuilder {
 class AccordionGroupBuilder implements GenericBuilder {
     AccordionGroup accordionGroup = new AccordionGroup();
 
-    def Accordion(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=AccordionBuilder)Closure closure){
+    def Accordion(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = AccordionBuilder) Closure closure) {
         var accordionBuilder = new AccordionBuilder()
         def code = closure.rehydrate(accordionBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -562,24 +560,24 @@ class AccordionGroupBuilder implements GenericBuilder {
         this.accordionGroup.componentList.add(accordionBuilder.buildAccordion())
     }
 
-    AccordionGroup buildAccordionGroup(){
+    AccordionGroup buildAccordionGroup() {
         return accordionGroup;
     }
 
 }
 
-class AccordionBuilder implements GenericBuilder{
+class AccordionBuilder implements GenericBuilder {
     Accordion accordion = new Accordion()
 
-    def name(String name){
+    def name(String name) {
         this.accordion.name = name;
     }
 
-    Accordion buildAccordion(){
+    Accordion buildAccordion() {
         return accordion;
     }
 
-    def addComponent(Component component){
+    def addComponent(Component component) {
         this.accordion.componentList.addAll(component)
     }
 
@@ -595,3 +593,4 @@ class HorizontalLayoutBuilder implements GenericBuilder {
 
 
 }
+
