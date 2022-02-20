@@ -17,10 +17,12 @@ class Action implements Component {
 class CartAction extends Action {
     boolean displayCartCount = true
     boolean displayCartIcon = false
+    CartPreview cartPreview = null
 
-    CartAction(String label, boolean displayCartCount, boolean  displayCartIcon) {
+    CartAction(String label, boolean displayCartCount, boolean  displayCartIcon, CartPreview cartPreview) {
         super(label)
         this.displayCartCount = displayCartCount
         this.displayCartIcon = displayCartIcon
+        this.cartPreview = cartPreview
     }
 }

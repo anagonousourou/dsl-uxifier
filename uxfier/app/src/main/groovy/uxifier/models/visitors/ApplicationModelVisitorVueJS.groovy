@@ -6,6 +6,7 @@ import uxifier.models.Action
 import uxifier.models.ActionMenuBar
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.CartAction
+import uxifier.models.CartPreview
 import uxifier.models.Component
 import uxifier.models.Field
 import uxifier.models.FieldGroup
@@ -22,6 +23,8 @@ import uxifier.models.WebPage
 import uxifier.vue.project.models.VueActionMenu
 import uxifier.vue.project.models.VueActionMenuBar
 import uxifier.vue.project.models.VueCartActionMenu
+import uxifier.vue.project.models.VueCartPreview
+import uxifier.vue.project.models.VueCartPreviewArticle
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsAccordion
@@ -253,7 +256,25 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(CartAction action) {
-        this.parent.addContent(new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon))
-        println("Adding cartaction to ${this.parent}")
+        var vueAction = new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon)
+        if(action.cartPreview != null){
+            var previousAction = this.parent
+            this.parent = vueAction
+            action.cartPreview.accept(this)
+            this.parent = previousAction
+        }
+        this.parent.addContent(vueAction)
+        println("Adding cartaction")
     }
+
+    @Override
+    def visit(CartPreview cartPreview) {
+        var vueCartPreview = new VueCartPreview()
+        vueCartPreview.displayTotal = cartPreview.displayTotal
+
+        vueCartPreview.setArticleInCartPreview(new VueCartPreviewArticle(cartPreview.articleInCartPreview))
+
+        (this.parent as VueCartActionMenu ).setCartPreview(vueCartPreview)
+    }
+
 }

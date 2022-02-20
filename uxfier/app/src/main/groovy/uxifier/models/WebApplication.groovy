@@ -198,6 +198,8 @@ interface ApplicationModelVisitor{
 
     def visit(CartAction action)
     def visit(Accordion accordion)
+
+    def visit(CartPreview cartPreview)
 }
 
 trait LeafComponent{
