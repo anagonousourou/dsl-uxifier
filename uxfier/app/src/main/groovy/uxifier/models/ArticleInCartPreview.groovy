@@ -5,4 +5,9 @@ class ArticleInCartPreview implements Component{
     boolean  displayPrice = false
     boolean  displayQuantity = false
     boolean  allowRemoval = false
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
