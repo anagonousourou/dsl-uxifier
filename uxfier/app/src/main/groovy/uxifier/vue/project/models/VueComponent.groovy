@@ -182,6 +182,9 @@ class VueJsPriceFilter implements VueGeneratable {
     }
 
     @Override
+    def insertInData(){}
+
+    @Override
     def insertInTemplate() {
         FileContext.writer.write("""
             <p> price filter type  ="${type}" </p><br>
@@ -204,6 +207,12 @@ class VueJsFilter implements VueGeneratable {
     @Override
     def writeScript() {
         return null
+    }
+
+    @Override
+    def insertInData(){
+        priceFilter.insertInData()
+        genericFilters.insertInData()
     }
 
     @Override
@@ -276,6 +285,14 @@ class VueJsGenericFilters implements VueGeneratable {
         return null
     }
 
+
+    @Override
+    def insertInData(){
+        for (VueGeneratable v: genericFilters){
+            v.insertInData()
+        }
+    }
+
     @Override
     def insertSelfInImports() {
         return null
@@ -334,9 +351,11 @@ class VueJsProduct implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
-            <h3> product </h3>
-            <p> product rating ="${product.rating.ratingType}" </p><br>
-            <span> {{product.name}} </span>
+            <v-card>
+                <h3> product </h3>
+                <p> product rating ="${product.rating.ratingType}" </p><br>
+                <span> {{product.name}} </span>
+            </v-card>
         """)
     }
 
@@ -367,6 +386,12 @@ class VueJsGenericFilter implements VueGeneratable {
     @Override
     def writeScript() {
         return null
+    }
+
+
+    @Override
+    def insertInData(){
+
     }
 
     @Override
