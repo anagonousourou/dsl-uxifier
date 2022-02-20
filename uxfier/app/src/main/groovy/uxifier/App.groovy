@@ -377,6 +377,7 @@ class CartBuilder implements TitleBuilder{
         code()
         cart.setProductInCart(productsInCartBuilderBuilder.build())
     }
+
     def PromoCode(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PromoCodeBuilder) Closure closure){
         var promoCodeBuilder =  new PromoCodeBuilder()
         def code = closure.rehydrate(promoCodeBuilder, this,this)
@@ -384,6 +385,7 @@ class CartBuilder implements TitleBuilder{
         code()
         cart.setPromoCode(promoCodeBuilder.build())
     }
+
     def Remark(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=RemarkBuilder) Closure closure){
         var remarkBuilder =  new RemarkBuilder()
         def code = closure.rehydrate(remarkBuilder, this,this)
@@ -391,6 +393,7 @@ class CartBuilder implements TitleBuilder{
         code()
         cart.setRemark(remarkBuilder.build())
     }
+
     def Summary(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SummaryBuilder) Closure closure){
         var summaryBuilder =  new SummaryBuilder()
         def code = closure.rehydrate(summaryBuilder, this,this)
@@ -398,9 +401,11 @@ class CartBuilder implements TitleBuilder{
         code()
         cart.setSummary(summaryBuilder.build())
     }
+
     Cart build() {
         return cart
     }
+    
 }
 
 
