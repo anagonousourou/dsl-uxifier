@@ -3,6 +3,7 @@ package uxifier
 import uxifier.models.Action
 import uxifier.models.ActionMenuBar
 import uxifier.models.CartAction
+import uxifier.models.CartPreview
 
 class ActionMenuBarBuilder {
 
@@ -26,6 +27,7 @@ class CartActionBuilder {
     private String _label
     private boolean _dc
     private boolean useIcon
+    CartPreview cartPreview = null
 
     private String previewType = ''
 
@@ -44,18 +46,20 @@ class CartActionBuilder {
 
     def onhover(stuff){
         println("In onhover")
-        [CartPreview: {cl -> println(cl)}]
     }
 
     def CartPreview (@DelegatesTo(value= CartPreviewBuilder, strategy = Closure.DELEGATE_FIRST) Closure closure){
+        println("In cartPreview")
         var builder = new CartPreviewBuilder()
         var code = closure.rehydrate(builder, this,this)
         code()
 
+        cartPreview = builder.buildPreview()
+
     }
 
     def build() {
-        return new CartAction(this._label, this._dc, this.useIcon)
+        return new CartAction(this._label, this._dc, this.useIcon, this.cartPreview)
     }
 }
 

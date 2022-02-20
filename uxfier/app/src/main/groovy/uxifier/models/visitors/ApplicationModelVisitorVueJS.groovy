@@ -67,6 +67,15 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     }
 
     @Override
+    def visit(Cart cart) {
+
+        var tmp = new VueJsCart()
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        //cart.accept(this)
+    }
+
+    @Override
     def visit(Header header) {
         return null
     }
@@ -250,7 +259,25 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(CartAction action) {
-        this.parent.addContent(new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon))
-        println("Adding cartaction to ${this.parent}")
+        var vueAction = new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon)
+        if(action.cartPreview != null){
+            var previousAction = this.parent
+            this.parent = vueAction
+            action.cartPreview.accept(this)
+            this.parent = previousAction
+        }
+        this.parent.addContent(vueAction)
+        println("Adding cartaction")
     }
+
+    @Override
+    def visit(CartPreview cartPreview) {
+        var vueCartPreview = new VueCartPreview()
+        vueCartPreview.displayTotal = cartPreview.displayTotal
+
+        vueCartPreview.setArticleInCartPreview(new VueCartPreviewArticle(cartPreview.articleInCartPreview))
+
+        (this.parent as VueCartActionMenu ).setCartPreview(vueCartPreview)
+    }
+
 }

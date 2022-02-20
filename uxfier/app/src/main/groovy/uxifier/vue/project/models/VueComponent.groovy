@@ -151,6 +151,65 @@ class VueJsSocialMediaGroup implements VueGeneratable {
                     """)
         socialMedia.forEach(s -> s.insertInTemplate())
         FileContext.writer.write("</div>")
+
+    }
+
+}
+
+class VueJsCart implements VueGeneratable {
+    @Override
+    def registerDependencies(PackageJson packageJson) {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def openTagInTemplate() {
+        return null
+    }
+
+    @Override
+    def closeTagInTemplate() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ <div>
+        <div>
+            Mon Panier
+            <hr/>
+        </div>
+        <div class="horizontal-container" style="display:flex;">
+          <div class='actual-map'>
+            <img id="myimage" src="https://picsum.photos/200" width="200">
+          </div>
+          <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;"></div>
+          <div id="product_in_cart_description" style="flex-grow:1;">
+              <h3 id="product_1_name">Je suis un article</h3>
+              <h4 id="product_1_price">400<span class="devise">£</span></h4>
+          </div>
+          <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;width:40%;"></div>
+          <div style="display:flex;flex-grow:1;">
+              <div><input id="product_1_quantity" type="number" height="10px"/></div>
+              <div class="vertical_separator" style="border-left: 6px solid transparent;height: max; width:20%;"></div>
+              <div style="flex-grow:1;"><span id="product_1_total">400</span><span class="devise">£</span></div>
+              <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;width:20%;"></div>
+              <div><button class="btn"><i class="fa fa-close"></i></button></div>
+          </div>
+      
+        </div>
+    </div>
+        """)
     }
 }
 
@@ -478,10 +537,10 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     static {
-        List<SocialMediaIconInfo> iconInfos = FileContext.objectMapper.readValue(new String(VueJsSocialMedia.getResourceAsStream("/social-media.json").readAllBytes()), new TypeReference<List<SocialMediaIconInfo>>() {
-        })
+         List<SocialMediaIconInfo>  iconInfos = FileContext.objectMapper.readValue(new String(VueJsSocialMedia.getResourceAsStream("/social-media.json").readAllBytes()),new TypeReference<List<SocialMediaIconInfo>>() {} )
 
-        iconInfos.forEach(info -> iconMaps.put(info.name, info))
+        iconInfos.forEach( info -> iconMaps.put(info.name, info))
+
     }
 
     @Override
@@ -528,7 +587,25 @@ class VueJsForm implements VueGeneratable{
 
     @Override
     def insertSelfInImports() {
-        return null
+        FileContext.writer.write("""
+            import '@vaadin/text-field';
+            import '@vaadin/checkbox';
+            import '@vaadin/combo-box';
+            import '@vaadin/email-field';
+            import '@vaadin/date-picker';
+            import '@vaadin/date-time-picker';
+            import '@vaadin/button';
+            import '@vaadin/message-input';
+            import '@vaadin/password-field';
+            import '@vaadin/time-picker';
+            import '@vaadin/upload';
+            
+            import '@vaadin/radio-group';
+            
+            export default {
+            
+            }
+        """)
     }
 
     @Override
