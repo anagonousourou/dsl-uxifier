@@ -6,6 +6,8 @@ import uxifier.models.Action
 import uxifier.models.ActionMenuBar
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.CartAction
+import uxifier.models.CartPreview
+import uxifier.models.Cart
 import uxifier.models.Component
 import uxifier.models.Field
 import uxifier.models.FieldGroup
@@ -22,12 +24,15 @@ import uxifier.models.WebPage
 import uxifier.vue.project.models.VueActionMenu
 import uxifier.vue.project.models.VueActionMenuBar
 import uxifier.vue.project.models.VueCartActionMenu
+import uxifier.vue.project.models.VueCartPreview
+import uxifier.vue.project.models.VueCartPreviewArticle
 import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsAccordion
 import uxifier.vue.project.models.VueJsAccordionGroup
 import uxifier.vue.project.models.VueJsField
 import uxifier.vue.project.models.VueJsForm
+import uxifier.vue.project.models.VueJsCart
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueMenu
@@ -51,6 +56,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.parent.addContent(tmp)
         return tmp
     }
+
 
     @Override
     def visit(HorizontalLayout layout) {
@@ -95,6 +101,15 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(Accordion accordion){
         return null
+    }
+
+    @Override
+    def visit(Cart cart) {
+
+        var tmp = new VueJsCart()
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        //cart.accept(this)
     }
 
     @Override
@@ -209,7 +224,25 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(CartAction action) {
-        this.parent.addContent(new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon))
-        println("Adding cartaction to ${this.parent}")
+        var vueAction = new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon)
+        if(action.cartPreview != null){
+            var previousAction = this.parent
+            this.parent = vueAction
+            action.cartPreview.accept(this)
+            this.parent = previousAction
+        }
+        this.parent.addContent(vueAction)
+        println("Adding cartaction")
     }
+
+    @Override
+    def visit(CartPreview cartPreview) {
+        var vueCartPreview = new VueCartPreview()
+        vueCartPreview.displayTotal = cartPreview.displayTotal
+
+        vueCartPreview.setArticleInCartPreview(new VueCartPreviewArticle(cartPreview.articleInCartPreview))
+
+        (this.parent as VueCartActionMenu ).setCartPreview(vueCartPreview)
+    }
+
 }
