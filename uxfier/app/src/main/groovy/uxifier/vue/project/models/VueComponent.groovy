@@ -221,7 +221,7 @@ class VueJsCart implements VueGeneratable {
         """</div>
         """)
         cartContent.forEach(c->c.insertInTemplate())
-        cart.productInCart.FileContext.writer.write("""           
+        FileContext.writer.write("""           
     </div>
         """)
     }
