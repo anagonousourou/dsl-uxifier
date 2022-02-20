@@ -106,16 +106,29 @@ class SocialMedia implements Component{
 
 class Poster implements Component{
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class MiniDescription implements Component{
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class QuantityInCart implements Component{
     QuantityInCartEditionMode quantityInCartEditionMode;
     def setQuantityInCartEditionMode(QuantityInCartEditionMode quantityInCartEditionMode){
         this.quantityInCartEditionMode = quantityInCartEditionMode
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -140,6 +153,11 @@ class ProductInCart implements Component{
                 "Total" +
                 "}"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 trait OneLineAbleLabelledComponent implements Component{
@@ -156,21 +174,41 @@ class PromoCode implements OneLineAbleLabelledComponent{
     PromoCode(){
         componentName = "PromoCode"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class Remark implements OneLineAbleLabelledComponent{
     Remark(){
         componentName = "Remark"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 class SubTotal implements OneLineAbleLabelledComponent{
     SubTotal(){
         componentName = "SubTotal"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 class Total implements OneLineAbleLabelledComponent{
     Total(){
         componentName = "Total"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -185,6 +223,10 @@ class DeliveryInCart implements Component {
                 "                        }\n"
     }
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class Summary implements Component {
@@ -203,6 +245,11 @@ class Summary implements Component {
                 "\n" +
                 "                        ${total}\n" +
                 "                    }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -225,6 +272,11 @@ class Cart implements Component{
                 "${remark}\n" +
                 "${summary}\n" +
                 " }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
