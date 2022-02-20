@@ -2,10 +2,7 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
-import uxifier.models.PriceType
-import uxifier.models.Product
-import uxifier.models.RatingType
-import uxifier.models.Component
+import uxifier.models.*
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -351,10 +348,9 @@ class VueJsProduct implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
-            <v-card>
-                <h3> product </h3>
-                <p> product rating ="${product.rating.ratingType}" </p><br>
-                <span> {{product.name}} </span>
+            <v-card elevation="2" outlined shaped tile>
+                <v-card-title>{{product.name}}</v-card-title>
+                <v-card-text> product rating ="${product.rating.ratingType}" </v-card-text><br>
             </v-card>
         """)
     }

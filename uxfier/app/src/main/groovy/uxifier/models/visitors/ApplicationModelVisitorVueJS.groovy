@@ -1,54 +1,7 @@
 package uxifier.models.visitors
 
-import uxifier.models.Accordion
-import uxifier.models.AccordionGroup
-import uxifier.models.Action
-import uxifier.models.ActionMenuBar
-import uxifier.models.ApplicationModelVisitor
-import uxifier.models.Catalog
-import uxifier.models.CartAction
-import uxifier.models.Component
-import uxifier.models.Filter
-import uxifier.models.GenericFilter
-import uxifier.models.GenericFilters
-import uxifier.models.Field
-import uxifier.models.FieldGroup
-import uxifier.models.Form
-import uxifier.models.Header
-import uxifier.models.HorizontalLayout
-import uxifier.models.Menu
-import uxifier.models.NavigationMenu
-import uxifier.models.PriceFilter
-import uxifier.models.Product
-import uxifier.models.Rating
-import uxifier.models.NavigationMenuType
-import uxifier.models.SocialMedia
-import uxifier.models.SocialMediaGroup
-import uxifier.models.WebApplication
-import uxifier.models.WebPage
-import uxifier.vue.project.models.VueActionMenu
-import uxifier.vue.project.models.VueActionMenuBar
-import uxifier.vue.project.models.VueCartActionMenu
-import uxifier.vue.project.models.VueComponent
-import uxifier.vue.project.models.VueGeneratable
-import uxifier.vue.project.models.VueJsAccordion
-import uxifier.vue.project.models.VueJsAccordionGroup
-import uxifier.vue.project.models.VueJsField
-import uxifier.vue.project.models.VueJsForm
-import uxifier.vue.project.models.VueJsCatalog
-import uxifier.vue.project.models.VueJsFilter
-import uxifier.vue.project.models.VueJsGenericFilter
-import uxifier.vue.project.models.VueJsGenericFilters
-import uxifier.vue.project.models.VueJsPriceFilter
-import uxifier.vue.project.models.VueJsProduct
-import uxifier.vue.project.models.VueJsRating
-import uxifier.vue.project.models.VueJsSocialMedia
-import uxifier.vue.project.models.VueJsSocialMediaGroup
-import uxifier.vue.project.models.VueMenu
-import uxifier.vue.project.models.VueMenuBar
-import uxifier.vue.project.models.VueMenuItemNavbar
-import uxifier.vue.project.models.VueMenuNavbar
-import uxifier.vue.project.models.VueProject
+import uxifier.models.*
+import uxifier.vue.project.models.*
 
 class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     int count = 1

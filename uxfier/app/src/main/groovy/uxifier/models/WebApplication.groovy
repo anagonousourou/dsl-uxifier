@@ -1,11 +1,7 @@
 package uxifier.models
 
-import uxifier.vue.project.models.VueGeneratable
-import uxifier.vue.project.models.VueJsAccordion
-import uxifier.vue.project.models.VueJsAccordionGroup
-import uxifier.vue.project.models.VueJsField
-import uxifier.vue.project.models.VueJsForm
-import uxifier.vue.project.models.VueJsSocialMediaGroup
+import uxifier.vue.project.models.*
+
 
 class WebApplication {
 
