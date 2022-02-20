@@ -43,7 +43,7 @@ WebApplication {
             label 'Mon Panier'
             useIcon
 
-            onhover CartPreview {
+            /*CartPreview on hover {
                 Article {
                     displayImage
                     displayPrice
@@ -52,6 +52,10 @@ WebApplication {
                 }
                 displayTotal
             }
+
+            CartPreview on click {
+
+            }*/
         }
 
     }
