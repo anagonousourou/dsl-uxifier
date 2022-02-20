@@ -9,16 +9,26 @@ import uxifier.models.CartAction
 import uxifier.models.CartPreview
 import uxifier.models.Cart
 import uxifier.models.Component
+import uxifier.models.DeliveryInCart
 import uxifier.models.Field
 import uxifier.models.FieldGroup
 import uxifier.models.Form
 import uxifier.models.Header
 import uxifier.models.HorizontalLayout
 import uxifier.models.Menu
+import uxifier.models.MiniDescription
 import uxifier.models.NavigationMenu
 import uxifier.models.NavigationMenuType
+import uxifier.models.Poster
+import uxifier.models.ProductInCart
+import uxifier.models.PromoCode
+import uxifier.models.QuantityInCart
+import uxifier.models.Remark
 import uxifier.models.SocialMedia
 import uxifier.models.SocialMediaGroup
+import uxifier.models.SubTotal
+import uxifier.models.Summary
+import uxifier.models.Total
 import uxifier.models.WebApplication
 import uxifier.models.WebPage
 import uxifier.vue.project.models.VueActionMenu
@@ -30,11 +40,21 @@ import uxifier.vue.project.models.VueComponent
 import uxifier.vue.project.models.VueGeneratable
 import uxifier.vue.project.models.VueJsAccordion
 import uxifier.vue.project.models.VueJsAccordionGroup
+import uxifier.vue.project.models.VueJsDeliveryInCart
 import uxifier.vue.project.models.VueJsField
 import uxifier.vue.project.models.VueJsForm
 import uxifier.vue.project.models.VueJsCart
+import uxifier.vue.project.models.VueJsMiniDescription
+import uxifier.vue.project.models.VueJsPoster
+import uxifier.vue.project.models.VueJsProductInCart
+import uxifier.vue.project.models.VueJsPromoCode
+import uxifier.vue.project.models.VueJsQuantityOfProductInCart
+import uxifier.vue.project.models.VueJsRemark
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
+import uxifier.vue.project.models.VueJsSubTotal
+import uxifier.vue.project.models.VueJsSummary
+import uxifier.vue.project.models.VueJsTotal
 import uxifier.vue.project.models.VueMenu
 import uxifier.vue.project.models.VueMenuBar
 import uxifier.vue.project.models.VueMenuItemNavbar
@@ -150,10 +170,65 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(Cart cart) {
 
-        var tmp = new VueJsCart()
+        var tmp = new VueJsCart(cart)
         this.parent.addContent(tmp)
         this.parent  = tmp
-        //cart.accept(this)
+        cart.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(ProductInCart productInCart) {
+
+        var tmp = new VueJsProductInCart(productInCart)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        productInCart.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Poster poster) {
+        this.parent.addContent(new VueJsPoster(poster))
+    }
+    @Override
+    def visit(MiniDescription miniDescription) {
+        this.parent.addContent(new VueJsMiniDescription(miniDescription))
+    }
+    @Override
+    def visit(QuantityInCart quantityInCart) {
+        this.parent.addContent(new VueJsQuantityOfProductInCart(quantityInCart))
+    }
+    @Override
+    def visit(Total total) {
+        this.parent.addContent(new VueJsTotal(total))
+    }
+    @Override
+    def visit(SubTotal subTotal) {
+        this.parent.addContent(new VueJsSubTotal(subTotal))
+    }
+    @Override
+    def visit(DeliveryInCart deliveryInCart) {
+        this.parent.addContent(new VueJsDeliveryInCart(deliveryInCart))
+    }
+    @Override
+    def visit(PromoCode promoCode) {
+        var tmp = new VueJsPromoCode(promoCode)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        promoCode.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Remark remark) {
+
+        var tmp = new VueJsRemark(remark)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        remark.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Summary summary) {
+
+        var tmp = new VueJsSummary(summary)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        summary.componentList.forEach(c -> c.accept(this))
     }
 
     @Override

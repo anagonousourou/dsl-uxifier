@@ -2,7 +2,18 @@ package uxifier.vue.project.models
 
 import com.fasterxml.jackson.core.type.TypeReference
 import groovy.transform.ToString
+import uxifier.models.Cart
 import uxifier.models.Component
+import uxifier.models.DeliveryInCart
+import uxifier.models.MiniDescription
+import uxifier.models.Poster
+import uxifier.models.ProductInCart
+import uxifier.models.PromoCode
+import uxifier.models.QuantityInCart
+import uxifier.models.Remark
+import uxifier.models.SubTotal
+import uxifier.models.Summary
+import uxifier.models.Total
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -159,6 +170,19 @@ class VueJsSocialMediaGroup implements VueGeneratable {
 }
 
 class VueJsCart implements VueGeneratable {
+    Cart cart;
+
+    List<VueGeneratable> cartContent = new ArrayList<>();
+
+    public VueJsCart(Cart cart){
+        this.cart = cart
+    }
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        return cartContent.add(vueGeneratable)
+    }
+
     @Override
     def registerDependencies(PackageJson packageJson) {
         return null
@@ -187,11 +211,44 @@ class VueJsCart implements VueGeneratable {
     def insertInTemplate() {
         FileContext.writer.write("""
  <div>
-        <div>
-            Mon Panier
-            <hr/>
-        </div>
-        <div class="horizontal-container" style="display:flex;">
+        <div>"""
+                +
+                cart.getTitle()
+                +
+            """
+            <hr/>"""
+                +
+        """</div>
+        """)
+        cartContent.forEach(c->c.insertInTemplate())
+        cart.productInCart.FileContext.writer.write("""           
+    </div>
+        """)
+    }
+}
+
+class VueJsProductInCart implements VueGeneratable {
+    ProductInCart productInCart;
+
+    List<VueGeneratable> productInCartContent = new ArrayList<>();
+
+    public VueJsProductInCart(ProductInCart productInCart){
+        this.productInCart = productInCart
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+         <div class="horizontal-container" style="display:flex;">
           <div class='actual-map'>
             <img id="myimage" src="https://picsum.photos/200" width="200">
           </div>
@@ -210,7 +267,233 @@ class VueJsCart implements VueGeneratable {
           </div>
       
         </div>
-    </div>
+        """)
+    }
+}
+
+class VueJsPromoCode implements VueGeneratable {
+
+    PromoCode promoCode;
+
+    List<VueGeneratable> promoCodeContent = new ArrayList<>();
+
+    public VueJsPromoCode(PromoCode promoCode){
+        this.promoCode = promoCode
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ VueJsPromoCode
+        """)
+    }
+}
+
+class VueJsRemark implements VueGeneratable {
+    Remark remark;
+
+    List<VueGeneratable> remarkContent = new ArrayList<>();
+
+    public VueJsRemark(Remark remark){
+        this.remark = remark
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ VueJsRemark
+        """)
+    }
+}
+
+class VueJsSummary implements VueGeneratable {
+    Summary summary;
+
+    List<VueGeneratable> summaryContent = new ArrayList<>();
+
+    public VueJsSummary(Summary summary){
+        this.summary = summary
+    }
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        return summaryContent.add(vueGeneratable)
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ VueJsSummary
+        """)
+    }
+}
+
+class VueJsPoster implements VueGeneratable {
+    Poster poster;
+
+    public VueJsPoster(Poster poster){
+        this.poster = poster
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ VueJsPoster
+        """)
+    }
+}
+
+class VueJsMiniDescription implements VueGeneratable {
+    MiniDescription miniDescription;
+
+    public VueJsMiniDescription(MiniDescription miniDescription){
+        this.miniDescription = miniDescription
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsMiniDescription
+        """)
+    }
+}
+
+class VueJsQuantityOfProductInCart implements VueGeneratable {
+    QuantityInCart quantityInCart;
+
+    public VueJsQuantityOfProductInCart(QuantityInCart quantityInCart){
+        this.quantityInCart = quantityInCart
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsQuantityOfProductInCart
+        """)
+    }
+}
+
+class VueJsTotal implements VueGeneratable {
+    Total total;
+
+    public VueJsTotal(Total total){
+        this.total = total
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsTotal
+        """)
+    }
+}
+
+class VueJsSubTotal implements VueGeneratable {
+    SubTotal subTotal;
+
+    public VueJsSubTotal(SubTotal subTotal){
+        this.subTotal = subTotal
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsSubTotal
+        """)
+    }
+}
+class VueJsDeliveryInCart implements VueGeneratable {
+    DeliveryInCart deliveryInCart;
+
+    public VueJsDeliveryInCart(DeliveryInCart deliveryInCart){
+        this.deliveryInCart = deliveryInCart
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsDeliveryICart
         """)
     }
 }

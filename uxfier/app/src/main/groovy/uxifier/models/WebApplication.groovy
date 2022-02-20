@@ -91,7 +91,6 @@ class ProductInCart implements Component{
     }
 
     def addTotalComponent(){
-        
     }
 
     @Override
@@ -108,6 +107,12 @@ class ProductInCart implements Component{
 trait OneLineAbleLabelledComponent implements Component{
     String label
     String componentName
+
+    void setLabel(String label){
+        this.label = label
+
+    }
+
     @Override
     String toString() {
         return "${componentName} label ${label}"
@@ -117,12 +122,14 @@ trait OneLineAbleLabelledComponent implements Component{
 
 class PromoCode implements OneLineAbleLabelledComponent{
     PromoCode(){
+        if (componentList ==null) componentList = new ArrayList<>()
         componentName = "PromoCode"
     }
 }
 
 class Remark implements OneLineAbleLabelledComponent{
     Remark(){
+        if (componentList ==null) componentList = new ArrayList<>()
         componentName = "Remark"
     }
 }
@@ -140,6 +147,19 @@ class Total implements OneLineAbleLabelledComponent{
 class DeliveryInCart implements Component {
     String label
     Integer defaultValue
+
+    public DeliveryInCart(){
+        if (componentList ==null) componentList = new ArrayList<>()
+    }
+
+    void setLabel(String label) {
+        this.label = label
+    }
+
+    void setDefaultValue(Integer defaultValue) {
+        this.defaultValue = defaultValue
+    }
+
     @Override
     String toString() {
         return  "                        Delivery{\n" +
@@ -155,6 +175,33 @@ class Summary implements Component {
     String label
     SubTotal subTotal
     Total total
+
+    public Summary(){
+        if (componentList ==null) componentList = new ArrayList<>()
+    }
+
+    void setDelivery(DeliveryInCart delivery) {
+        this.delivery = delivery
+        addComponent(delivery)
+    }
+
+    void setLabel(String label) {
+        this.label = label
+        //TODO add String label as component
+        //addComponent(label)
+    }
+
+    void setSubTotal(SubTotal subTotal) {
+        this.subTotal = subTotal
+        this.componentList = new ArrayList<>()
+        addComponent(subTotal)
+    }
+
+    void setTotal(Total total) {
+        this.total = total
+        addComponent(total)
+    }
+
     @Override
     String toString() {
         return "Summary{\n" +
@@ -177,6 +224,26 @@ class Cart implements Component{
     Remark remark
     Summary summary
 
+    public Cart(){
+        this.componentList = new ArrayList<>()
+    }
+
+    def setProductInCart(ProductInCart productInCart){
+        this.productInCart = productInCart
+        addComponent(productInCart)
+    }
+    def setPromoCode(PromoCode promoCode){
+        this.promoCode = promoCode
+        addComponent(promoCode)
+    }
+    def setRemark(Remark remark){
+        this.remark = remark
+        addComponent(remark)
+    }
+    def setSummary(Summary summary){
+        this.summary = summary
+        addComponent(summary)
+    }
     @Override
     String toString() {
         return "Cart {\n" +
@@ -313,7 +380,19 @@ interface ApplicationModelVisitor{
 
     def visit(Component component)
     def visit(SocialMediaGroup socialMediaGroup)
+
     def visit(Cart cart)
+    def visit(ProductInCart productInCart)
+    def visit(Poster poster)
+    def visit(MiniDescription miniDescription)
+    def visit(QuantityInCart quantityInCart)
+    def visit(Total total)
+    def visit(SubTotal subTotal)
+    def visit(PromoCode promoCode)
+    def visit(Remark remark)
+    def visit(Summary summary)
+    def visit(DeliveryInCart deliveryInCart)
+
     def visit(Header header)
     def visit(WebApplication application)
     def visit(WebPage webPage)
