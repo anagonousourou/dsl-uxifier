@@ -1,5 +1,5 @@
 WebApplication {
-    name 'adeline'
+    name 'adeline2'
     pageTitle 'The default title of Adeline !'
     WebPage {
         name 'Home'

@@ -1,45 +1,7 @@
 package uxifier.models.visitors
 
-import uxifier.models.Accordion
-import uxifier.models.AccordionGroup
-import uxifier.models.Action
-import uxifier.models.ActionMenuBar
-import uxifier.models.ApplicationModelVisitor
-import uxifier.models.CartAction
-import uxifier.models.CartPreview
-import uxifier.models.Cart
-import uxifier.models.Component
-import uxifier.models.Field
-import uxifier.models.FieldGroup
-import uxifier.models.Form
-import uxifier.models.Header
-import uxifier.models.HorizontalLayout
-import uxifier.models.Menu
-import uxifier.models.NavigationMenu
-import uxifier.models.NavigationMenuType
-import uxifier.models.SocialMedia
-import uxifier.models.SocialMediaGroup
-import uxifier.models.WebApplication
-import uxifier.models.WebPage
-import uxifier.vue.project.models.VueActionMenu
-import uxifier.vue.project.models.VueActionMenuBar
-import uxifier.vue.project.models.VueCartActionMenu
-import uxifier.vue.project.models.VueCartPreview
-import uxifier.vue.project.models.VueCartPreviewArticle
-import uxifier.vue.project.models.VueComponent
-import uxifier.vue.project.models.VueGeneratable
-import uxifier.vue.project.models.VueJsAccordion
-import uxifier.vue.project.models.VueJsAccordionGroup
-import uxifier.vue.project.models.VueJsField
-import uxifier.vue.project.models.VueJsForm
-import uxifier.vue.project.models.VueJsCart
-import uxifier.vue.project.models.VueJsSocialMedia
-import uxifier.vue.project.models.VueJsSocialMediaGroup
-import uxifier.vue.project.models.VueMenu
-import uxifier.vue.project.models.VueMenuBar
-import uxifier.vue.project.models.VueMenuItemNavbar
-import uxifier.vue.project.models.VueMenuNavbar
-import uxifier.vue.project.models.VueProject
+import uxifier.models.*
+import uxifier.vue.project.models.*
 
 class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     int count = 1
@@ -57,7 +19,6 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         return tmp
     }
 
-
     @Override
     def visit(HorizontalLayout layout) {
         return null
@@ -70,46 +31,20 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(SocialMediaGroup socialMediaGroup) {
+        var previousParent = this.parent
         var tmp = new VueJsSocialMediaGroup()
-
         this.parent.addContent(tmp)
         this.parent  = tmp // Pourquoi cette ligne ?
         socialMediaGroup.componentList.forEach(c -> c.accept(this))
+        this.parent = previousParent
         return tmp
     }
 
     @Override
     def visit(Form form){
-        var tmp = new VueJsForm()
-        tmp.name = form.name
-        for(Component c : form.componentList){
-            if(c instanceof FieldGroup){
-                for(Field f : (c.componentList as List<Field>)){
-                    var tmpField = new VueJsField()
-                    tmpField.setName(f.name)
-                    tmpField.setType(f.type)
-                    tmp.fields.add(tmpField)
-                }
-            }
-        }
+        var tmp = form.buildVue()
         this.parent.addContent(tmp)
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
-        return tmp
-    }
-
-    def buildForm(Form form){
-        var tmp = new VueJsForm()
-        tmp.name = form.name
-        for(Component c : form.componentList){
-            if(c instanceof FieldGroup){
-                for(Field f : (c.componentList as List<Field>)){
-                    var tmpField = new VueJsField()
-                    tmpField.setName(f.name)
-                    tmpField.setType(f.type)
-                    tmp.fields.add(tmpField)
-                }
-            }
-        }
         return tmp
     }
 
@@ -120,23 +55,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(AccordionGroup accordionGroup){
-        var tmp = new VueJsAccordionGroup();
-
-        for(Accordion a : (accordionGroup.componentList as List<Accordion>)){
-            VueJsAccordion tmpAcc = new VueJsAccordion()
-            tmpAcc.name = a.name
-
-            for(Component c : a.componentList){
-
-                if(c instanceof Form){
-                    tmpAcc.components.add(buildForm(c))
-                }
-                //tmpAcc.components.add(c.accept(this) as VueGeneratable)
-
-            }
-            tmp.accordions.add(tmpAcc)
-        }
-
+        var tmp = accordionGroup.buildVue()
         this.parent.addContent(tmp)
         this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
         return tmp
@@ -174,6 +93,78 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         for (WebPage webPage : application.pages) {
             webPage.accept(this)
         }
+
+    }
+
+    @Override
+    def visit(Catalog catalog) {
+
+        println("inside catalog ==========" + catalog)
+        var tmp = new VueJsCatalog()
+
+        this.parent.addContent(tmp)
+        var previousParent = this.parent
+        this.parent = tmp
+        catalog.filter.accept(this)
+        catalog.product.accept(this)
+        this.parent = previousParent
+
+    }
+
+
+    @Override
+    def visit(PriceFilter priceFilter) {
+        var tmp = new VueJsPriceFilter(priceFilter.priceType)
+
+        ((VueJsFilter) this.parent).priceFilter = tmp
+    }
+
+    @Override
+    def visit(Filter filter) {
+
+        println("inside filter ==========" + filter)
+        var tmp = new VueJsFilter()
+
+        ((VueJsCatalog) this.parent).filtre = tmp
+
+        var previousParent = this.parent
+        this.parent = tmp
+        filter.priceFilter.accept(this)
+        filter.genericFilters.accept(this)
+        this.parent = previousParent
+
+    }
+
+
+    @Override
+    def visit(Product product) {
+
+        println("inside product ==========" + product)
+        var tmp = new VueJsProduct(product)
+        ((VueJsCatalog) this.parent).product = tmp
+    }
+
+    @Override
+    def visit(GenericFilters genericFilters) {
+        var tmp = new VueJsGenericFilters()
+
+        ((VueJsFilter)this.parent).genericFilters = tmp
+        var previousParent = this.parent
+        this.parent = tmp
+        genericFilters.componentList.forEach(c -> c.accept(this))
+        this.parent = previousParent
+    }
+
+    @Override
+    def visit(GenericFilter genericFilter) {
+
+        println("inside generic filter ==========" + genericFilter)
+
+
+        var tmp = new VueJsGenericFilter(genericFilter.targetAtributType, genericFilter.targetAtributName)
+
+        this.parent.addContent(tmp)
+
 
     }
 
