@@ -46,7 +46,6 @@ class HorizontalLayout implements Component{
 }
 
 class VerticalLayout implements Component{
-
 }
 
 class SocialMediaGroup implements Component{
@@ -66,6 +65,139 @@ class SocialMedia implements Component{
     String toString() {
         return "SocialMedia {type = ${type},url = ${url} }"
     }
+}
+
+class Poster implements Component{
+
+}
+
+class MiniDescription implements Component{
+
+}
+
+class QuantityInCart implements Component{
+    QuantityInCartEditionMode quantityInCartEditionMode;
+    def setQuantityInCartEditionMode(QuantityInCartEditionMode quantityInCartEditionMode){
+        this.quantityInCartEditionMode = quantityInCartEditionMode
+    }
+}
+
+class ProductInCart implements Component{
+    List<Component> componentList = new ArrayList<>();
+    var deletable = false
+
+    def enableDeleteable(){
+        deletable = true
+    }
+
+    def addTotalComponent(){
+        
+    }
+
+    @Override
+    String toString() {
+        return "Product{" +
+                "Poster" +
+                "MiniDescription" +
+                "Quantity" +
+                "Total" +
+                "}"
+    }
+}
+
+trait OneLineAbleLabelledComponent implements Component{
+    String label
+    String componentName
+    @Override
+    String toString() {
+        return "${componentName} label ${label}"
+    }
+}
+
+
+class PromoCode implements OneLineAbleLabelledComponent{
+    PromoCode(){
+        componentName = "PromoCode"
+    }
+}
+
+class Remark implements OneLineAbleLabelledComponent{
+    Remark(){
+        componentName = "Remark"
+    }
+}
+class SubTotal implements OneLineAbleLabelledComponent{
+    SubTotal(){
+        componentName = "SubTotal"
+    }
+}
+class Total implements OneLineAbleLabelledComponent{
+    Total(){
+        componentName = "Total"
+    }
+}
+
+class DeliveryInCart implements Component {
+    String label
+    Integer defaultValue
+    @Override
+    String toString() {
+        return  "                        Delivery{\n" +
+                "                            label ${label}\n" +
+                "                            default ${defaultValue}\n" +
+                "                        }\n"
+    }
+
+}
+
+class Summary implements Component {
+    DeliveryInCart delivery
+    String label
+    SubTotal subTotal
+    Total total
+    @Override
+    String toString() {
+        return "Summary{\n" +
+                "                        label ${label}\n" +
+                "\n" +
+                "                        ${subTotal}\n" +
+                "\n" +
+                "${delivery}" +
+                "\n" +
+                "                        ${total}\n" +
+                "                    }"
+    }
+}
+
+class Cart implements Component{
+
+    String title
+    ProductInCart productInCart
+    PromoCode promoCode
+    Remark remark
+    Summary summary
+
+    @Override
+    String toString() {
+        return "Cart {\n" +
+                "title = ${title},\n" +
+                "Products = { \n" +
+                "${productInCart}\n" +
+                "  }\n" +
+                "${promoCode}\n" +
+                "${remark}\n" +
+                "${summary}\n" +
+                " }"
+    }
+}
+
+enum DeletableAnswer{
+    yes,
+    no
+}
+
+enum QuantityInCartEditionMode{
+    Default
 }
 
 enum SocialMediaType {
@@ -181,6 +313,7 @@ interface ApplicationModelVisitor{
 
     def visit(Component component)
     def visit(SocialMediaGroup socialMediaGroup)
+    def visit(Cart cart)
     def visit(Header header)
     def visit(WebApplication application)
     def visit(WebPage webPage)

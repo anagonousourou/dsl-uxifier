@@ -7,6 +7,7 @@ import uxifier.models.ActionMenuBar
 import uxifier.models.ApplicationModelVisitor
 import uxifier.models.CartAction
 import uxifier.models.CartPreview
+import uxifier.models.Cart
 import uxifier.models.Component
 import uxifier.models.Field
 import uxifier.models.FieldGroup
@@ -31,6 +32,7 @@ import uxifier.vue.project.models.VueJsAccordion
 import uxifier.vue.project.models.VueJsAccordionGroup
 import uxifier.vue.project.models.VueJsField
 import uxifier.vue.project.models.VueJsForm
+import uxifier.vue.project.models.VueJsCart
 import uxifier.vue.project.models.VueJsSocialMedia
 import uxifier.vue.project.models.VueJsSocialMediaGroup
 import uxifier.vue.project.models.VueMenu
@@ -54,6 +56,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         this.parent.addContent(tmp)
         return tmp
     }
+
 
     @Override
     def visit(HorizontalLayout layout) {
@@ -142,6 +145,15 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(Accordion accordion){
         return null
+    }
+
+    @Override
+    def visit(Cart cart) {
+
+        var tmp = new VueJsCart()
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        //cart.accept(this)
     }
 
     @Override
