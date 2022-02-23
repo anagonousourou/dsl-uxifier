@@ -221,8 +221,6 @@ class PackageJson {
         projectPackageJson.devDependencies.put("@vue/compiler-sfc", "^3.0.0")
         projectPackageJson.devDependencies.put("babel-eslint", "^10.1.0")
         projectPackageJson.devDependencies.put("eslint", "^6.7.2")
-        projectPackageJson.devDependencies.put("vue-cli-plugin-vuetify", "~2.4.5")
-        projectPackageJson.devDependencies.put("eslint", "^6.7.2")
         projectPackageJson.devDependencies.put("eslint-plugin-vue", "^7.0.0")
 
         projectPackageJson.browserslist.addAll([

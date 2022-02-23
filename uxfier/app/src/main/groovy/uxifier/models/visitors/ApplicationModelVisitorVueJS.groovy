@@ -109,6 +109,9 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         catalog.product.accept(this)
         this.parent = previousParent
 
+        this.vueProject.packageJson.dependencies.put('vue-star-rating', '^2.1.0')
+        this.vueProject.packageJson.dependencies.put('readline', '^1.3.0')
+
     }
 
 
