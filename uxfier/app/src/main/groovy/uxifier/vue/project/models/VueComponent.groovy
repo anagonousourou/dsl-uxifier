@@ -649,7 +649,7 @@ class VueJsField implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
+        FileContext.writer.write("""<vaadin-${type}  style="width: 100%" label="${name}"/><br/>""")
     }
 }
 
@@ -674,7 +674,7 @@ class VueJsAccordionGroup implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-accordion style="width:40%; margin-left: 2%; margin-right: 2%; margin-top: 2%">""")
+        FileContext.writer.write("""<vaadin-accordion style="width:30%; margin-left: 15%; margin-right: 2%; margin-top: 2%">""")
         for(VueGeneratable v : accordions){
             v.insertInTemplate()
         }
@@ -711,6 +711,7 @@ class VueJsAccordion implements VueGeneratable{
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""<vaadin-accordion-panel>
+        <h3 style="font-family: 'Open Sans'">${name}</h3>
         <vaadin-vertical-layout>""")
         for(VueGeneratable v : components){
             v.insertInTemplate()

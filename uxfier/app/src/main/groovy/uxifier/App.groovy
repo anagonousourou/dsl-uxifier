@@ -412,7 +412,7 @@ class UXifier extends Script {
         applicationVisitor.visit(application)
 
         println applicationVisitor.vueProject
-        //applicationVisitor.vueProject.toCode()
+        applicationVisitor.vueProject.toCode()
     }
 
 
