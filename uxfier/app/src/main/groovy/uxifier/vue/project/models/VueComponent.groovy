@@ -78,7 +78,6 @@ class VueComponent implements VueGeneratable {
     }
 
 
-
     @Override
     def insertInTemplate() {
         FileContext.writer.write("<${this.name}/>")
@@ -420,8 +419,7 @@ class VueJsProduct implements VueGeneratable {
                 <star-rating />
         """)
 
-        }
-        else {
+        } else {
             // TODO
         }
 
@@ -508,7 +506,7 @@ class VueJsCatalog implements VueGeneratable {
     }
 
     @Override
-    def registerSelfInComponents(){
+    def registerSelfInComponents() {
         FileContext.writer.write("""StarRating,""")
     }
 
@@ -517,7 +515,6 @@ class VueJsCatalog implements VueGeneratable {
         return null
 
     }
-
 
 
     @Override
@@ -705,7 +702,7 @@ class VueJsAccordionGroup implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""<vaadin-accordion style="width:30%; margin-left: 15%; margin-right: 2%; margin-top: 2%">""")
-        for(VueGeneratable v : accordions){
+        for (VueGeneratable v : accordions) {
             v.insertInTemplate()
         }
         FileContext.writer.write("""</vaadin-accordion>""")
@@ -775,7 +772,8 @@ trait VueGeneratable {
     def writeTemplate() {
 
     }
-    def insertInData(){
+
+    def insertInData() {
 
     }
 
