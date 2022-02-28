@@ -55,18 +55,6 @@ class VueComponent implements VueGeneratable {
     @Override
     def registerSelfInComponents() {
         FileContext.writer.write("${this.name},")
-
-    }
-
-    @Override
-    def writeStyle() {
-
-        FileContext.writer.write("<style>\n")
-        content.forEach(c -> c.insertSelfInStyle())
-        FileContext.writer.write("</style>\n")
-
-        FileContext.writer.close()
-        FileContext.writer = null
     }
 
     @Override
