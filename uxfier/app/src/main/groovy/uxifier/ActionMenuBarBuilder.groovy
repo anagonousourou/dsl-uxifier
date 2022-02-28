@@ -28,6 +28,7 @@ class CartActionBuilder {
     private boolean _dc
     private boolean useIcon
     CartPreview cartPreview = null
+    private String _previewAction = ''
 
     private String previewType = ''
 
@@ -44,8 +45,13 @@ class CartActionBuilder {
        }
     }
 
+    def onclick(stuff){
+        println("In onclick")
+        this._previewAction = 'CLICK'
+    }
     def onhover(stuff){
         println("In onhover")
+        this._previewAction = 'HOVER'
     }
 
     def CartPreview (@DelegatesTo(value= CartPreviewBuilder, strategy = Closure.DELEGATE_FIRST) Closure closure){
@@ -59,7 +65,7 @@ class CartActionBuilder {
     }
 
     def build() {
-        return new CartAction(this._label, this._dc, this.useIcon, this.cartPreview)
+        return new CartAction(this._label, this._dc, this.useIcon, this.cartPreview, this._previewAction)
     }
 }
 

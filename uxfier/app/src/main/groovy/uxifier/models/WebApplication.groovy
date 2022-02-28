@@ -1,5 +1,12 @@
 package uxifier.models
 
+import uxifier.vue.project.models.VueGeneratable
+import uxifier.vue.project.models.VueJsAccordion
+import uxifier.vue.project.models.VueJsAccordionGroup
+import uxifier.vue.project.models.VueJsField
+import uxifier.vue.project.models.VueJsForm
+import uxifier.vue.project.models.VueJsSocialMediaGroup
+
 class WebApplication {
 
     String name
@@ -27,7 +34,144 @@ class WebPage implements Component{
     String toString() {
         return "WebPage {title = ${title} , name = ${name}, components = ${componentList} }"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
+
+class Catalog implements Component{
+    Product product
+    Filter filter
+
+    Catalog(List<Component> componentList){
+        for(Component c : componentList){
+            if (c instanceof Product){
+                product = c
+            }
+            if(c instanceof  Filter){
+                filter = c
+            }
+        }
+    }
+
+    @Override
+    String toString(){
+        return "product : " + product + "\nfilter : " + filter
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+
+class Product implements Component {
+
+    Rating rating
+
+    @Override
+    String toString(){
+
+        return "rating : "+ rating+"\n"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class Rating implements Component{
+    RatingType ratingType
+
+    @Override
+    String toString(){
+        return "rating type : " + ratingType
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+enum RatingType {
+    Stars,
+    Bar,
+    Mark
+
+}
+
+
+class Filter implements Component{
+
+    PriceFilter priceFilter
+
+    GenericFilters genericFilters
+
+    Filter(List<Component> compoents){
+
+        for(Component c: compoents){
+            if(c instanceof PriceFilter){
+                this.priceFilter = (PriceFilter) c
+            }
+
+            if(c instanceof GenericFilters){
+                this.genericFilters = (GenericFilters) c
+            }
+
+        }
+
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class GenericFilter implements Component{
+
+    String targetAtributName
+    String targetAtributType
+
+    @Override
+    String toString(){
+        return "targetAtributName : " + targetAtributName + "\ntargetAtributType" + targetAtributType
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class PriceFilter implements Component{
+
+    PriceType priceType
+
+    @Override
+    String toString(){
+        return "type : " + priceType
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+enum PriceType {
+
+    Range,
+    Bar,
+}
+
+
+
 
 class Header implements Component{
     Header(List<Component> componentList){
@@ -37,17 +181,50 @@ class Header implements Component{
     String toString(){
         return "Header {components = ${componentList} }"
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class HorizontalLayout implements Component{
         HorizontalLayout(List<Component> componentList){
             this.componentList = componentList
         }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class VerticalLayout implements Component{
 
+    @Override
+    def buildVue() {
+        return null
+    }
 }
+
+
+class GenericFilters implements Component {
+    GenericFilters(List<Component> componentList){
+        this.componentList = componentList
+    }
+
+    @Override
+    String toString() {
+        return "GenericFilters {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+
 
 class SocialMediaGroup implements Component{
     SocialMediaGroup(List<Component> componentList){
@@ -55,6 +232,11 @@ class SocialMediaGroup implements Component{
     }
     String toString(){
         return "SocialMediaGroup {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -65,6 +247,11 @@ class SocialMedia implements Component{
     @Override
     String toString() {
         return "SocialMedia {type = ${type},url = ${url} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -97,6 +284,23 @@ class Form implements Component{
                 ", components = ${componentList} " +
                 '}';
     }
+
+    @Override
+    def buildVue() {
+        var vue = new VueJsForm()
+        vue.name = this.name
+        for(Component c : this.componentList){
+            if(c instanceof FieldGroup){
+                for(Field f : (c.componentList as List<Field>)){
+                    var tmpField = new VueJsField()
+                    tmpField.setName(f.name)
+                    tmpField.setType(f.type)
+                    vue.fields.add(tmpField)
+                }
+            }
+        }
+        return vue
+    }
 }
 
 class FieldGroup implements Component{
@@ -106,6 +310,11 @@ class FieldGroup implements Component{
     @Override
     String toString(){
         return "FieldGroup {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
     }
 }
 
@@ -121,6 +330,11 @@ class Field implements Component{
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    @Override
+    def buildVue() {
+        return null
+    }
 }
 
 class AccordionGroup implements Component{
@@ -135,6 +349,23 @@ class AccordionGroup implements Component{
     @Override
     String toString(){
         return "AccordionGroup {components = ${componentList} }"
+    }
+
+    @Override
+    def buildVue() {
+        var tmp = new VueJsAccordionGroup();
+        for(Accordion a : (this.componentList as List<Accordion>)){
+            VueJsAccordion tmpAcc = new VueJsAccordion()
+            tmpAcc.name = a.name
+            for(Component c : a.componentList){
+                var vue = c.buildVue()
+                if(vue == null)
+                    continue
+                tmpAcc.components.add(vue as VueGeneratable)
+            }
+            tmp.accordions.add(tmpAcc)
+        }
+        return tmp
     }
 }
 
@@ -164,6 +395,10 @@ trait Component implements ApplicationModelVisitable {
         return "Component {components = ${componentList} }"
     }
 
+    def buildVue(){
+
+    }
+
     @Override
     def accept(ApplicationModelVisitor visitor) {
         visitor.visit(this)
@@ -181,8 +416,12 @@ interface ApplicationModelVisitor{
 
     def visit(Component component)
     def visit(SocialMediaGroup socialMediaGroup)
+
     def visit(Header header)
+
     def visit(WebApplication application)
+
+    def visit(Catalog application)
     def visit(WebPage webPage)
 
     def visit(NavigationMenu navigationMenu)
@@ -200,6 +439,11 @@ interface ApplicationModelVisitor{
     def visit(Accordion accordion)
 
     def visit(CartPreview cartPreview)
+    def visit(Filter filter)
+    def visit(PriceFilter priceFilter)
+    def visit(Product product)
+    def visit(GenericFilters genericFilters)
+    def visit(GenericFilter genericFilter)
 }
 
 trait LeafComponent{

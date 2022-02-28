@@ -1,0 +1,75 @@
+WebApplication {
+
+    name  'adeline-Anas'
+
+    WebPage {
+        name 'Home'
+
+        title 'page Title'
+        SocialMediaGroup {
+            SocialMedia {
+                type Facebook
+                url 'http://127.0.0.1/'
+            }
+        }
+
+        Catalog {
+
+            Product {
+
+                Rating {
+                    ratingType Stars
+                }
+            }
+
+            Filter {
+                PriceFilter {
+                    priceType Bar
+                }
+
+                GenericFilters{
+                    GenericFilter {
+                        targetAtributName  'color'
+                        targetAtributType 'String'
+                    }
+
+                    GenericFilter {
+                        targetAtributName  'brand'
+                        targetAtributType 'String'
+                    }
+                }
+
+            }
+        }
+
+    }
+    NavigationMenu{
+        ApplicationName 'Adeline'
+        type Navbar
+        Menu{
+            label 'Products'
+            link '/'
+        }
+        Menu{
+            label 'Customers'
+            link '/'
+        }
+        Menu{
+            label 'Orders'
+            link '/'
+        }
+        Menu{
+            label 'Login'
+            link '/'
+        }
+        Menu{
+            label 'My account'
+        }
+        CartAction{
+            displayItemCount
+            label 'Mon Panier'
+            useIcon
+        }
+    }
+
+}

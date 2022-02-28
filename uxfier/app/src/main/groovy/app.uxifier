@@ -1,0 +1,11 @@
+WebApplication {
+    name('Adeline')
+    pageTitle('Best web app ever')
+    WebPage {
+        title('Page title')
+        name('PageName')
+    }
+    NavigationMenu {
+
+    }
+}

@@ -1,0 +1,58 @@
+package uxifier
+def ctx = context(pathRegexp: /.*\.uxifier/)
+
+contributor(ctx, {
+
+    method(name:'WebApplication', type: Object, params: [closure: 'groovy.lang.Closure'], doc: 'Declaring the application')
+})
+
+def applicationContext = context(scope : closureScope(isArg:true))
+contributor([applicationContext], {
+    if(enclosingCall('WebApplication')){
+        method(name:'name', type: 'void', params: [name:'java.lang.String'], doc:'Precise the name of the application')
+        method(name:'pageTitle', type: 'void', params: [title:'java.lang.String'], doc:'Precise the title of the default web page')
+        method(name:'WebPage', type: 'void', params: [closure: 'groovy.lang.Closure'], doc:' Define a web page')
+        method(name:'NavigationMenu', type: 'void', params: [closure: 'groovy.lang.Closure'], doc:' Define the navigation menu')
+
+    }
+})
+
+def webpageContext = context(scope: closureScope(isArg:true))
+contributor([webpageContext], {
+    if(enclosingCall('WebPage')){
+        method(name:'name', type: 'void', params: [name:'java.lang.String'], doc:'Precise the name of the webpage')
+        method(name:'title', type: 'void', params: [title:'java.lang.String'], doc:'Precise the title of the current web page')
+
+    }
+})
+
+def navigationMenuContext = context(scope: closureScope(isArg:true))
+contributor([navigationMenuContext], {
+    if(enclosingCall('NavigationMenu')){
+        method(name: 'ApplicationName', type: 'void', params: [name: 'java.lang.String'], doc: 'Precise the name of the application to be displayed in the navigation Menu.')
+        method(name: 'type', type: 'void', params: [type :'uxifier.models.NavigationMenuType'], doc: 'type of menu Navbar of Drawer ')
+        method(name: 'Menu', type: 'void', params: [closure: 'groovy.lang.Closure'], doc: 'Define an item of Navigation')
+        method(name: 'CartAction', type: 'void', params: [closure: 'groovy.lang.Closure'], doc: 'Define the cart button on the navigation menu')
+    }
+})
+
+def menuContext = context(scope: closureScope(isArg:true))
+contributor([menuContext], {
+    if(enclosingCall('Menu')){
+        method(name: 'label', type: 'void', params: [label: 'java.lang.String'], doc: 'Precise the text displayed on the menu item')
+        method(name: 'link', type: 'void', params: [link: 'java.lang.String'], doc: 'Precise the link of the page to be redirected to')
+    }
+})
+
+def cartActionContext = context(scope: closureScope(isArg: true))
+contributor([cartActionContext], {
+    if(enclosingCall('CartAction')){
+        method(name: 'displayItemCount',type: 'void', doc: 'To display the total number of items in the cart on the cart button')
+        method(name: 'useIcon',type: 'void', doc: 'To display an Icon of cart')
+        method(name: 'label', type: 'void',params: [label: 'java.lang.String'], doc:'Precise the text displayed on the menu item')
+        method(name: 'onclick', type: 'void', doc: 'Display a preview of the cart when users click on the button')
+        method(name: 'CartPreview', type: 'void', params: [closure: 'groovy.lang.Closure'], doc: 'Define how the preview of cart is')
+
+
+    }
+})
