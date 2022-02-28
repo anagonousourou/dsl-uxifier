@@ -10,6 +10,8 @@ class VueMenu extends VueComponent {
 
     }
 
+
+
     @Override
     def insertInTemplate() {
         FileContext.writer.write(""" 
@@ -51,6 +53,10 @@ class VueMenuBar extends VueComponent {
     @Override
     def registerDependencies(PackageJson packageJson) {
         println("Registering vaadin-core in ")
+    }
+    @Override
+    Object insertInData() {
+        return menus.forEach(m -> m.insertInData())
     }
 
     @Override

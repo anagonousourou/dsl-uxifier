@@ -18,6 +18,11 @@ class VueMenuNavbar extends VueComponent {
     }
 
     @Override
+    Object insertInData() {
+        return menus.forEach(m -> m.insertInData())
+    }
+
+    @Override
     def registerSelfInComponents() {
         //
     }

@@ -7,17 +7,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uxifier.api.ecommerce.entities.Product;
-import uxifier.api.ecommerce.services.ProductService;
+import uxifier.api.ecommerce.entities.ProductInCart;
+import uxifier.api.ecommerce.services.CartService;
 
 @RestController
 @CrossOrigin()
-public class ProductController {
-    @Autowired
-    private ProductService productService;
+public class CartController {
 
-    @GetMapping("/products")
-    public List<Product> fetchProducts(){
-        return this.productService.findAll();
+    @Autowired
+    private CartService cartService;
+    @GetMapping("/carts")
+
+    public List<ProductInCart> fetchProductInCart(){
+        return cartService.getContent();
     }
 }

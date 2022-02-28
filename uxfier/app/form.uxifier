@@ -1,10 +1,16 @@
 WebApplication {
 
-    name  'Form35'
+    name  'Form3'
 
      WebPage {
         name 'CheckOut'
         title 'page Title'
+        SocialMediaGroup {
+                                                SocialMedia {
+                                                    type Facebook
+                                                    url 'http://127.0.0.1/'
+                                                }
+                     }
         AccordionGroup{
             Accordion{
                 name 'Shipment'
@@ -22,6 +28,12 @@ WebApplication {
                         Upload {name 'Upload'}
                     }
                 }
+                SocialMediaGroup {
+                                                        SocialMedia {
+                                                            type Facebook
+                                                            url 'http://127.0.0.1/'
+                                                        }
+                             }
             }
             Accordion{
                 name 'Shipment'

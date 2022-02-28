@@ -94,7 +94,7 @@ class SourceDirectory {
 }
 
 class MainJsFile {
-    def toCode() {
+    static def toCode() {
         Path mainjs = Files.createFile(Path.of(FileContext.currentDirectory.toString(), "main.js"))
         FileContext.writeToFile(mainjs, """
 import { createApp } from 'vue'
@@ -122,9 +122,7 @@ class AppFile extends VueComponent {
         var componentFilePath = Files.createFile(Path.of(FileContext.currentDirectory.toString(), 'App.vue'))
         FileContext.writer = Files.newBufferedWriter(componentFilePath)
         FileContext.writer.write("<template>")
-        content.forEach(c -> c.openTagInTemplate())
         content.forEach(c -> c.insertInTemplate())
-        content.forEach(c -> c.closeTagInTemplate())
         FileContext.writer.write("</template>")
     }
 
@@ -133,20 +131,24 @@ class AppFile extends VueComponent {
         FileContext.writer.write("<script>\n")
         content.forEach(c -> c.insertSelfInImports())
 
-        FileContext.writer.write("""
-            import '@vaadin/text-field';
-            import '@vaadin/checkbox';
-            import '@vaadin/combo-box';
-            import '@vaadin/email-field';
-            import '@vaadin/date-picker';
-            import '@vaadin/date-time-picker';
-            import '@vaadin/button';
-            import '@vaadin/message-input';
-            import '@vaadin/password-field';
+        FileContext.writer.write(
+                """
+        import '@vaadin/text-field';
+        import '@vaadin/checkbox';
+        import '@vaadin/combo-box';
+        import '@vaadin/email-field';
+        import '@vaadin/date-picker';
+        import '@vaadin/date-time-picker';
+        import '@vaadin/button';
+        import '@vaadin/message-input';
+        import '@vaadin/password-field';
             import '@vaadin/time-picker';
             import '@vaadin/upload';
-            
             import '@vaadin/radio-group';
+            import '@vaadin/accordion';
+            import '@vaadin/vertical-layout';
+            import "@vaadin/horizontal-layout";
+        import '@vaadin/integer-field';
             
             import '@vaadin/vertical-layout';
             import '@vaadin/horizontal-layout';
@@ -161,11 +163,19 @@ class AppFile extends VueComponent {
         FileContext.writer.write("""export default {
             name: 'App',""")
 
-        FileContext.writer.write("""components :{""")
+        FileContext.writer.write("""components :{\n""")
 
         content.forEach(c -> c.registerSelfInComponents())
 
-        FileContext.writer.write("}}\n</script>")
+        FileContext.writer.write("}\n")
+
+        FileContext.writer.write(",data : () => ({\n")
+
+        content.forEach(c -> c.insertInData())
+
+        FileContext.writer.write("})\n")
+
+        FileContext.writer.write("}\n</script>\n")
 
 
     }
