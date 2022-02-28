@@ -1,6 +1,6 @@
 # Ignore Gradle project-specific cache directory
 .gradle
-
+.idea
 # Ignore Gradle build output directory
 build
 adeline
@@ -11,3 +11,5 @@ app/.settings
 app/bin
 .idea
 Form35
+CartApplication/
+myNew_Application/

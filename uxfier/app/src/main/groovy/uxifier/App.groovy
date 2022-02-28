@@ -141,7 +141,17 @@ class WebPageBuilder implements GenericBuilder {
 
     }
 
-    WebPage buildPage() {
+    def Cart(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=CartBuilder) Closure closure){
+        var cart = new CartBuilder()
+        def code = closure.rehydrate(cart, this, this)//permet de définir que tous les appels de méthodes
+        code.resolveStrategy = Closure.DELEGATE_ONLY//à l'intérieur de la closure seront résolus en utilisant le delegate
+        code()
+        println "Building Cart ${cart.build()}"
+        this.componentList.addAll(cart.build())
+        //this.componentList.addAll(new HorizontalLayoutBuilder( cart.build() ))
+    }
+
+    WebPage buildPage(){
         var webPage = new WebPage()
 
         webPage.name = this._name
@@ -156,6 +166,229 @@ class WebPageBuilder implements GenericBuilder {
 
 class HeaderBuilder implements GenericBuilder {
 
+}
+
+class PosterBuilder {
+    var poster = new Poster()
+
+    Poster build(){
+        return poster
+    }
+}
+
+class MiniDescriptionBuilder {
+    var miniDescription = new MiniDescription()
+
+    MiniDescription build(){
+        return miniDescription
+    }
+}
+
+class QuantityBuilder {
+
+    final QuantityInCartEditionMode Default = QuantityInCartEditionMode.Default
+
+    var quantityInCart = new QuantityInCart()
+
+    def editionMode(QuantityInCartEditionMode quantityInCartEditionMode){
+        quantityInCart.setQuantityInCartEditionMode(quantityInCartEditionMode)
+    }
+
+    QuantityInCart build(){
+        return miniDescription
+    }
+}
+
+class ProductInCartBuilder{
+
+    final DeletableAnswer yes = DeletableAnswer.yes
+    final DeletableAnswer no = DeletableAnswer.no
+
+    ProductInCart productInCart = new ProductInCart();
+
+    def deletable(DeletableAnswer deletableAnswer){
+        if (deletableAnswer == DeletableAnswer.yes) productInCart.enableDeleteable()
+    }
+
+    def Poster(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PosterBuilder) Closure closure) {
+        var layoutBuilder =  new PosterBuilder()
+        def code = closure.rehydrate(layoutBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+    }
+    def MiniDescription(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=MiniDescriptionBuilder) Closure closure) {
+        var layoutBuilder =  new MiniDescriptionBuilder()
+        def code = closure.rehydrate(layoutBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+    }
+    def Quantity(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=QuantityBuilder) Closure closure) {
+        var layoutBuilder =  new QuantityBuilder()
+        def code = closure.rehydrate(layoutBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+    }
+    def total(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=TotalBuilder) Closure closure){
+        var layoutBuilder =  new TotalBuilder()
+        def code = closure.rehydrate(layoutBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        productInCart.addTotalComponent();
+    }
+    ProductInCart build(){
+        return productInCart
+    }
+}
+
+class ProductsInCartBuilder{
+    ProductInCart productInCart = new ProductInCart()
+
+    def Product(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=ProductInCartBuilder) Closure closure) {
+        var layoutBuilder =  new ProductInCartBuilder()
+        def code = closure.rehydrate(layoutBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        productInCart = layoutBuilder.build()
+    }
+
+    ProductInCart build(){
+        return productInCart
+    }
+}
+
+trait TitleBuilder{
+    String content;
+
+    def title(String content){
+        this.content = content
+    }
+}
+trait labelBuilder{
+    String label;
+
+    def label(String content){
+        this.label = content
+    }
+}
+
+class PromoCodeBuilder implements labelBuilder{
+    PromoCode promoCode = new PromoCode()
+
+    PromoCode build(){
+        promoCode.setLabel(label)
+        return promoCode
+    }
+}
+
+class RemarkBuilder implements labelBuilder{
+    Remark remark = new Remark()
+
+    Remark build(){
+        remark.setLabel(label)
+        return remark
+    }
+}
+
+class SubTotalBuilder implements labelBuilder{
+    SubTotal subTotal = new SubTotal()
+
+    SubTotal build(){
+        subTotal.setLabel(label)
+        return subTotal
+    }
+}
+
+class DeliveryInCartBuilder implements labelBuilder {
+    DeliveryInCart deliveryInCart = new DeliveryInCart()
+    def defaultValue(Integer defaultValue){
+        deliveryInCart.setDefaultValue(defaultValue)
+    }
+
+    DeliveryInCart build() {
+        deliveryInCart.setLabel(label)
+        return deliveryInCart
+    }
+}
+
+class TotalBuilder implements labelBuilder{
+    Total total = new Total()
+
+    Total build(){
+        total.setLabel(label)
+        return total
+    }
+}
+
+class SummaryBuilder{
+    Summary summary = new Summary()
+
+    def label(String content){
+        summary.setLabel(content)
+    }
+
+    def subTotal(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SubTotalBuilder) Closure closure){
+        var subTotalBuilder =  new SubTotalBuilder()
+        def code = closure.rehydrate(subTotalBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        summary.setSubTotal(subTotalBuilder.build())
+    }
+
+    def Delivery(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=DeliveryInCartBuilder) Closure closure){
+        var deliveryInCartBuilder =  new DeliveryInCartBuilder()
+        def code = closure.rehydrate(deliveryInCartBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        summary.setDelivery(deliveryInCartBuilder.build())
+    }
+
+    def total(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=TotalBuilder) Closure closure){
+        var totalBuilder =  new TotalBuilder()
+        def code = closure.rehydrate(totalBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        summary.setTotal(totalBuilder.build())
+    }
+    Summary build(){
+        return summary
+    }
+}
+
+class CartBuilder implements TitleBuilder{
+
+    Cart cart = new Cart()
+
+    def Products(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=ProductsInCartBuilder) Closure closure){
+        var productsInCartBuilderBuilder =  new ProductsInCartBuilder()
+        def code = closure.rehydrate(productsInCartBuilderBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        cart.setProductInCart(productsInCartBuilderBuilder.build())
+    }
+    def PromoCode(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=PromoCodeBuilder) Closure closure){
+        var promoCodeBuilder =  new PromoCodeBuilder()
+        def code = closure.rehydrate(promoCodeBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        cart.setPromoCode(promoCodeBuilder.build())
+    }
+    def Remark(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=RemarkBuilder) Closure closure){
+        var remarkBuilder =  new RemarkBuilder()
+        def code = closure.rehydrate(remarkBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        cart.setRemark(remarkBuilder.build())
+    }
+    def Summary(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=SummaryBuilder) Closure closure){
+        var summaryBuilder =  new SummaryBuilder()
+        def code = closure.rehydrate(summaryBuilder, this,this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
+        cart.setSummary(summaryBuilder.build())
+    }
+    Cart build() {
+        return cart
+    }
 }
 
 
@@ -379,7 +612,8 @@ class GenericFilterBuilder {
 
 
 class SocialMediaGroupBuiler implements GenericBuilder {
-    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SocialMediaBuilder) Closure closure) {
+    def SocialMedia(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SocialMediaBuilder) Closure closure) {
+
         var socialMediaBuilder = new SocialMediaBuilder()
         def code = closure.rehydrate(socialMediaBuilder, this, this)
 //permet de définir que tous les appels de méthodes

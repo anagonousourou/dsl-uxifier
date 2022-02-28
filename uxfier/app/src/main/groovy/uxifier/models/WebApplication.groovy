@@ -1,11 +1,7 @@
 package uxifier.models
 
-import uxifier.vue.project.models.VueGeneratable
-import uxifier.vue.project.models.VueJsAccordion
-import uxifier.vue.project.models.VueJsAccordionGroup
-import uxifier.vue.project.models.VueJsField
-import uxifier.vue.project.models.VueJsForm
-import uxifier.vue.project.models.VueJsSocialMediaGroup
+import uxifier.vue.project.models.*
+
 
 class WebApplication {
 
@@ -255,6 +251,191 @@ class SocialMedia implements Component{
     }
 }
 
+class Poster implements Component{
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class MiniDescription implements Component{
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class QuantityInCart implements Component{
+    QuantityInCartEditionMode quantityInCartEditionMode;
+    def setQuantityInCartEditionMode(QuantityInCartEditionMode quantityInCartEditionMode){
+        this.quantityInCartEditionMode = quantityInCartEditionMode
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class ProductInCart implements Component{
+    List<Component> componentList = new ArrayList<>();
+    var deletable = false
+
+    def enableDeleteable(){
+        deletable = true
+    }
+
+    def addTotalComponent(){
+
+    }
+
+    @Override
+    String toString() {
+        return "Product{" +
+                "Poster" +
+                "MiniDescription" +
+                "Quantity" +
+                "Total" +
+                "}"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+trait OneLineAbleLabelledComponent implements Component{
+    String label
+    String componentName
+    @Override
+    String toString() {
+        return "${componentName} label ${label}"
+    }
+}
+
+
+class PromoCode implements OneLineAbleLabelledComponent{
+    PromoCode(){
+        componentName = "PromoCode"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class Remark implements OneLineAbleLabelledComponent{
+    Remark(){
+        componentName = "Remark"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+class SubTotal implements OneLineAbleLabelledComponent{
+    SubTotal(){
+        componentName = "SubTotal"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+class Total implements OneLineAbleLabelledComponent{
+    Total(){
+        componentName = "Total"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class DeliveryInCart implements Component {
+    String label
+    Integer defaultValue
+    @Override
+    String toString() {
+        return  "                        Delivery{\n" +
+                "                            label ${label}\n" +
+                "                            default ${defaultValue}\n" +
+                "                        }\n"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class Summary implements Component {
+    DeliveryInCart delivery
+    String label
+    SubTotal subTotal
+    Total total
+    @Override
+    String toString() {
+        return "Summary{\n" +
+                "                        label ${label}\n" +
+                "\n" +
+                "                        ${subTotal}\n" +
+                "\n" +
+                "${delivery}" +
+                "\n" +
+                "                        ${total}\n" +
+                "                    }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+class Cart implements Component{
+
+    String title
+    ProductInCart productInCart
+    PromoCode promoCode
+    Remark remark
+    Summary summary
+
+    @Override
+    String toString() {
+        return "Cart {\n" +
+                "title = ${title},\n" +
+                "Products = { \n" +
+                "${productInCart}\n" +
+                "  }\n" +
+                "${promoCode}\n" +
+                "${remark}\n" +
+                "${summary}\n" +
+                " }"
+    }
+
+    @Override
+    def buildVue() {
+        return null
+    }
+}
+
+enum DeletableAnswer{
+    yes,
+    no
+}
+
+enum QuantityInCartEditionMode{
+    Default
+}
+
 enum SocialMediaType {
     Facebook,
     LinkedIn,
@@ -417,6 +598,7 @@ interface ApplicationModelVisitor{
     def visit(Component component)
     def visit(SocialMediaGroup socialMediaGroup)
 
+    def visit(Cart cart)
     def visit(Header header)
 
     def visit(WebApplication application)
@@ -437,13 +619,13 @@ interface ApplicationModelVisitor{
 
     def visit(CartAction action)
     def visit(Accordion accordion)
-
-    def visit(CartPreview cartPreview)
     def visit(Filter filter)
     def visit(PriceFilter priceFilter)
     def visit(Product product)
     def visit(GenericFilters genericFilters)
     def visit(GenericFilter genericFilter)
+
+    def visit(CartPreview cartPreview)
 }
 
 trait LeafComponent{
