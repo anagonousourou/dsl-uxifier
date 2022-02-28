@@ -172,12 +172,15 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
         var tmp = new VueJsCart(cart)
         this.parent.addContent(tmp)
-        this.parent  = tmp
-        cart.componentList.forEach(c -> c.accept(this))
+        cart.componentList.forEach(c -> {
+
+            this.parent  = tmp
+            c.accept(this)
+        })
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
     }
     @Override
     def visit(ProductInCart productInCart) {
-
         var tmp = new VueJsProductInCart(productInCart)
         this.parent.addContent(tmp)
         this.parent  = tmp
@@ -210,13 +213,13 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(PromoCode promoCode) {
         var tmp = new VueJsPromoCode(promoCode)
+        println this.parent.getClass()
         this.parent.addContent(tmp)
         this.parent  = tmp
         promoCode.componentList.forEach(c -> c.accept(this))
     }
     @Override
     def visit(Remark remark) {
-
         var tmp = new VueJsRemark(remark)
         this.parent.addContent(tmp)
         this.parent  = tmp
@@ -224,7 +227,6 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     }
     @Override
     def visit(Summary summary) {
-
         var tmp = new VueJsSummary(summary)
         this.parent.addContent(tmp)
         this.parent  = tmp

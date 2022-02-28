@@ -85,12 +85,14 @@ class QuantityInCart implements Component{
 class ProductInCart implements Component{
     List<Component> componentList = new ArrayList<>();
     var deletable = false
+    var totalComponent = false
 
     def enableDeleteable(){
         deletable = true
     }
 
     def addTotalComponent(){
+        totalComponent = true
     }
 
     @Override

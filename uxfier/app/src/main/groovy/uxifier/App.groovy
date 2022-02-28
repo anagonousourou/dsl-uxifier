@@ -5,7 +5,6 @@ package uxifier
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
-import uxifier.models.ActionMenuBar
 import uxifier.models.Accordion
 import uxifier.models.AccordionGroup
 import uxifier.models.Field
@@ -282,12 +281,13 @@ class ProductsInCartBuilder{
 }
 
 trait TitleBuilder{
-    String content;
+    String title;
 
     def title(String content){
-        this.content = content
+        this.title = content
     }
 }
+
 trait labelBuilder{
     String label;
 
@@ -416,6 +416,7 @@ class CartBuilder implements TitleBuilder{
     }
 
     Cart build() {
+        cart.setTitle(title)
         return cart
     }
     
