@@ -465,8 +465,6 @@ trait GenericBuilder {
         addComponent(formBuilder.buildForm())
     }
 
-    def Catalog(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = CatalogBuilder) Closure closure) {
-
     def Catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CatalogBuilder) Closure closure) {
         var catalogBuilder = new CatalogBuilder()
         def code = closure.rehydrate(catalogBuilder, this, this)
