@@ -434,7 +434,7 @@ trait GenericBuilder {
         def code = closure.rehydrate(layoutBuilder, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
-        addComponent(new HorizontalLayout(layoutBuilder.build()))
+        addComponent(layoutBuilder.buildHorizontalLayout())
     }
 
     def SocialMediaGroup(@DelegatesTo(SocialMediaGroupBuiler) Closure closure) {
@@ -465,6 +465,7 @@ trait GenericBuilder {
         addComponent(formBuilder.buildForm())
     }
 
+    def Catalog(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = CatalogBuilder) Closure closure) {
 
     def Catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CatalogBuilder) Closure closure) {
         var catalogBuilder = new CatalogBuilder()
@@ -669,7 +670,6 @@ class FormBuilder implements GenericBuilder {
         def code = closure.rehydrate(fieldGroupBuilder, this, this)
         code.resolveStrategy = Closure.OWNER_FIRST
         code()
-
         this.componentList.addAll(new FieldGroup(fieldGroupBuilder.build()))
     }
 
@@ -717,6 +717,17 @@ class FieldGroupBuilder implements GenericBuilder {
         code()
         fieldBuilder.type('email-field')
         this.componentList.add(fieldBuilder.build())
+    }
+    def RadioButtonGroup(@DelegatesTo(RadioGroupBuilder) Closure closure) {
+        var radioGroupBuilder = new RadioGroupBuilder()
+        def code = closure.rehydrate(radioGroupBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+
+        this.componentList.add(radioGroupBuilder.buildRadioGroup())
+
+        /*
+        */
     }
 
     def DatePicker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FieldBuilder) Closure closure) {
@@ -799,6 +810,43 @@ class FieldBuilder {
     }
 }
 
+class RadioGroupBuilder implements GenericBuilder{
+    RadioGroup radioGroup = new RadioGroup();
+
+    def name(String name) {
+        this.radioGroup.name = name;
+    }
+
+    def RadioButton(@DelegatesTo(RadioButtonBuilder) Closure closure) {
+        var radioButtonBuilder = new RadioButtonBuilder()
+        def code = closure.rehydrate(radioButtonBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        this.radioGroup.componentList.add(radioButtonBuilder.buildRadioButton())
+    }
+
+    RadioGroup buildRadioGroup(){
+        return this.radioGroup;
+    }
+}
+
+class RadioButtonBuilder implements GenericBuilder{
+    Field field = new Field();
+
+    def name(String name) {
+        this.field.name = name;
+    }
+
+    def type(String type) {
+        this.field.type = type;
+    }
+
+    Field buildRadioButton() {
+        this.field.type = "radio-button";
+        return this.field;
+    }
+}
+
 class AccordionGroupBuilder implements GenericBuilder {
     AccordionGroup accordionGroup = new AccordionGroup();
 
@@ -840,6 +888,22 @@ class AccordionBuilder implements GenericBuilder {
 }
 
 class HorizontalLayoutBuilder implements GenericBuilder {
+    HorizontalLayout horizontalLayout = new HorizontalLayout();
 
+    HorizontalLayout buildHorizontalLayout(){
+        return horizontalLayout;
+    }
 
+    def TextField(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = FieldBuilder) Closure closure) {
+        var fieldBuilder = new FieldBuilder()
+        def code = closure.rehydrate(fieldBuilder, this, this)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
+        code()
+        fieldBuilder.type('text-field')
+        this.componentList.add(fieldBuilder.build())
+    }
+
+    def addComponent(Component component) {
+        this.horizontalLayout.componentList.addAll(component)
+    }
 }

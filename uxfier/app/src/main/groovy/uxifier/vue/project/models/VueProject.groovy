@@ -148,10 +148,7 @@ class AppFile extends VueComponent {
             import '@vaadin/accordion';
             import '@vaadin/vertical-layout';
             import "@vaadin/horizontal-layout";
-        import '@vaadin/integer-field';
             
-            import '@vaadin/vertical-layout';
-            import '@vaadin/horizontal-layout';
             import '@vaadin/integer-field';
 
             import '@vaadin/text-area';
@@ -159,6 +156,7 @@ class AppFile extends VueComponent {
             import '@vaadin/icon';
             import '@vaadin/icons';
             
+            import '@vaadin/horizontal-layout';
         """)
         FileContext.writer.write("""export default {
             name: 'App',""")

@@ -1,0 +1,90 @@
+WebApplication {
+
+    name  'test'
+NavigationMenu {
+        ApplicationName 'Adeline'
+        type Drawer
+        Menu {
+            label 'Products'
+            link '/'
+
+        }
+        Menu {
+            label 'Customers'
+            link '/'
+        }
+        Menu {
+            label 'Orders'
+            link '/'
+        }
+        Menu {
+            label 'Login'
+            link '/'
+        }
+        Menu {
+            label 'My account'
+
+        }
+        CartAction {
+            displayItemCount
+            label 'Mon Panier'
+            useIcon
+
+            /*CartPreview on hover {
+                Article {
+                    displayImage
+                    displayPrice
+                    displayQuantity
+                    allowRemoval
+                }
+                displayTotal
+            }
+
+            CartPreview on click {
+
+            }*/
+        }
+
+    }
+     WebPage {
+        name 'CheckOut'
+        title 'page Title'
+        Form {
+            name 'Shipping Details'
+            FieldGroup{
+                EmailField {name '*Email for order confirmation'}
+                TextField {name '*First name'}
+                TextField {name '*Last name'}
+                TextField {name '*Address'}
+                TextField {name 'City'}
+                TextField {name 'Country'}
+                TextField {name 'Region'}
+                TextField {name 'Zip / Postal Code'}
+                TextField {name '*Phone'}
+            }
+        }
+        Form {
+            FieldGroup{
+                RadioButtonGroup{
+                    name 'Delivery Method'
+                    RadioButton {name 'Standard'}
+                    RadioButton {name 'Fast'}
+                    RadioButton {name 'Relay point'}
+                }
+            }
+        }
+        Form {
+            FieldGroup{
+                RadioButtonGroup{
+                    name 'Payment Method'
+                    RadioButton {name 'Cash'}
+                    RadioButton {name 'PayPal'}
+                    RadioButton {name 'Credit Card'}
+                }
+            Button {name 'Submit'}
+            }
+        }
+     }
+}
+
+

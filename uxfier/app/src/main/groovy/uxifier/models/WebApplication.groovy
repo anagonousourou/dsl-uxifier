@@ -187,13 +187,32 @@ class Header implements Component{
 }
 
 class HorizontalLayout implements Component{
-        HorizontalLayout(List<Component> componentList){
-            this.componentList = componentList
-        }
+
+    HorizontalLayout(){
+        this.componentList = new ArrayList<>()
+    }
+
+    HorizontalLayout(List<Component> componentList){
+        this.componentList = componentList
+    }
+
+    @Override
+    public String toString() {
+        return "HorizontalLayout{" +
+                "components = ${componentList} " +
+                '}';
+    }
 
     @Override
     def buildVue() {
-        return null
+        var tmp = new VueJSHorizontalLayout()
+        for(Component c : componentList){
+            var vue = c.buildVue()
+            if(vue == null)
+                continue
+            tmp.components.add(vue as VueGeneratable)
+        }
+        return tmp
     }
 }
 
@@ -543,11 +562,21 @@ class Form implements Component{
         vue.name = this.name
         for(Component c : this.componentList){
             if(c instanceof FieldGroup){
-                for(Field f : (c.componentList as List<Field>)){
-                    var tmpField = new VueJsField()
-                    tmpField.setName(f.name)
-                    tmpField.setType(f.type)
-                    vue.fields.add(tmpField)
+                for(Component component : (c.componentList)){
+                    if (component instanceof Field){
+                        var tmpField = new VueJsField()
+                        tmpField.setName(component.name)
+                        tmpField.setType(component.type)
+                        vue.fields.add(tmpField)
+                    }
+                    if (component instanceof RadioGroup){
+                        var tmpRadioGroup = new VueJsRadioGroup()
+                        tmpRadioGroup.name = component.name;
+                        for(Field f : (component.componentList as List<Field>)){
+                            tmpRadioGroup.fields.add(f.buildVue())
+                        }
+                        vue.fields.add(tmpRadioGroup)
+                    }
                 }
             }
         }
@@ -585,7 +614,29 @@ class Field implements Component{
 
     @Override
     def buildVue() {
+        VueJsField vueJsField = new VueJsField()
+        vueJsField.setType(type)
+        vueJsField.setName(name)
+        return vueJsField
+    }
+}
+
+class RadioGroup implements Component{
+    String name;
+    List<Component> componentList = new ArrayList<>();
+
+
+    @Override
+    def buildVue() {
         return null
+    }
+
+    @Override
+    public String toString() {
+        return "RadioGroup{" +
+                "name='" + name + '\'' +
+                ", componentList=" + componentList +
+                '}';
     }
 }
 
