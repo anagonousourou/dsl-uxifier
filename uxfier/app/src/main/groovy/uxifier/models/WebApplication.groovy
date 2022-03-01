@@ -68,6 +68,8 @@ class Product implements Component {
 
     Rating rating
 
+    PrintingType printingType
+
     @Override
     String toString(){
 

@@ -943,7 +943,7 @@ class VueJsGenericFilters implements VueGeneratable {
 
 class VueJsProduct implements VueGeneratable {
 
-    private final Product product
+    final Product product
 
     VueJsProduct(Product product) {
         this.product = product
@@ -1093,7 +1093,16 @@ class VueJsCatalog implements VueGeneratable {
     @Override
     def insertSelfInStyle() {
 
-        FileContext.writer.write(""".layout{display:flex;}""")
+        if(product.product.printingType ==  PrintingType.ROW ){
+
+            FileContext.writer.write(""".layout{display:flex; flex-direction: row;}""")
+        }
+
+        else {
+            FileContext.writer.write(""".layout{display:flex; flex-direction: column;}""")
+
+        }
+
     }
 
     @Override
