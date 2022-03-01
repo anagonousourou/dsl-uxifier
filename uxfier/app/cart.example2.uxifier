@@ -1,0 +1,63 @@
+WebApplication {
+
+    name  'CartApplication'
+
+    WebPage {
+        name 'pagename1'
+        title 'page Title'
+
+        Header {
+
+            HorizontalLayout{
+                SocialMediaGroup {
+                    SocialMedia {
+                        type Facebook
+                        url 'http://127.0.0.1/'
+                    }
+                }
+            }
+        }
+        Cart{
+            title 'Mon Panier'
+
+            Products{
+                Product{
+                    deletable yes
+                    Poster{
+                        smallDimensions 153,120
+                        largeDimensions 200,150
+                    }
+                    Quantity{
+                        editable no
+                    }
+                    total {
+                    }
+                }
+            }
+            PromoCode {
+                label 'Saisissez un code promo'
+            }
+            Remark {
+                label 'Ajouter une remarque'
+            }
+            Summary{
+                label 'Resume de votre commande'
+
+                subTotal {
+                    label 'Sous-total'
+                }
+
+                Delivery{
+                    label 'Frais de livraison'
+                    defaultValue 2
+                }
+
+                total {
+                    label 'Total'
+                }
+            }
+
+        }
+
+    }
+}

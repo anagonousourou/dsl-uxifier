@@ -252,7 +252,10 @@ class SocialMedia implements Component{
 }
 
 class Poster implements Component{
-
+    int largeWidth = 233
+    int smallWidth = 133
+    int largeHeight = 200
+    int smallHeight = 100
     @Override
     def buildVue() {
         return null
@@ -268,9 +271,13 @@ class MiniDescription implements Component{
 }
 
 class QuantityInCart implements Component{
-    QuantityInCartEditionMode quantityInCartEditionMode;
-    def setQuantityInCartEditionMode(QuantityInCartEditionMode quantityInCartEditionMode){
-        this.quantityInCartEditionMode = quantityInCartEditionMode
+    EditableAnswer editableAnswer=EditableAnswer.yes;
+    def setQuantityInCartEditionMode(EditableAnswer editableAnswer){
+        this.editableAnswer = editableAnswer
+    }
+
+    boolean getEditable(){
+        return editableAnswer==EditableAnswer.yes;
     }
 
     @Override
@@ -496,7 +503,13 @@ class Cart implements Component{
     }
 }
 
+
 enum DeletableAnswer{
+    yes,
+    no
+}
+
+enum EditableAnswer{
     yes,
     no
 }
