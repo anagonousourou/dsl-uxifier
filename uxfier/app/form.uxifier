@@ -1,0 +1,57 @@
+WebApplication {
+
+    name  'test'
+
+     WebPage {
+        name 'CheckOut'
+        title 'page Title'
+        AccordionGroup{
+            Accordion{
+                name 'Shipping Details'
+                Form {
+                    name 'Shipping Details'
+                    FieldGroup{
+                        EmailField {name '*Email for order confirmation'}
+                        TextField {name '*First name'}
+                        TextField {name '*Last name'}
+                        TextField {name '*Address'}
+                        TextField {name 'City'}
+                        TextField {name 'Country'}
+                        TextField {name 'Region'}
+                        TextField {name 'Zip / Postal Code'}
+                        TextField {name '*Phone'}
+                    }
+                }
+            }
+            Accordion{
+                name 'Delivery Method'
+                Form {
+                    FieldGroup{
+                        RadioButtonGroup{
+                            name 'Delivery Method'
+                            RadioButton {name 'Standard'}
+                            RadioButton {name 'Fast'}
+                            RadioButton {name 'Relay point'}
+                        }
+                    }
+                }
+            }
+            Accordion{
+                name 'Payment Method'
+                Form {
+                    FieldGroup{
+                        RadioButtonGroup{
+                            name 'Payment Method'
+                            RadioButton {name 'Cash'}
+                            RadioButton {name 'PayPal'}
+                            RadioButton {name 'Credit Card'}
+                        }
+                        Button {name 'Submit'}
+                    }
+                }
+            }
+        }
+     }
+}
+
+
