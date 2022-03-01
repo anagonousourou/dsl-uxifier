@@ -249,9 +249,27 @@ class VueJsPriceFilter implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
+        if(this.type === PriceType.Bar){
         FileContext.writer.write("""
-            <p> price filter type  ="${type}" </p><br>
-        """)
+<h2 class="text-center">Filter by</h2>
+  <hr>
+  <h4>Price:</h4>
+  <div class="card-body">
+    <form id="price-range-form">
+      <label for="min-price" class="form-label">Min price: </label>
+      <span id="min-price-txt">\$0</span>
+      <input type="range" class="form-range" min="0" max="99" id="min-price" step="1" value="0">
+      <label for="max-price" class="form-label">Max price: </label>
+      <span id="max-price-txt">\$100</span>
+      <input type="range" class="form-range" min="1" max="100" id="max-price" step="1" value="100">
+    </form>
+  </div>
+          """)
+        }
+        else {
+            // TODO
+        }
+
     }
 }
 
