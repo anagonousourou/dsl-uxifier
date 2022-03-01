@@ -274,7 +274,7 @@ class VueJsCart implements VueGeneratable {
                 display:none;
               }
               .smallScreen{
-                display: block;
+                display: flex;
               }
             }
 """)
@@ -372,21 +372,22 @@ class VueJsProductInCart implements VueGeneratable,VueResponsive{
                 FileContext.writer.write("""
                 <vaadin-vertical-layout class="smallScreen" style="justify-content: space-between; flex-grow: 2;">""")
 
+                        if(productInCart.getDeletable()){
+                            FileContext.writer.write("""
+                                        <layout-item style="padding-left: 40%">
+                                          <vaadin-button aria-label="Close" theme="icon">
+                                            <vaadin-icon icon="vaadin:close-small"></vaadin-icon>
+                                          </vaadin-button>
+                                        </layout-item>""")
+                        }
                         if (productInCart.getTotalComponent()){
                             FileContext.writer.write("""
                                         <layout-item style="padding-left: 2%">
+                                        <vaadin-label style="padding-left: 2%">"""+productInCart.getTotalLabel()+"""</vaadin-label>
                                           <vaadin-number-field value="800"  readonly >
                                             <div slot="suffix">€</div>
                                           </vaadin-number-field>
                                         </layout-item>""")
-                        }
-                        if(productInCart.getDeletable()){
-                            FileContext.writer.write("""
-                                <layout-item style="padding-left: 40%">
-                                  <vaadin-button aria-label="Close" theme="icon">
-                                    <vaadin-icon icon="vaadin:close-small"></vaadin-icon>
-                                  </vaadin-button>
-                                </layout-item>""")
                         }
                 FileContext.writer.write("""
                 </vaadin-vertical-layout>
@@ -521,18 +522,19 @@ class VueJsSummary implements VueGeneratable,VueResponsive {
         
               <vaadin-label>"""+(summary.getLabel()?summary.getLabel():"Résumé de la commande")+"""</vaadin-label>
         
-              <hr style="width: 100%;"/>
-        
-        
               """)
 
-        if(subTotal)
-           subTotal.insertInTemplate()
+        if(subTotal||deliveryInCart){
+            FileContext.writer.write("""
+                    <hr style="width: 100%;"/>
+                    """)
+                    if (subTotal)
+                        subTotal.insertInTemplate()
 
 
-
-              if(deliveryInCart)
-                  deliveryInCart.insertInTemplate()
+                    if (deliveryInCart)
+                        deliveryInCart.insertInTemplate()
+                }
 
         FileContext.writer.write("""
               <hr style="width: 100%;"/>
@@ -576,17 +578,20 @@ class VueJsSummary implements VueGeneratable,VueResponsive {
             
                     <vaadin-label>"""+(summary.getLabel()?summary.getLabel():"Résumé de la commande")+"""</vaadin-label>
             
-                    <hr style="width: 100%;"/>
             
             
                     """)
 
+                    if(subTotal||deliveryInCart){
+                        FileContext.writer.write("""
+                    <hr style="width: 100%;"/>
+                    """)
+                        if (subTotal)
+                            subTotal.insertInTemplate()
 
-            if(subTotal)
-                subTotal.insertInTemplate()
-
-            if(deliveryInCart)
-                deliveryInCart.insertInTemplate()
+                        if (deliveryInCart)
+                            deliveryInCart.insertInTemplate()
+                    }
 
                     FileContext.writer.write("""
             

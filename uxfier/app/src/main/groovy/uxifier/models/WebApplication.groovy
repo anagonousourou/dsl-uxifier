@@ -290,13 +290,15 @@ class ProductInCart implements Component{
     List<Component> componentList = new ArrayList<>();
     var deletable = false
     var totalComponent = false
+    var totalLabel = "Sous-Total"
 
     def enableDeleteable(){
         deletable = true
     }
 
-    def addTotalComponent(){
+    def addTotalComponent(String totalLabel){
         totalComponent = true
+        this.totalLabel = totalLabel
     }
 
     @Override

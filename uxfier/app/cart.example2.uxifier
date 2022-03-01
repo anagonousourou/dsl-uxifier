@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'CartApplication'
+    name  'CartExemple2_Application'
 
     WebPage {
         name 'pagename1'
@@ -18,24 +18,15 @@ WebApplication {
             }
         }
         Cart{
-            title 'Mon Panier'
+            title 'Mon Panier discret'
 
             Products{
                 Product{
                     deletable yes
-                    Poster{
-                        smallDimensions 153,120
-                        largeDimensions 200,150
-                    }
                     Quantity{
                         editable no
                     }
-                    total {
-                    }
                 }
-            }
-            PromoCode {
-                label 'Saisissez un code promo'
             }
             Remark {
                 label 'Ajouter une remarque'
@@ -49,7 +40,7 @@ WebApplication {
 
                 Delivery{
                     label 'Frais de livraison'
-                    defaultValue 2
+                    defaultValue 0
                 }
 
                 total {
@@ -60,4 +51,33 @@ WebApplication {
         }
 
     }
+    NavigationMenu{
+        ApplicationName 'Adeline'
+        type Navbar
+        Menu{
+            label 'Products'
+            link '/'
+        }
+        Menu{
+            label 'Customers'
+            link '/'
+        }
+        Menu{
+            label 'Orders'
+            link '/'
+        }
+        Menu{
+            label 'Login'
+            link '/'
+        }
+        Menu{
+            label 'My account'
+        }
+        CartAction{
+            displayItemCount
+            label 'Mon Panier'
+            useIcon
+        }
+    }
+
 }

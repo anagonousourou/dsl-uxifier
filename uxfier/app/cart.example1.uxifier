@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'CartApplication'
+    name  'CartExemple1Application'
 
     WebPage {
         name 'pagename1'
@@ -28,10 +28,9 @@ WebApplication {
                         largeDimensions 200,150
                     }
                     Quantity{
-                        editable no
+                        editable yes
                     }
-                    total {
-                    }
+                    total 'Sous total'
                 }
             }
             PromoCode {
@@ -43,15 +42,6 @@ WebApplication {
             Summary{
                 label 'Resume de votre commande'
 
-                subTotal {
-                    label 'Sous-total'
-                }
-
-                Delivery{
-                    label 'Frais de livraison'
-                    defaultValue 2
-                }
-
                 total {
                     label 'Total'
                 }
@@ -59,5 +49,33 @@ WebApplication {
 
         }
 
+    }
+    NavigationMenu{
+        ApplicationName 'Adeline'
+        type Navbar
+        Menu{
+            label 'Products'
+            link '/'
+        }
+        Menu{
+            label 'Customers'
+            link '/'
+        }
+        Menu{
+            label 'Orders'
+            link '/'
+        }
+        Menu{
+            label 'Login'
+            link '/'
+        }
+        Menu{
+            label 'My account'
+        }
+        CartAction{
+            displayItemCount
+            label 'Mon Panier'
+            useIcon
+        }
     }
 }

@@ -242,12 +242,8 @@ class ProductInCartBuilder{
         code()
         productInCart.componentList.add(layoutBuilder.build())
     }
-    def total(@DelegatesTo(strategy=Closure.DELEGATE_ONLY, value=TotalBuilder) Closure closure){
-        var layoutBuilder =  new TotalBuilder()
-        def code = closure.rehydrate(layoutBuilder, this,this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
-        code()
-        productInCart.addTotalComponent();
+    def total(String totalLabel){
+        productInCart.addTotalComponent(totalLabel)
     }
     ProductInCart build(){
         return productInCart
