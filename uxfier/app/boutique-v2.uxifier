@@ -1,6 +1,6 @@
 WebApplication {
 
-    name  'adeline-Anas'
+    name  'adeline-Anas-v2'
 
     WebPage {
         name 'Home'
@@ -20,7 +20,11 @@ WebApplication {
                 Rating {
                     ratingType Stars
                 }
-                printType Row
+
+
+                printType Column
+
+
             }
 
             Filter {

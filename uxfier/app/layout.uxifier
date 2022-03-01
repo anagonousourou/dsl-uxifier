@@ -1,0 +1,37 @@
+WebApplication {
+
+    name  'layout5'
+
+     WebPage {
+        name 'CheckOut'
+        title 'page Title'
+        HorizontalLayout{
+            Form {
+            	name 'formname'
+                FieldGroup{
+                    EmailField {name '*Email for order confirmation'}
+                    TextField {name '*First name'}
+                    TextField {name '*Last name'}
+                    TextField {name '*Address'}
+                    HorizontalLayout{
+                        TextField {name '*City'}
+                        TextField {name '*Country'}
+                    }
+                    TextField {name '*City'}
+                }
+            }
+            Form {
+            	name 'formname'
+                FieldGroup{
+                    EmailField {name '*Email for order confirmation'}
+                    TextField {name '*First name'}
+                    TextField {name '*Last name'}
+                    TextField {name '*Address'}
+                    TextField {name '*City'}
+                    TextField {name '*Country'}
+                    TextField {name '*City'}
+                }
+            }
+        }
+     }
+}
