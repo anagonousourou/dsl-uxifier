@@ -149,6 +149,16 @@ class AppFile extends VueComponent {
             import '@vaadin/vertical-layout';
             import "@vaadin/horizontal-layout";
         import '@vaadin/integer-field';
+            
+            import '@vaadin/vertical-layout';
+            import '@vaadin/horizontal-layout';
+            import '@vaadin/integer-field';
+
+            import '@vaadin/text-area';
+            
+            import '@vaadin/icon';
+            import '@vaadin/icons';
+            
         """)
         FileContext.writer.write("""export default {
             name: 'App',""")
