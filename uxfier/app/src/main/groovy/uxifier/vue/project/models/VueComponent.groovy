@@ -96,7 +96,17 @@ class ScriptElement {
 }
 
 trait HtmlElement {
+    /**
+     * used for nested components
+     * such as tabs or accordions
+     * */
+    def openTagInTemplate(){
 
+    }
+
+    def closeTagInTemplate(){
+
+    }
 }
 
 trait LeafHtmlElement implements HtmlElement {
@@ -107,7 +117,32 @@ trait CompositeHtmlElement implements HtmlElement {
     List<HtmlElement> elements = new ArrayList<>()
 }
 
-class HorizontalLayout implements HtmlElement {
+class VueJSHorizontalLayout implements VueGeneratable {
+
+    List<VueGeneratable> components = new ArrayList<>()
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-horizontal-layout>""")
+        for(VueGeneratable v : components){
+            FileContext.writer.write("""<vaadin-vertical-layout>""")
+
+            v.insertInTemplate()
+            FileContext.writer.write("""</vaadin-vertical-layout>""")
+
+        }
+        FileContext.writer.write("""</vaadin-horizontal-layout>""")
+    }
 
 }
 
@@ -840,9 +875,24 @@ class VueJsPriceFilter implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
+        if(this.type === PriceType.Bar){
         FileContext.writer.write("""
-            <p> price filter type  ="${type}" </p><br>
-        """)
+  <div class="card-body">
+    <form id="price-range-form">
+      <label for="min-price" class="form-label">Min price: </label>
+      <span id="min-price-txt">\$0</span>
+      <input type="range" class="form-range" min="0" max="99" id="min-price" step="1" value="0">
+      <label for="max-price" class="form-label">Max price: </label>
+      <span id="max-price-txt">\$100</span>
+      <input type="range" class="form-range" min="1" max="100" id="max-price" step="1" value="100">
+    </form>
+  </div>
+          """)
+        }
+        else {
+            // TODO
+        }
+
     }
 }
 
@@ -876,16 +926,8 @@ class VueJsFilter implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""
-            <h3> filter </h3>
-            <div> priceFilter = """)
         priceFilter.insertInTemplate()
-        FileContext.writer.write("""</div><br>
-            <div> genericFilters = """)
         genericFilters.insertInTemplate()
-        FileContext.writer.write("""
-            </div><br>
-        """)
     }
 }
 
@@ -961,7 +1003,7 @@ class VueJsGenericFilters implements VueGeneratable {
 
 class VueJsProduct implements VueGeneratable {
 
-    private final Product product
+    final Product product
 
     VueJsProduct(Product product) {
         this.product = product
@@ -1111,7 +1153,16 @@ class VueJsCatalog implements VueGeneratable {
     @Override
     def insertSelfInStyle() {
 
-        FileContext.writer.write(""".layout{display:flex;}""")
+        if(product.product.printingType ==  PrintingType.ROW ){
+
+            FileContext.writer.write(""".layout{display:flex; flex-direction: row;}""")
+        }
+
+        else {
+            FileContext.writer.write(""".layout{display:flex; flex-direction: column;}""")
+
+        }
+
     }
 
     @Override
@@ -1124,8 +1175,7 @@ class VueJsCatalog implements VueGeneratable {
     def insertInTemplate() {
         filtre.insertInTemplate()
         FileContext.writer.write("""
-            <h1> Context</h1>
-            <h3> products </h3>
+            
             <div class="layout">
             <div v-for="product in products" :key="product.name">  """)
 
@@ -1205,35 +1255,18 @@ class VueJsForm implements VueGeneratable {
 
     @Override
     def insertSelfInImports() {
-        FileContext.writer.write("""
-            import '@vaadin/text-field';
-            import '@vaadin/checkbox';
-            import '@vaadin/combo-box';
-            import '@vaadin/email-field';
-            import '@vaadin/date-picker';
-            import '@vaadin/date-time-picker';
-            import '@vaadin/button';
-            import '@vaadin/message-input';
-            import '@vaadin/password-field';
-            import '@vaadin/time-picker';
-            import '@vaadin/upload';
-            
-            import '@vaadin/radio-group';
-            
-            export default {
-            
-            }
-        """)
+        return null
     }
 
     @Override
     def insertInTemplate() {
         println 'creating form : ' + name + 'with fields size' + fields.size()
-        FileContext.writer.write("""<vaadin-form-layout name="${name}">""")
-
+        FileContext.writer.write("""<div style="width: 50%"><vaadin-form-layout name="${name}">""")
+        if(name != null && name != "null"){
+            FileContext.writer.write("""<h3 style="font-family: 'Open Sans'; padding-left:10%">${name}</h3>""");
+        }
         fields.forEach(s -> s.insertInTemplate())
-
-        FileContext.writer.write("""</vaadin-form-layout>""")
+        FileContext.writer.write("""</vaadin-form-layout></div>""")
     }
 
     @Override
@@ -1267,7 +1300,64 @@ class VueJsField implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-${type}  style="width: 100%" label="${name}"/><br/>""")
+        var required = name.substring(0,1).equals("*")
+        if(required){
+            name = name.substring(1, name.size())
+        }
+        if(type.equals("button")){
+            FileContext.writer.write("""<vaadin-${type}  style="width: 45%; margin-left:25%;">${name}</vaadin-${type}>""")
+            return
+        }
+        if(type.equals("email-field")){
+            FileContext.writer.write("""<vaadin-${type}  style="width: 80%; padding-left:10%;" label="${name}" error-message="Please enter a valid email address"/>""")
+            return
+        }
+        if(required){
+            FileContext.writer.write("""<vaadin-${type} required=${required} style="width: 80%; padding-left:10%;" label="${name}" error-message="${name} is required."/>""")
+            return
+        }
+        FileContext.writer.write("""<vaadin-${type} style="width: 80%; padding-left:10%;" label="${name}"/>""")
+    }
+
+
+    @Override
+    public String toString() {
+        return "VueJsField{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
+}
+
+class VueJsRadioGroup implements VueGeneratable{
+
+    List<VueGeneratable> fields = new ArrayList<>();
+    String name;
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def insertInTemplate() {
+        FileContext.writer.write("""<vaadin-radio-group style="padding-left:10%;" label="${name}" theme="vertical">""")
+
+        fields.forEach(s -> s.insertInTemplate())
+
+        FileContext.writer.write("""</vaadin-radio-group>""")
+    }
+
+
+    @Override
+    public String toString() {
+        return "VueJsRadioGroup{" +
+                "fields=" + fields +
+                '}';
     }
 }
 
@@ -1292,7 +1382,7 @@ class VueJsAccordionGroup implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-accordion style="width:30%; margin-left: 15%; margin-right: 2%; margin-top: 2%">""")
+        FileContext.writer.write("""<vaadin-accordion style="margin-left: 15%; margin-right: 2%; margin-top: 2%">""")
         for (VueGeneratable v : accordions) {
             v.insertInTemplate()
         }
@@ -1329,7 +1419,6 @@ class VueJsAccordion implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""<vaadin-accordion-panel>
-        <h3 style="font-family: 'Open Sans'">${name}</h3>
         <vaadin-vertical-layout>""")
         for (VueGeneratable v : components) {
             v.insertInTemplate()
@@ -1406,7 +1495,7 @@ trait VueGeneratable {
 
     }
 
-    def closeTagInTemplate() {
+    def closeTagInTemplate(){
 
     }
 
