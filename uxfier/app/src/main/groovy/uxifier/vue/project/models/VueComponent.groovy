@@ -806,9 +806,6 @@ class VueJsPriceFilter implements VueGeneratable {
     def insertInTemplate() {
         if(this.type === PriceType.Bar){
         FileContext.writer.write("""
-<h2 class="text-center">Filter by</h2>
-  <hr>
-  <h4>Price:</h4>
   <div class="card-body">
     <form id="price-range-form">
       <label for="min-price" class="form-label">Min price: </label>
@@ -858,16 +855,8 @@ class VueJsFilter implements VueGeneratable {
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""
-            <h3> filter </h3>
-            <div> priceFilter = """)
         priceFilter.insertInTemplate()
-        FileContext.writer.write("""</div><br>
-            <div> genericFilters = """)
         genericFilters.insertInTemplate()
-        FileContext.writer.write("""
-            </div><br>
-        """)
     }
 }
 
@@ -1115,8 +1104,7 @@ class VueJsCatalog implements VueGeneratable {
     def insertInTemplate() {
         filtre.insertInTemplate()
         FileContext.writer.write("""
-            <h1> Context</h1>
-            <h3> products </h3>
+            
             <div class="layout">
             <div v-for="product in products" :key="product.name">  """)
 

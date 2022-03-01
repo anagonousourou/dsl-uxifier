@@ -538,24 +538,6 @@ class ProductBuilder {
     }
 
 }
-/*
-class PrintingBuilder {
-
-    Printing printing = new Printing()
-
-    final PrintingType Row = PrintingType.ROW
-    final PrintingType Column = PrintingType.COLUMN
-
-
-    def printType(PrintingType type) {
-        this.printing.printingType = type
-    }
-
-    Printing build(){
-        return this.printing
-    }
-
-}*/
 
 class RatingBuilder {
 
