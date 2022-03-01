@@ -13,6 +13,7 @@ __Authors__:
   * `subject` the pdf subject of the project
   * `report` the pdf report the project
   * `ecommerce` mock backend for displaying products for testing
+  * `uml` diagram of classes
 
 
 ## Test
