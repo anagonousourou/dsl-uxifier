@@ -169,7 +169,18 @@ class HeaderBuilder implements GenericBuilder {
 }
 
 class PosterBuilder {
+
     var poster = new Poster()
+
+    def smallDimensions(int width,int height){
+        poster.setSmallWidth(width)
+        poster.setSmallHeight(height)
+    }
+
+    def largeDimensions(int width,int height){
+        poster.setSmallWidth(width)
+        poster.setSmallHeight(height)
+    }
 
     Poster build(){
         return poster
@@ -186,16 +197,17 @@ class MiniDescriptionBuilder {
 
 class QuantityBuilder {
 
-    final QuantityInCartEditionMode Default = QuantityInCartEditionMode.Default
+    final EditableAnswer yes = EditableAnswer.yes
+    final EditableAnswer no = EditableAnswer.no
 
     var quantityInCart = new QuantityInCart()
 
-    def editionMode(QuantityInCartEditionMode quantityInCartEditionMode){
-        quantityInCart.setQuantityInCartEditionMode(quantityInCartEditionMode)
+    def editable(EditableAnswer editableAnswer){
+        quantityInCart.setQuantityInCartEditionMode(editableAnswer)
     }
 
     QuantityInCart build(){
-        return miniDescription
+        return quantityInCart
     }
 }
 
@@ -207,7 +219,7 @@ class ProductInCartBuilder{
     ProductInCart productInCart = new ProductInCart();
 
     def deletable(DeletableAnswer deletableAnswer){
-        if (deletableAnswer == DeletableAnswer.yes) productInCart.enableDeleteable()
+        if (deletableAnswer == yes) productInCart.enableDeleteable()
     }
 
     def Poster(@DelegatesTo(strategy=Closure.DELEGATE_FIRST, value=PosterBuilder) Closure closure) {
@@ -215,6 +227,7 @@ class ProductInCartBuilder{
         def code = closure.rehydrate(layoutBuilder, this,this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
+        productInCart.componentList.add(layoutBuilder.build())
     }
     def MiniDescription(@DelegatesTo(strategy=Closure.DELEGATE_FIRST, value=MiniDescriptionBuilder) Closure closure) {
         var layoutBuilder =  new MiniDescriptionBuilder()
@@ -234,6 +247,10 @@ class ProductInCartBuilder{
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code()
         productInCart.addTotalComponent();
+        productInCart.componentList.add(layoutBuilder.build())
+    }
+    def total(String totalLabel){
+        productInCart.addTotalComponent(totalLabel)
     }
     ProductInCart build(){
         return productInCart
@@ -301,6 +318,7 @@ class SubTotalBuilder implements labelBuilder{
 
 class DeliveryInCartBuilder implements labelBuilder {
     DeliveryInCart deliveryInCart = new DeliveryInCart()
+
     def defaultValue(Integer defaultValue){
         deliveryInCart.setDefaultValue(defaultValue)
     }

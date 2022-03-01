@@ -1,0 +1,55 @@
+WebApplication {
+
+    name  'CartExemple2_Application'
+
+    WebPage {
+        name 'pagename1'
+        title 'page Title'
+
+        Header {
+
+            HorizontalLayout{
+                SocialMediaGroup {
+                    SocialMedia {
+                        type Facebook
+                        url 'http://127.0.0.1/'
+                    }
+                }
+            }
+        }
+        Cart{
+            title 'Mon Panier discret'
+
+            Products{
+                Product{
+                    deletable yes
+                    Quantity{
+                        editable no
+                    }
+                }
+            }
+            Remark {
+                label 'Ajouter une remarque'
+            }
+            Summary{
+                label 'Resume de votre commande'
+
+                subTotal {
+                    label 'Sous-total'
+                }
+
+                Delivery{
+                    label 'Frais de livraison'
+                    defaultValue 0
+                }
+
+                total {
+                    label 'Total'
+                }
+            }
+
+        }
+
+    }
+
+}

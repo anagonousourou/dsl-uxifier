@@ -86,7 +86,10 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         var tmp = new VueJsProductInCart(productInCart)
         this.parent.addContent(tmp)
         this.parent  = tmp
-        productInCart.componentList.forEach(c -> c.accept(this))
+        productInCart.componentList.forEach(c -> {
+            this.parent  = tmp
+            c.accept(this)
+        })
     }
     @Override
     def visit(Poster poster) {
