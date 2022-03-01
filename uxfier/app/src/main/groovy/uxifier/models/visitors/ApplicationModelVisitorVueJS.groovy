@@ -21,7 +21,10 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
     @Override
     def visit(HorizontalLayout layout) {
-        return null
+        var tmp = layout.buildVue()
+        this.parent.addContent(tmp)
+        return tmp
+
     }
 
     @Override
@@ -57,7 +60,7 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     def visit(AccordionGroup accordionGroup){
         var tmp = accordionGroup.buildVue()
         this.parent.addContent(tmp)
-        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core', '22.0.5')
         return tmp
     }
 
@@ -83,7 +86,10 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
         var tmp = new VueJsProductInCart(productInCart)
         this.parent.addContent(tmp)
         this.parent  = tmp
-        productInCart.componentList.forEach(c -> c.accept(this))
+        productInCart.componentList.forEach(c -> {
+            this.parent  = tmp
+            c.accept(this)
+        })
     }
     @Override
     def visit(Poster poster) {
@@ -236,6 +242,8 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
 
         var previousParent = this.parent
         this.parent = vueComponent
+
+        println "components : " + webPage
 
         for (Component component1 : webPage.getComponentList()) {
             component1.accept(this)
