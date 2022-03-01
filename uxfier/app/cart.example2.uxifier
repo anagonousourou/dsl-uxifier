@@ -51,33 +51,5 @@ WebApplication {
         }
 
     }
-    NavigationMenu{
-        ApplicationName 'Adeline'
-        type Navbar
-        Menu{
-            label 'Products'
-            link '/'
-        }
-        Menu{
-            label 'Customers'
-            link '/'
-        }
-        Menu{
-            label 'Orders'
-            link '/'
-        }
-        Menu{
-            label 'Login'
-            link '/'
-        }
-        Menu{
-            label 'My account'
-        }
-        CartAction{
-            displayItemCount
-            label 'Mon Panier'
-            useIcon
-        }
-    }
 
 }
