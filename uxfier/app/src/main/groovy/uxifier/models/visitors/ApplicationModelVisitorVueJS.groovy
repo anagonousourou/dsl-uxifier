@@ -69,10 +69,67 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     @Override
     def visit(Cart cart) {
 
-        var tmp = new VueJsCart()
+        var tmp = new VueJsCart(cart)
+        this.parent.addContent(tmp)
+        cart.componentList.forEach(c -> {
+
+            this.parent  = tmp
+            c.accept(this)
+        })
+        this.vueProject.packageJson.dependencies.put('@vaadin/vaadin-core','22.0.5')
+    }
+    @Override
+    def visit(ProductInCart productInCart) {
+        var tmp = new VueJsProductInCart(productInCart)
         this.parent.addContent(tmp)
         this.parent  = tmp
-        //cart.accept(this)
+        productInCart.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Poster poster) {
+        this.parent.addContent(new VueJsPoster(poster))
+    }
+    @Override
+    def visit(MiniDescription miniDescription) {
+        this.parent.addContent(new VueJsMiniDescription(miniDescription))
+    }
+    @Override
+    def visit(QuantityInCart quantityInCart) {
+        this.parent.addContent(new VueJsQuantityOfProductInCart(quantityInCart))
+    }
+    @Override
+    def visit(Total total) {
+        this.parent.addContent(new VueJsTotal(total))
+    }
+    @Override
+    def visit(SubTotal subTotal) {
+        this.parent.addContent(new VueJsSubTotal(subTotal))
+    }
+    @Override
+    def visit(DeliveryInCart deliveryInCart) {
+        this.parent.addContent(new VueJsDeliveryInCart(deliveryInCart))
+    }
+    @Override
+    def visit(PromoCode promoCode) {
+        var tmp = new VueJsPromoCode(promoCode)
+        println this.parent.getClass()
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        promoCode.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Remark remark) {
+        var tmp = new VueJsRemark(remark)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        remark.componentList.forEach(c -> c.accept(this))
+    }
+    @Override
+    def visit(Summary summary) {
+        var tmp = new VueJsSummary(summary)
+        this.parent.addContent(tmp)
+        this.parent  = tmp
+        summary.componentList.forEach(c -> c.accept(this))
     }
 
     @Override
@@ -264,10 +321,19 @@ class ApplicationModelVisitorVueJS implements  ApplicationModelVisitor{
     def visit(CartAction action) {
         var vueAction = new VueCartActionMenu(action.label, action.displayCartCount, action.displayCartIcon)
         if(action.cartPreview != null){
-            var previousAction = this.parent
-            this.parent = vueAction
-            action.cartPreview.accept(this)
-            this.parent = previousAction
+
+            if('CLICK'.equals(action.previewAction)){
+                vueAction.previewAction = action.previewAction
+                this.vueProject.sourceDirectory.appFile.content.add(action.cartPreview.buildVue())
+            }
+            else{
+                var previousAction = this.parent
+                this.parent = vueAction
+                action.cartPreview.accept(this)
+                this.parent = previousAction
+                vueAction.previewAction = action.previewAction
+            }
+
         }
         this.parent.addContent(vueAction)
         println("Adding cartaction")

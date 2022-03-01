@@ -20,7 +20,7 @@ WebApplication {
                 }
             }
             Cart{
-                    title 'Mon Panier'
+                    title 'Panier en cour...'
 
                     Products{
                         Product{
@@ -36,6 +36,7 @@ WebApplication {
 
                             }
                             total {
+                                label 'Total'
                             }
                         }
                     }
@@ -46,7 +47,7 @@ WebApplication {
                         label 'Ajouter une remarque'
                     }
                     Summary{
-                        label '... Plus qu\'une dernière étape pour valider le panier'
+                        label 'Résumé de la commande'
 
                         subTotal {
                             label 'Sous-total'
@@ -54,7 +55,7 @@ WebApplication {
 
                         Delivery{
                             label 'Frais de livraison'
-                            defaultValue 0
+                            defaultValue 500
                         }
 
                         total {
