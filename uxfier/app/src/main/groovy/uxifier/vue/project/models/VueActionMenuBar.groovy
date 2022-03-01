@@ -10,6 +10,11 @@ class VueActionMenuBar implements VueGeneratable {
     }
 
     @Override
+    def insertInData() {
+        return actions.forEach(action -> action.insertInData())
+    }
+
+    @Override
     def writeScript() {
         return null
     }

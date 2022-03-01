@@ -131,30 +131,51 @@ class AppFile extends VueComponent {
         FileContext.writer.write("<script>\n")
         content.forEach(c -> c.insertSelfInImports())
 
-        FileContext.writer.write("""
-            import '@vaadin/text-field';
-            import '@vaadin/checkbox';
-            import '@vaadin/combo-box';
-            import '@vaadin/email-field';
-            import '@vaadin/date-picker';
-            import '@vaadin/date-time-picker';
-            import '@vaadin/button';
-            import '@vaadin/message-input';
-            import '@vaadin/password-field';
+        FileContext.writer.write(
+                """
+        import '@vaadin/text-field';
+        import '@vaadin/checkbox';
+        import '@vaadin/combo-box';
+        import '@vaadin/email-field';
+        import '@vaadin/date-picker';
+        import '@vaadin/date-time-picker';
+        import '@vaadin/button';
+        import '@vaadin/message-input';
+        import '@vaadin/password-field';
             import '@vaadin/time-picker';
             import '@vaadin/upload';
             import '@vaadin/radio-group';
             import '@vaadin/accordion';
             import '@vaadin/vertical-layout';
+            import "@vaadin/horizontal-layout";
+        import '@vaadin/integer-field';
+            
+            import '@vaadin/vertical-layout';
+            import '@vaadin/horizontal-layout';
+            import '@vaadin/integer-field';
+
+            import '@vaadin/text-area';
+            
+            import '@vaadin/icon';
+            import '@vaadin/icons';
+            
         """)
         FileContext.writer.write("""export default {
             name: 'App',""")
 
-        FileContext.writer.write("""components :{""")
+        FileContext.writer.write("""components :{\n""")
 
         content.forEach(c -> c.registerSelfInComponents())
 
-        FileContext.writer.write("}}\n</script>")
+        FileContext.writer.write("}\n")
+
+        FileContext.writer.write(",data : () => ({\n")
+
+        content.forEach(c -> c.insertInData())
+
+        FileContext.writer.write("})\n")
+
+        FileContext.writer.write("}\n</script>\n")
 
 
     }
@@ -220,8 +241,6 @@ class PackageJson {
         projectPackageJson.devDependencies.put("@vue/cli-service", "~4.5.0")
         projectPackageJson.devDependencies.put("@vue/compiler-sfc", "^3.0.0")
         projectPackageJson.devDependencies.put("babel-eslint", "^10.1.0")
-        projectPackageJson.devDependencies.put("eslint", "^6.7.2")
-        projectPackageJson.devDependencies.put("vue-cli-plugin-vuetify", "~2.4.5")
         projectPackageJson.devDependencies.put("eslint", "^6.7.2")
         projectPackageJson.devDependencies.put("eslint-plugin-vue", "^7.0.0")
 

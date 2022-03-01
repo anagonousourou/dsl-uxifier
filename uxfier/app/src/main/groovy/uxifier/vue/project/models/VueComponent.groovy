@@ -14,6 +14,16 @@ class VueComponent implements VueGeneratable {
     List<VueGeneratable> content = new ArrayList<>();
 
     @Override
+    def writeStyle() {
+        FileContext.writer.write("<style>")
+        content.forEach(c->c.insertSelfInStyle())
+        FileContext.writer.write("</style>")
+
+        FileContext.writer.close()
+        FileContext.writer = null
+    }
+
+    @Override
     def addContent(VueGeneratable vueGeneratable) {
         this.content.add(vueGeneratable)
     }
@@ -45,7 +55,6 @@ class VueComponent implements VueGeneratable {
     @Override
     def registerSelfInComponents() {
         FileContext.writer.write("${this.name},")
-
     }
 
     @Override
@@ -64,12 +73,8 @@ class VueComponent implements VueGeneratable {
         content.forEach(c -> c.insertInData())
 
         FileContext.writer.write("}}}\n</script>")
-
-        FileContext.writer.close()
-        FileContext.writer = null
-
-
     }
+
 
     @Override
     def insertInTemplate() {
@@ -78,7 +83,7 @@ class VueComponent implements VueGeneratable {
 
     @Override
     String toString() {
-        return "VueComponent {name = ${name} } -> ${content}"
+        return "VueCoponent {name = ${name} } -> ${content}"
     }
 }
 
@@ -157,6 +162,19 @@ class VueJsSocialMediaGroup implements VueGeneratable {
 }
 
 class VueJsCart implements VueGeneratable {
+    Cart cart;
+
+    List<VueGeneratable> cartContent = new ArrayList<>();
+
+    public VueJsCart(Cart cart){
+        this.cart = cart
+    }
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        return cartContent.add(vueGeneratable)
+    }
+
     @Override
     def registerDependencies(PackageJson packageJson) {
         return null
@@ -164,8 +182,10 @@ class VueJsCart implements VueGeneratable {
 
     @Override
     def insertSelfInImports() {
-        return null
+
     }
+
+
 
     @Override
     def writeScript() {
@@ -182,34 +202,576 @@ class VueJsCart implements VueGeneratable {
         return null
     }
 
+
+    def insertInTemplate() {
+        VueJsProductInCart productInCart = null
+        VueJsPromoCode promoCode = null
+        VueJsRemark remark = null
+        VueJsSummary summary = null
+
+        for (int i=0;i<cartContent.size();i++) {
+            var cartContentI = cartContent.get(i)
+            if (cartContentI instanceof VueJsProductInCart)
+                productInCart = (VueJsProductInCart) cartContentI
+            if (cartContentI instanceof VueJsPromoCode)
+                promoCode = (VueJsPromoCode) cartContentI
+            if (cartContentI instanceof VueJsRemark)
+                remark = (VueJsRemark) cartContentI
+            if (cartContentI instanceof VueJsSummary)
+                summary = (VueJsSummary) cartContentI
+            /*println cartContentI.getClass()
+            switch (cartContentI.getClass()){
+                case VueJsProductInCart.getClass():
+                    productInCart = (VueJsProductInCart) cartContentI
+                    break
+                case VueJsPromoCode.getClass():
+                    promoCode = (VueJsPromoCode) cartContentI
+                    break
+                case VueJsRemark.getClass():
+                    remark = (VueJsRemark) cartContentI
+                    break
+                case VueJsSummary.getClass():
+                    summary = (VueJsSummary) cartContentI
+                    break
+            }*/
+        }
+
+        FileContext.writer.write("""
+ <vaadin-horizontal-layout style="width: 100%;">
+
+    <vaadin-vertical-layout style="width: 100%;">
+      <vaadin-vertical-layout style="width: 100%;">
+        <vaadin-label>"""+(cart.getTitle()?cart.getTitle():"")+"""</vaadin-label>
+    
+        <hr style="width: 100%;"/>
+            """)
+            if(productInCart)
+                    productInCart.insertInTemplate()
+        FileContext.writer.write("""
+      </vaadin-vertical-layout>
+    
+        <vaadin-vertical-layout>
+    """)
+
+        if (promoCode)
+            promoCode.insertInTemplate()
+
+        if(remark)
+            remark.insertInTemplate()
+
+        FileContext.writer.write("""
+      </vaadin-vertical-layout>
+
+      """)
+        if (summary)
+            summary.insertInTemplate(992)
+
+        FileContext.writer.write("""
+    </vaadin-vertical-layout>
+
+    """)
+        if(summary)
+            summary.insertInTemplate()
+    FileContext.writer.write("""
+  </vaadin-horizontal-layout>
+        """)
+    }
+
+    @Override
+    def insertSelfInStyle() {
+        FileContext.writer.write("""
+            .largeScreen{
+              visibility: visible;
+            }
+            .smallScreen{
+              visibility: collapse;
+            }
+            
+            @media screen and (max-width: 992px) {
+              .largeScreen{
+                visibility: collapse;
+              }
+              .smallScreen{
+                visibility: visible;
+              }
+            }
+""")
+    }
+
+
+}
+
+class VueJsProductInCart implements VueGeneratable,VueResponsive{
+    ProductInCart productInCart;
+
+    List<VueGeneratable> productInCartContent = new ArrayList<>();
+
+    public VueJsProductInCart(ProductInCart productInCart){
+        this.productInCart = productInCart
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+
     def insertInTemplate() {
         FileContext.writer.write("""
- <div>
-        <div>
-            Mon Panier
-            <hr/>
-        </div>
-        <div class="horizontal-container" style="display:flex;">
-          <div class='actual-map'>
-            <img id="myimage" src="https://picsum.photos/200" width="200">
-          </div>
-          <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;"></div>
-          <div id="product_in_cart_description" style="flex-grow:1;">
-              <h3 id="product_1_name">Je suis un article</h3>
-              <h4 id="product_1_price">400<span class="devise">£</span></h4>
-          </div>
-          <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;width:40%;"></div>
-          <div style="display:flex;flex-grow:1;">
-              <div><input id="product_1_quantity" type="number" height="10px"/></div>
-              <div class="vertical_separator" style="border-left: 6px solid transparent;height: max; width:20%;"></div>
-              <div style="flex-grow:1;"><span id="product_1_total">400</span><span class="devise">£</span></div>
-              <div class="vertical_separator" style="border-left: 6px solid transparent;height: max;width:20%;"></div>
-              <div><button class="btn"><i class="fa fa-close"></i></button></div>
-          </div>
-      
-        </div>
-    </div>
+        <vaadin-horizontal-layout style="width: 100%;">
+              <img id="myimage" src="https://picsum.photos/200" width="133" height="100">
+    
+              <vaadin-vertical-layout
+                  style="justify-content: flex-start; padding-left: 5px;">
+                <layout-item><span>Je suis un article</span></layout-item>
+                <layout-item>
+                  <vaadin-number-field edit="false" value="400" readonly>
+                    <div slot="suffix">€</div>
+                  </vaadin-number-field>
+                </layout-item>
+                <layout-item>
+                  <vaadin-integer-field has-controls class="smallScreen" max="100000" min="0" value="2"></vaadin-integer-field>
+                </layout-item>
+              </vaadin-vertical-layout>
+                
+              """)
+            if(productInCart.getTotalComponent()||productInCart.getDeletable()) {
+
+                FileContext.writer.write("""
+    
+            <vaadin-horizontal-layout class="largeScreen" style="justify-content: space-evenly; flex-grow: 2;">
+    
+                <vaadin-integer-field has-controls   max="100000" min="0" value="2"></vaadin-integer-field>
+    
+                """)
+                if (productInCart.getTotalComponent())
+                    FileContext.writer.write("""
+                        <layout-item style="justify-content: space-around;" >
+                          <vaadin-number-field value="800"  readonly >
+                            <div slot="suffix">€</div>
+                          </vaadin-number-field>
+                        </layout-item>""")
+
+                if (productInCart.getDeletable())
+                    FileContext.writer.write("""
+                        <vaadin-button aria-label="Close" theme="icon">
+                          <vaadin-icon icon="vaadin:close-small"></vaadin-icon>
+                        </vaadin-button>""")
+
+                FileContext.writer.write("""
+            </vaadin-horizontal-layout>
+                    """)
+            }
+            if(productInCart.getTotalComponent()||productInCart.getDeletable()){
+                FileContext.writer.write("""
+                <vaadin-vertical-layout class="smallScreen" style="justify-content: space-between; flex-grow: 2;">""")
+                        if(productInCart.getDeletable()){
+                            FileContext.writer.write("""
+                                <layout-item style="padding-left: 40%">
+                                  <vaadin-button aria-label="Close" theme="icon">
+                                    <vaadin-icon icon="vaadin:close-small"></vaadin-icon>
+                                  </vaadin-button>
+                                </layout-item>""")
+                        }
+                        if (productInCart.getTotalComponent()){
+                            FileContext.writer.write("""
+                                <layout-item style="padding-left: 2%">
+                                  <vaadin-number-field value="800"  readonly >
+                                    <div slot="suffix">€</div>
+                                  </vaadin-number-field>
+                                </layout-item>""")
+                        }
+                FileContext.writer.write("""
+                </vaadin-vertical-layout>
+                        """)
+        }
+
+        FileContext.writer.write("""
+        </vaadin-horizontal-layout>
+                """)
+    }
+/**
+ * insert self in a parent template
+ * @return
+ */
+
+    @Override
+    def insertInTemplate(Integer integer) {
+        return null
+    }
+}
+
+class VueJsPromoCode implements VueGeneratable {
+
+    PromoCode promoCode;
+
+    List<VueGeneratable> promoCodeContent = new ArrayList<>();
+
+    public VueJsPromoCode(PromoCode promoCode){
+        this.promoCode = promoCode
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+            <vaadin-horizontal-layout>
+    
+              <vaadin-text-field label="""+(promoCode.getLabel()? promoCode.getLabel():"Saisissez un code promo")+""">
+                <vaadin-icon icon="vaadin:ticket"></vaadin-icon>
+              </vaadin-text-field>
+    
+              <vaadin-vertical-layout style="justify-content: end;">
+                <vaadin-button >Appliquer</vaadin-button>
+              </vaadin-vertical-layout>
+    
+            </vaadin-horizontal-layout>
         """)
+    }
+}
+
+class VueJsRemark implements VueGeneratable {
+    Remark remark;
+
+    List<VueGeneratable> remarkContent = new ArrayList<>();
+
+    public VueJsRemark(Remark remark){
+        this.remark = remark
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+            <vaadin-text-area
+                .maxlength="1233"
+                .value="toto"
+                label="""+(remark.getLabel()? remark.getLabel():"Ajouter une remarque")+"""
+                width="100">
+              <vaadin-icon icon="vaadin:file-text-o"></vaadin-icon>
+            </vaadin-text-area>
+        """)
+    }
+}
+
+class VueJsSummary implements VueGeneratable,VueResponsive {
+    Summary summary;
+
+    List<VueGeneratable> summaryContent = new ArrayList<>();
+
+    public VueJsSummary(Summary summary){
+        this.summary = summary
+    }
+
+    @Override
+    def addContent(VueGeneratable vueGeneratable) {
+        return summaryContent.add(vueGeneratable)
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        VueJsDeliveryInCart deliveryInCart = null;
+        VueJsSubTotal subTotal = null;
+        VueJsTotal total = null;
+
+        for (int i=0; i<summaryContent.size(); i++) {
+            var contentI = summaryContent.get(i)
+            if(contentI instanceof VueJsDeliveryInCart)
+                deliveryInCart = (VueJsDeliveryInCart)contentI
+            if(contentI instanceof VueJsSubTotal)
+                subTotal = (VueJsSubTotal)contentI
+            if(contentI instanceof VueJsTotal)
+                total = (VueJsTotal)contentI
+        }
+
+        FileContext.writer.write("""
+        <vaadin-vertical-layout style="width: 40%;padding-left: 40px;" class="largeScreen">
+        
+              <vaadin-label>"""+(summary.getLabel()?summary.getLabel():"")+"""</vaadin-label>
+        
+              <hr style="width: 100%;"/>
+        
+        
+              """)
+
+        if(subTotal)
+           subTotal.insertInTemplate()
+
+
+
+              if(deliveryInCart)
+                  deliveryInCart.insertInTemplate()
+
+        FileContext.writer.write("""
+              <hr style="width: 100%;"/>
+        
+              """)
+
+                if(total)
+                    total.insertInTemplate()
+
+                FileContext.writer.write("""
+        
+              <vaadin-button class="btn btn-primary" style="justify-content: center; width: 100%;" theme="primary">Paiement</vaadin-button>
+        
+            </vaadin-vertical-layout>
+        """)
+    }
+/**
+ * insert self in a parent template
+ * @return
+ */
+
+    @Override
+    def insertInTemplate(Integer integer) {
+        VueJsDeliveryInCart deliveryInCart = null;
+        VueJsSubTotal subTotal = null;
+        VueJsTotal total = null;
+
+        for (int i=0; i<summaryContent.size(); i++) {
+            var contentI = summaryContent.get(i)
+            if(contentI instanceof VueJsDeliveryInCart)
+                deliveryInCart = (VueJsDeliveryInCart)contentI
+            if(contentI instanceof VueJsSubTotal)
+                subTotal = (VueJsSubTotal)contentI
+            if(contentI instanceof VueJsTotal)
+                total = (VueJsTotal)contentI
+        }
+
+        if(integer == 992){
+            FileContext.writer.write("""
+            <vaadin-vertical-layout style="width: 100%; padding-top: 20px;" class="smallScreen">
+            
+                    <vaadin-label>"""+summary.getLabel()+"""</vaadin-label>
+            
+                    <hr style="width: 100%;"/>
+            
+            
+                    """)
+
+
+            if(subTotal)
+                subTotal.insertInTemplate()
+
+            if(deliveryInCart)
+                deliveryInCart.insertInTemplate()
+
+                    FileContext.writer.write("""
+            
+                    <hr style="width: 100%;"/>""")
+
+
+            if(total)
+                total.insertInTemplate()
+
+            FileContext.writer.write("""
+                    <vaadin-button class="btn btn-primary" style="justify-content: center; width: 100%;" theme="secondary">Paiement</vaadin-button>
+            
+                  </vaadin-vertical-layout>
+        """)
+        }
+    }
+}
+
+class VueJsPoster implements VueGeneratable {
+    Poster poster;
+
+    public VueJsPoster(Poster poster){
+        this.poster = poster
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+ VueJsPoster
+        """)
+    }
+}
+
+class VueJsMiniDescription implements VueGeneratable {
+    MiniDescription miniDescription;
+
+    public VueJsMiniDescription(MiniDescription miniDescription){
+        this.miniDescription = miniDescription
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsMiniDescription
+        """)
+    }
+}
+
+class VueJsQuantityOfProductInCart implements VueGeneratable {
+    QuantityInCart quantityInCart;
+
+    public VueJsQuantityOfProductInCart(QuantityInCart quantityInCart){
+        this.quantityInCart = quantityInCart
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+VueJsQuantityOfProductInCart
+        """)
+    }
+}
+
+class VueJsTotal implements VueGeneratable {
+    Total total;
+
+    public VueJsTotal(Total total){
+        this.total = total
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+                          <vaadin-horizontal-layout style="justify-content: space-between;width: 100%;">
+                    
+                            <vaadin-label>"""+(this.total.getLabel()?this.total.getLabel():"Total")+"""</vaadin-label>
+                    
+                            <layout-item style="padding-left: 2%">
+                              <vaadin-number-field value="800"  readonly >
+                                <div slot="suffix">€</div>
+                              </vaadin-number-field>
+                            </layout-item>
+                          </vaadin-horizontal-layout>
+        """)
+    }
+}
+
+class VueJsSubTotal implements VueGeneratable {
+    SubTotal subTotal;
+
+    public VueJsSubTotal(SubTotal subTotal){
+        this.subTotal = subTotal
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+
+              <vaadin-horizontal-layout style="justify-content: space-between;width: 100%;">
+        
+                <vaadin-label>"""+(subTotal.getLabel()?subTotal.getLabel():"Sous total")+"""</vaadin-label>
+        
+                <layout-item style="padding-left: 2%">
+                  <vaadin-number-field value="800"  readonly >
+                    <div slot="suffix">€</div>
+                  </vaadin-number-field>
+                </layout-item>
+              </vaadin-horizontal-layout>"""
+        )
+    }
+
+}
+class VueJsDeliveryInCart implements VueGeneratable {
+    DeliveryInCart deliveryInCart;
+
+    public VueJsDeliveryInCart(DeliveryInCart deliveryInCart){
+        this.deliveryInCart = deliveryInCart
+    }
+
+    @Override
+    def writeScript() {
+        return null
+    }
+
+    @Override
+    def insertSelfInImports() {
+        return null
+    }
+
+    def insertInTemplate() {
+        FileContext.writer.write("""
+
+              <vaadin-horizontal-layout style="justify-content: space-between;width: 100%;">
+        
+                <vaadin-label>"""+(deliveryInCart.getLabel()?deliveryInCart.getLabel():"Frais d'expédition estimés")+"""</vaadin-label>
+        
+                <layout-item style="padding-left: 2%">
+                  <vaadin-number-field value="""+(deliveryInCart.getDefaultValue()?deliveryInCart.getDefaultValue():400)+"""  readonly >
+                    <div slot="suffix">€</div>
+                  </vaadin-number-field>
+                </layout-item>
+              </vaadin-horizontal-layout>""")
     }
 }
 
@@ -238,13 +800,31 @@ class VueJsPriceFilter implements VueGeneratable {
     }
 
     @Override
-    def insertInData(){}
+    def insertInData() {}
 
     @Override
     def insertInTemplate() {
+        if(this.type === PriceType.Bar){
         FileContext.writer.write("""
-            <p> price filter type  ="${type}" </p><br>
-        """)
+<h2 class="text-center">Filter by</h2>
+  <hr>
+  <h4>Price:</h4>
+  <div class="card-body">
+    <form id="price-range-form">
+      <label for="min-price" class="form-label">Min price: </label>
+      <span id="min-price-txt">\$0</span>
+      <input type="range" class="form-range" min="0" max="99" id="min-price" step="1" value="0">
+      <label for="max-price" class="form-label">Max price: </label>
+      <span id="max-price-txt">\$100</span>
+      <input type="range" class="form-range" min="1" max="100" id="max-price" step="1" value="100">
+    </form>
+  </div>
+          """)
+        }
+        else {
+            // TODO
+        }
+
     }
 }
 
@@ -266,7 +846,7 @@ class VueJsFilter implements VueGeneratable {
     }
 
     @Override
-    def insertInData(){
+    def insertInData() {
         priceFilter.insertInData()
         genericFilters.insertInData()
     }
@@ -343,8 +923,8 @@ class VueJsGenericFilters implements VueGeneratable {
 
 
     @Override
-    def insertInData(){
-        for (VueGeneratable v: genericFilters){
+    def insertInData() {
+        for (VueGeneratable v : genericFilters) {
             v.insertInData()
         }
     }
@@ -368,7 +948,6 @@ class VueJsProduct implements VueGeneratable {
     VueJsProduct(Product product) {
         this.product = product
     }
-
 
 
     @Override
@@ -407,11 +986,16 @@ class VueJsProduct implements VueGeneratable {
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""
-            <v-card elevation="2" outlined shaped tile>
-                <v-card-title>{{product.name}}</v-card-title>
-                <v-card-text> product rating ="${product.rating.ratingType}" </v-card-text><br>
-            </v-card>
+                <p>{{product.name}}</p>""")
+        if (this.product.rating.ratingType == RatingType.Stars) {
+            FileContext.writer.write("""
+                <star-rating />
         """)
+
+        } else {
+            // TODO
+        }
+
     }
 
 
@@ -445,7 +1029,7 @@ class VueJsGenericFilter implements VueGeneratable {
 
 
     @Override
-    def insertInData(){
+    def insertInData() {
 
     }
 
@@ -490,19 +1074,32 @@ class VueJsCatalog implements VueGeneratable {
     }
 
     @Override
-    def writeTemplate() {
-        return null
-
-    }
-
-    @Override
     def writeScript() {
         return null
     }
 
     @Override
-    def insertSelfInImports() {
+    def registerSelfInComponents() {
+        FileContext.writer.write("""StarRating,""")
+    }
+
+    @Override
+    def writeTemplate() {
         return null
+
+    }
+
+
+    @Override
+    def insertSelfInStyle() {
+
+        FileContext.writer.write(""".layout{display:flex;}""")
+    }
+
+    @Override
+    def insertSelfInImports() {
+        FileContext.writer.write("""import StarRating from 'vue-star-rating';
+""")
     }
 
     @Override
@@ -511,11 +1108,13 @@ class VueJsCatalog implements VueGeneratable {
         FileContext.writer.write("""
             <h1> Context</h1>
             <h3> products </h3>
+            <div class="layout">
             <div v-for="product in products" :key="product.name">  """)
 
         product.insertInTemplate()
 
         FileContext.writer.write("""
+            </div>
             </div>
         """)
 
@@ -537,9 +1136,10 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 
     static {
-         List<SocialMediaIconInfo>  iconInfos = FileContext.objectMapper.readValue(new String(VueJsSocialMedia.getResourceAsStream("/social-media.json").readAllBytes()),new TypeReference<List<SocialMediaIconInfo>>() {} )
+        List<SocialMediaIconInfo> iconInfos = FileContext.objectMapper.readValue(new String(VueJsSocialMedia.getResourceAsStream("/social-media.json").readAllBytes()), new TypeReference<List<SocialMediaIconInfo>>() {
+        })
 
-        iconInfos.forEach( info -> iconMaps.put(info.name, info))
+        iconInfos.forEach(info -> iconMaps.put(info.name, info))
 
     }
 
@@ -570,7 +1170,7 @@ class VueJsSocialMedia implements VueGeneratable {
     }
 }
 
-class VueJsForm implements VueGeneratable{
+class VueJsForm implements VueGeneratable {
 
     String name
     List<VueGeneratable> fields = new ArrayList<>();
@@ -627,7 +1227,7 @@ class VueJsForm implements VueGeneratable{
     }
 }
 
-class VueJsField implements VueGeneratable{
+class VueJsField implements VueGeneratable {
 
     String name
     String type
@@ -649,11 +1249,11 @@ class VueJsField implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-${type} label="${name}"/><br/>""")
+        FileContext.writer.write("""<vaadin-${type}  style="width: 100%" label="${name}"/><br/>""")
     }
 }
 
-class VueJsAccordionGroup implements VueGeneratable{
+class VueJsAccordionGroup implements VueGeneratable {
 
     List<VueGeneratable> accordions = new ArrayList<>();
 
@@ -674,8 +1274,8 @@ class VueJsAccordionGroup implements VueGeneratable{
 
     @Override
     def insertInTemplate() {
-        FileContext.writer.write("""<vaadin-accordion style="width:40%; margin-left: 2%; margin-right: 2%; margin-top: 2%">""")
-        for(VueGeneratable v : accordions){
+        FileContext.writer.write("""<vaadin-accordion style="width:30%; margin-left: 15%; margin-right: 2%; margin-top: 2%">""")
+        for (VueGeneratable v : accordions) {
             v.insertInTemplate()
         }
         FileContext.writer.write("""</vaadin-accordion>""")
@@ -689,7 +1289,7 @@ class VueJsAccordionGroup implements VueGeneratable{
     }
 }
 
-class VueJsAccordion implements VueGeneratable{
+class VueJsAccordion implements VueGeneratable {
     String name
     List<VueGeneratable> components = new ArrayList<>()
 
@@ -711,8 +1311,9 @@ class VueJsAccordion implements VueGeneratable{
     @Override
     def insertInTemplate() {
         FileContext.writer.write("""<vaadin-accordion-panel>
+        <h3 style="font-family: 'Open Sans'">${name}</h3>
         <vaadin-vertical-layout>""")
-        for(VueGeneratable v : components){
+        for (VueGeneratable v : components) {
             v.insertInTemplate()
         }
         FileContext.writer.write("""</vaadin-vertical-layout>
@@ -728,13 +1329,20 @@ class VueJsAccordion implements VueGeneratable{
     }
 }
 
+trait VueResponsive{
+    /**
+     * insert self in a parent template
+     * @return
+     */
+    abstract def insertInTemplate(Integer integer)
+}
 
 trait VueGeneratable {
 
     //NOTE : deux contextes pour un composant un où on génère son propre fichier et un où il est utilisé dans un autre fichier
 
 
-    def registerDependencies(PackageJson packageJson){
+    def registerDependencies(PackageJson packageJson) {
 
     }
 
@@ -744,7 +1352,8 @@ trait VueGeneratable {
     def writeTemplate() {
 
     }
-    def insertInData(){
+
+    def insertInData() {
 
     }
 
@@ -771,16 +1380,15 @@ trait VueGeneratable {
     abstract def insertInTemplate()
 
 
-
     /**
      * used for nested components
      * such as tabs or accordions
      * */
-    def openTagInTemplate(){
+    def openTagInTemplate() {
 
     }
 
-   def closeTagInTemplate(){
+    def closeTagInTemplate() {
 
     }
 
@@ -789,7 +1397,7 @@ trait VueGeneratable {
         this.writeTemplate()
         this.writeScript()
         this.writeStyle()
-        if(FileContext.writer != null && FileContext.writer){
+        if (FileContext.writer != null && FileContext.writer) {
             FileContext.writer.close()
         }
 

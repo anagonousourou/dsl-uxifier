@@ -1,5 +1,5 @@
 WebApplication {
-    name 'adeline'
+    name 'adeline5'
     pageTitle 'The default title of Adeline !'
     WebPage {
         name 'Home'
@@ -16,7 +16,7 @@ WebApplication {
 
     NavigationMenu {
         ApplicationName 'Adeline'
-        type Drawer
+        type Navbar
         Menu {
             label 'Products'
             link '/'
@@ -43,7 +43,7 @@ WebApplication {
             label 'Mon Panier'
             useIcon
 
-            onhover CartPreview {
+            onclick CartPreview {
                 Article {
                     displayImage
                     displayPrice
