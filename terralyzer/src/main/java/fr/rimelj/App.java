@@ -2,14 +2,23 @@ package fr.rimelj;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
+import com.bertramlabs.plugins.hcl4j.HCLParser;
 import com.bertramlabs.plugins.hcl4j.HCLParserException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -64,7 +73,7 @@ public final class App {
                 System.out.println("modules/modules-resources-map.json already exists...");
                 resultFile = Paths.get("modules", "modules-resources-map" + System.currentTimeMillis() + ".json")
                         .toFile();
-                        System.out.println("modules/modules-resources-map.json ");
+                System.out.println("modules/modules-resources-map.json ");
                 resultFile.createNewFile();//
             }
             this.objectMapper.writeValue(resultFile, resourcesUsedByModules);
@@ -75,6 +84,49 @@ public final class App {
         }
     }
 
+    private Map<String, Integer> findResources(String pathString) throws HCLParserException, IOException {
+        File rootFile = Paths.get(pathString).toFile();
+        Map<String, Integer> resourceCounts = new HashMap<>();
+        if (rootFile.isDirectory()) {
+            System.out.println("Dir");
+
+        } else if (rootFile.isFile()) {
+            System.out.println("File");
+            Map results = new HCLParser().parse(rootFile, "UTF-8");
+
+            for (Object resource : ((Map) results.get("resource")).keySet()) {
+                resourceCounts.put(resource.toString(),
+                        ((Map) ((Map) results.get("resource")).get(resource.toString())).size());
+            }
+        }
+
+        System.out.println(resourceCounts);
+        return resourceCounts;
+
+    }
+
+    private TreeMap<Integer, String> calculateProximityScore(Map<String, Integer> resourcesCount)
+            throws IOException {
+        TreeMap<Integer, String> map = new TreeMap<>();
+
+        Map<String, List<String>> modulesResources = this.objectMapper.readValue(
+                Path.of("modules/modules-resources-map.json").toFile(), new TypeReference<Map<String, List<String>>>() {
+                });
+        for (Map.Entry<String, List<String>> entry : modulesResources.entrySet()) {// for every module in the terraform
+                                                                                   // official registry
+            String module = entry.getKey();
+            List<String> resources = entry.getValue();
+            int score = -CollectionUtils.disjunction(resources, resourcesCount.keySet()).size()
+                    + (5 * CollectionUtils.intersection(resources, resourcesCount.keySet()).size());
+
+            map.put(score, module);
+
+        }
+
+        return map;
+
+    }
+
     /**
      * Says hello to the world.
      * 
@@ -83,14 +135,21 @@ public final class App {
      * @throws HCLParserException
      */
     public static void main(String[] args) throws HCLParserException, IOException {
-        /*
-         * File terraformFile = new File("terraform/main.tf");
-         * Map results = new HCLParser().parse(terraformFile, "UTF-8");
-         * 
-         * System.out.println(results);
-         */
+        App app = new App();
+        var files = List.of("clburlison/terraform/main.tf", "terraform/load_balancer.tf", "terraform/aws_chatbot.tf");
+        for (var file : files) {
+            TreeMap<Integer, String> treeMap = app
+                    .calculateProximityScore(app.findResources(file));
 
-        new App().work();
+            int n = 0;
+            for (Entry<Integer, String> entry : treeMap.tailMap(0).entrySet()) {
+                System.out.println(entry);
+            }
+
+        }
+
+        // new App().work();
+
     }
 
 }
