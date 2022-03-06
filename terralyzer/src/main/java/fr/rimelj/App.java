@@ -105,7 +105,8 @@ public final class App {
 
     }
 
-    private TreeMap<Integer, String> calculateProximityScore(Map<String, Integer> resourcesCount)
+    private TreeMap<Integer, String> calculateProximityScore(Map<String, Integer> resourcesCount,
+            Integer similarityBonus, Integer differenceMalus)
             throws IOException {
         TreeMap<Integer, String> map = new TreeMap<>();
 
@@ -116,8 +117,8 @@ public final class App {
                                                                                    // official registry
             String module = entry.getKey();
             List<String> resources = entry.getValue();
-            int score = -CollectionUtils.disjunction(resources, resourcesCount.keySet()).size()
-                    + (5 * CollectionUtils.intersection(resources, resourcesCount.keySet()).size());
+            int score = -differenceMalus * CollectionUtils.disjunction(resources, resourcesCount.keySet()).size()
+                    + (similarityBonus * CollectionUtils.intersection(resources, resourcesCount.keySet()).size());
 
             map.put(score, module);
 
@@ -139,7 +140,7 @@ public final class App {
         var files = List.of("clburlison/terraform/main.tf", "terraform/load_balancer.tf", "terraform/aws_chatbot.tf");
         for (var file : files) {
             TreeMap<Integer, String> treeMap = app
-                    .calculateProximityScore(app.findResources(file));
+                    .calculateProximityScore(app.findResources(file),5,1);
 
             int n = 0;
             for (Entry<Integer, String> entry : treeMap.tailMap(0).entrySet()) {
