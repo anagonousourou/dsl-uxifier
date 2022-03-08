@@ -6,7 +6,7 @@ import urllib.request
 import os
 import sys
 
-token = "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"
+token = "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"
 
 def save_main_file(repo_name,url,dir):
 
@@ -117,7 +117,7 @@ def save_main_tf_file(topic,language,save_all_infos=False):
 
             if len(main_tf_links) != len(repos_name):
                 main_tf_links = None
-                #TODO Améliorer le processus en ne récupérant que les repos maquant
+                #TODO Améliorer le processus en ne récupérant que les repos maquants
 
 
     download = False
@@ -135,11 +135,11 @@ def save_main_tf_file(topic,language,save_all_infos=False):
         sys.exit()
 
     if download:
-        #TODO Améliorer le processus en ne sauvegardant que les repos manquant
+        #TODO Améliorer le processus en ne sauvegardant que les repos manquants
         with open(repos_infos_file,"w") as content:
             json.dump(main_tf_links, content)
 
-    print(f"Dowloading maint.tf files matching with topic {topic} and language {language}")
+    print(f"Downloading maint.tf files matching with topic {topic} and language {language}")
     for repo_name in tqdm(main_tf_links):
         save_main_file(repo_name,main_tf_links[repo_name],"Downloads")
     
