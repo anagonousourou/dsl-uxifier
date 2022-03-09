@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.TreeMap;
 
 import com.bertramlabs.plugins.hcl4j.HCLParser;
@@ -21,9 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Hello world!
- */
+
 public final class App {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OkHttpClient client = new OkHttpClient();
@@ -58,7 +57,7 @@ public final class App {
                 var details = get(moduleInfo.id);
                 if (details != null && details.root != null && details.root.resources != null) {
                     resourcesUsedByModules.put(moduleInfo.id,
-                            details.root.resources.stream().map(rs -> rs.type).toList());
+                            details.root.resources.stream().map(rs -> rs.type).collect(Collectors.toList()) );
                 }
                 // requete vers l'api terraform
 
@@ -134,15 +133,13 @@ public final class App {
      */
     public static void main(String[] args) throws HCLParserException, IOException {
         App app = new App();
-        var files = List.of("clburlison/terraform/main.tf", "terraform/load_balancer.tf", "terraform/aws_chatbot.tf", "hotelster/terraform/main.tf");
+        var files = List.of("clburlison/terraform/main.tf", "metadatamanagement/load_balancer.tf", "metadatamanagement/aws_chatbot.tf", "hotelster/terraform/main.tf");
         for (var file : files) {
             System.out.println("******************");
             TreeMap<Integer, String> treeMap = app
                     .calculateProximityScore(app.findResources(file),1,1);
-
-            int n = 0;
             for (Entry<Integer, String> entry : treeMap.tailMap(0).entrySet()) {
-                System.out.println(entry.getValue());
+                System.out.println(entry);
 
             }
             System.out.println("******************");
