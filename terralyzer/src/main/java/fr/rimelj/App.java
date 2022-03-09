@@ -8,14 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.bertramlabs.plugins.hcl4j.HCLParser;
 import com.bertramlabs.plugins.hcl4j.HCLParserException;
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -88,10 +85,10 @@ public final class App {
         File rootFile = Paths.get(pathString).toFile();
         Map<String, Integer> resourceCounts = new HashMap<>();
         if (rootFile.isDirectory()) {
-            System.out.println("Dir");
+            
 
         } else if (rootFile.isFile()) {
-            System.out.println("File");
+            
             Map results = new HCLParser().parse(rootFile, "UTF-8");
 
             for (Object resource : ((Map) results.get("resource")).keySet()) {
@@ -100,7 +97,7 @@ public final class App {
             }
         }
 
-        System.out.println(resourceCounts);
+        
         return resourceCounts;
 
     }
@@ -137,15 +134,18 @@ public final class App {
      */
     public static void main(String[] args) throws HCLParserException, IOException {
         App app = new App();
-        var files = List.of("clburlison/terraform/main.tf", "terraform/load_balancer.tf", "terraform/aws_chatbot.tf");
+        var files = List.of("clburlison/terraform/main.tf", "terraform/load_balancer.tf", "terraform/aws_chatbot.tf", "hotelster/terraform/main.tf");
         for (var file : files) {
+            System.out.println("******************");
             TreeMap<Integer, String> treeMap = app
-                    .calculateProximityScore(app.findResources(file),5,1);
+                    .calculateProximityScore(app.findResources(file),1,1);
 
             int n = 0;
             for (Entry<Integer, String> entry : treeMap.tailMap(0).entrySet()) {
-                System.out.println(entry);
+                System.out.println(entry.getValue());
+
             }
+            System.out.println("******************");
 
         }
 
